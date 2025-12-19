@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  font-family: 'Inter', sans-serif;
+}
+
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f3f5f7;
+}
+
+.register-card {
+  width: 380px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.register-card h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.field label span {
+  color: #f97316;
+}
+
+.field small {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #f97316;
+}
+
+.notice {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #9a3412;
+  font-size: 13px;
+  padding: 12px;
+  border-radius: 10px;
+  margin: 18px 0;
+}
+
+.notice a {
+  color: #f97316;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  border: none;
+  background: #f97316;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(249, 115, 22, 0.35);
+  transition: transform 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+.error {
+  color: #dc2626;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.login-link span {
+  color: #f97316;
+  font-weight: 600;
+  cursor: pointer;
+}
