@@ -9,7 +9,7 @@ const Header = () => {
     <header className="header">
       <div className="header__container">
         <div className="header__top">
-          <div className="header__logo">
+          <div onClick={() => navigate("/")} className="header__logo">
             <img src="./img/logo-header.png" alt="Cryopath Logo" />
           </div>
 
