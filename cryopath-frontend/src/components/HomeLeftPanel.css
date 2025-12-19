@@ -1,0 +1,15 @@
+.home-left-panel {
+  flex: 0 0 350px;
+  background-color: #FFF9F9;
+  padding: 16px;
+  margin-left: 50px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .home-left-panel {
+    width: 100%;
+    margin-left: 0;
+  }
+}

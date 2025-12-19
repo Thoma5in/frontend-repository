@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import Layout from './components/layout/Layout.jsx'
 import Profile from './pages/profile/Profile.jsx'
+import Home from './pages/home/Home.jsx'
 import Register from './pages/register/Register.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -12,7 +13,7 @@ createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Layout>
         <Routes>
-          <Route path="/*" element={<App />} />
+          <Route path="/*" element={<Home />} />
           <Route path='/profile' element={<Profile />} />
           <Route path='/register' element={<Register />} />
         </Routes>
