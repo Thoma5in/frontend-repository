@@ -19,12 +19,31 @@ export default function Home() {
         { id: 11, name: 'Producto 11', description: 'Descripción breve del producto 11.', price: '$129.99', image: 'https://via.placeholder.com/300x80?text=Producto+11' },
         { id: 12, name: 'Producto 12', description: 'Descripción breve del producto 12.', price: '$139.99', image: 'https://via.placeholder.com/300x80?text=Producto+12' },
     ];
+    // obtenemos precios mínimos y máximos para el slider
+    const numericPrices = products.map((p) => parseFloat(p.price.replace('$', '')));
+    const minPrice = Math.min(...numericPrices);
+    const maxPrice = Math.max(...numericPrices);
+
     const pageSize = 9;
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(products.length / pageSize) || 1;
+    const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice);
+    const [sortOrder, setSortOrder] = useState('asc');
+
+    const filteredAndSortedProducts = products
+        .filter((product) => {
+            const priceValue = parseFloat(product.price.replace('$', ''));
+            return priceValue <= maxPriceFilter;
+        })
+        .sort((a, b) => {
+            const priceA = parseFloat(a.price.replace('$', ''));
+            const priceB = parseFloat(b.price.replace('$', ''));
+            return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+        });
+
+    const totalPages = Math.ceil(filteredAndSortedProducts.length / pageSize) || 1;
 
     const startIndex = (currentPage - 1) * pageSize;
-    const currentProducts = products.slice(startIndex, startIndex + pageSize);
+    const currentProducts = filteredAndSortedProducts.slice(startIndex, startIndex + pageSize);
 
     const handlePrev = () => {
         setCurrentPage((prev) => Math.max(1, prev - 1));
@@ -34,10 +53,27 @@ export default function Home() {
         setCurrentPage((prev) => Math.min(totalPages, prev + 1));
     };
 
+    const handleMaxPriceChange = (value) => {
+        setMaxPriceFilter(value);
+        setCurrentPage(1);
+    };
+
+    const handleSortOrderChange = (order) => {
+        setSortOrder(order);
+        setCurrentPage(1);
+    };
+
 
     return (
         <div className="home-background">
-            <HomeLeftPanel />
+            <HomeLeftPanel
+                minPrice={minPrice}
+                maxPrice={maxPrice}
+                currentMaxPrice={maxPriceFilter}
+                onMaxPriceChange={handleMaxPriceChange}
+                sortOrder={sortOrder}
+                onSortOrderChange={handleSortOrderChange}
+            />
 
             <div className="home-products">
                 {currentProducts.map((product) => (
