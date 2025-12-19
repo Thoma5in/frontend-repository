@@ -1,4 +1,5 @@
 import "./Header.css"
+import LupeIcon from "../../../assets/icons/LupeIcon"
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -11,13 +12,15 @@ const Header = () => {
           <img src="./img/logo-header.png" alt="Cryopath Logo" />
         </div>
 
-        <search>
+        <search className="header__search">
           <input
             type="text"
             className="header__search-input"
-            placeholder="Search..."
+            placeholder="Busca tu proximo producto......"
           />
-          <button className="header__search-button">Search</button>
+          <button className="header__search-button">
+            <LupeIcon />
+          </button>
         </search>
 
         <div className="header__nav">
