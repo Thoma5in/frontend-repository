@@ -4,12 +4,16 @@
   font-family: 'Inter', sans-serif;
 }
 
+.logo img {
+  width: 120px;
+  margin-bottom: 16px;
+}
+
 .register-container {
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #f3f5f7;
 }
 
 .register-card {
@@ -91,7 +95,7 @@
   text-decoration: none;
 }
 
-button {
+.submit-button {
   width: 100%;
   padding: 12px;
   border-radius: 999px;
@@ -105,7 +109,7 @@ button {
   transition: transform 0.15s ease;
 }
 
-button:hover {
+.submit-button:hover {
   transform: translateY(-1px);
 }
 
