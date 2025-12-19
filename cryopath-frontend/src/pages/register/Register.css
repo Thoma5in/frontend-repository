@@ -4,6 +4,11 @@
   font-family: 'Inter', sans-serif;
 }
 
+.logo img {
+  width: 120px;
+  margin-bottom: 16px;
+}
+
 .register-container {
   min-height: 100vh;
   display: flex;

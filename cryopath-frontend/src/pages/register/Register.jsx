@@ -82,6 +82,11 @@ const Register = () => {
     return (
         <div className="register-container">
       <form className="register-card" onSubmit={handleSubmit}>
+
+        <div className="logo">
+            <img src={"/img/logo.png"} alt="Cryopath logo" />
+        </div>
+
         <h2>¡Únete a nuestra familia!</h2>
         <p className="subtitle">Solo te tomará un minuto</p>
         
