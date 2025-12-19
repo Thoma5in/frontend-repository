@@ -1,7 +1,12 @@
-footer{
+.footer {
     background-color: #2E2E2E;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    left: 0;
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    margin-top: auto;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 0.875rem;
 }
