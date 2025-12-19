@@ -6,6 +6,7 @@ import App from './App.jsx'
 import Layout from './components/layout/Layout.jsx'
 import Profile from './pages/profile/Profile.jsx'
 import Home from './pages/home/Home.jsx'
+import Register from './pages/register/Register.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById('root')).render(
         <Routes>
           <Route path="/*" element={<Home />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/register' element={<Register />} />
         </Routes>
       </Layout>
     </BrowserRouter>
