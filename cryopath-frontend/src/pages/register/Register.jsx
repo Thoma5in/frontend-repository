@@ -158,7 +158,7 @@ const Register = () => {
             <a href="#"> Política de privacidad</a>
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button className="submit-button" type="submit" disabled={loading}>
           {loading ? 'Creando cuenta...' : 'Crear cuenta'}
         </button>
 

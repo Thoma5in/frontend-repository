@@ -96,7 +96,7 @@
   text-decoration: none;
 }
 
-button {
+.submit-button {
   width: 100%;
   padding: 12px;
   border-radius: 999px;
@@ -110,7 +110,7 @@ button {
   transition: transform 0.15s ease;
 }
 
-button:hover {
+.submit-button:hover {
   transform: translateY(-1px);
 }
 
