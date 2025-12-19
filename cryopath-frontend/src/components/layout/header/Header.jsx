@@ -8,26 +8,37 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header__container">
-        <div className="header__logo">
-          <img src="./img/logo-header.png" alt="Cryopath Logo" />
+        <div className="header__top">
+          <div className="header__logo">
+            <img src="./img/logo-header.png" alt="Cryopath Logo" />
+          </div>
+
+          <search className="header__search">
+            <input
+              type="text"
+              className="header__search-input"
+              placeholder="Busca tu proximo producto......"
+            />
+            <button className="header__search-button">
+              <LupeIcon />
+            </button>
+          </search>
+
+          <div className="header__nav">
+            <a onClick={() => navigate('/login')}>Iniciar Sesión</a>
+            <a onClick={() => navigate('/register')}>Registrate</a>
+          </div>
         </div>
 
-        <search className="header__search">
-          <input
-            type="text"
-            className="header__search-input"
-            placeholder="Busca tu proximo producto......"
-          />
-          <button className="header__search-button">
-            <LupeIcon />
+        <div className="header__actions">
+          <button className="header__action header__action--dropdown">
+            <span>Categorías</span>
+            <span className="header__chevron" aria-hidden="true" />
           </button>
-        </search>
-
-        <div className="header__nav">
-          <a onClick={() => navigate('/login')}>Iniciar Sesión</a>
-          <a onClick={() => navigate('/register')}>Registrate</a>
+          <button className="header__action">Supermercado</button>
+          <button className="header__action">Vender</button>
+          <button className="header__action">Ayuda</button>
         </div>
-
       </div>
     </header>
   )
