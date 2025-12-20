@@ -14,6 +14,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 5vh;
+  margin-bottom: 10vh;
 }
 
 .register-card {
@@ -46,6 +48,7 @@
 
 .field {
   margin-bottom: 14px;
+  width: 93%;
 }
 
 .field label {
