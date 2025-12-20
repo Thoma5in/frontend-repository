@@ -1,0 +1,117 @@
+.profile-page {
+    margin: 5%;
+    padding: 20px;
+}
+
+.profile-header {
+    margin-bottom: 2rem;
+}
+
+.profile-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.profile-content {
+    display: flex;
+    justify-content: center;
+}
+
+.profile-card {
+    border: 2px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    background-color: #FAFAFA;
+}
+
+.profile-top {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+    align-items: flex-start;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
+
+.profile-avatar svg {
+    width: 80px;
+    height: 80px;
+    stroke: #666;
+    stroke-width: 2;
+    fill: none;
+}
+
+.profile-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.profile-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+}
+
+.profile-detail {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.4;
+}
+
+.profile-status {
+    color: #1976D2;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.profile-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.action-button {
+    border: 2px solid #999;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    border-color: #333;
+    background-color: #F5F5F5;
+    transform: translateY(-2px);
+}
+
+.button-icon {
+    font-size: 1.2rem;
+}
