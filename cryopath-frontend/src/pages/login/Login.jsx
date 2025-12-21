@@ -1,11 +1,33 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { loginRequest } from '../../services/authApi';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const togglePassword = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      setLoading(true);
+      await loginRequest(email, password);
+      setSuccess('Inicio de sesión exitoso. ¡Bienvenido de vuelta!');
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,7 +40,7 @@ const Login = () => {
         <h1 className="login-title">¡Qué bueno verte de nuevo!</h1>
         <p className="login-subtitle">Ingresa para continuar donde lo dejaste</p>
 
-        <form className="login-form">
+        <form className="login-form" onSubmit={handleSubmit}>
           <div className="login-field">
             <label htmlFor="email">
               Correo electrónico<span className="login-asterisk">*</span>
@@ -27,6 +49,8 @@ const Login = () => {
               id="email"
               type="email"
               placeholder="tu@email.ejemplo"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -39,6 +63,8 @@ const Login = () => {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <button
                 type="button"
@@ -51,10 +77,13 @@ const Login = () => {
             </div>
           </div>
 
-          <button type="submit" className="login-button">
-            Iniciar sesión
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Iniciar sesión'}
           </button>
         </form>
+
+        {error && <p className="login-error">{error}</p>}
+        {success && <p className="login-success">{success}</p>}
 
         <div className="login-divider">
           <span className="login-divider-line" />
