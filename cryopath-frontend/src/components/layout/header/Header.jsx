@@ -5,7 +5,10 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, profile, logout } = useAuth();
+
+  console.log('USER:', user)
+  console.log('PROFILE:', profile)
 
   const handleLogout = () => {
     logout();
@@ -40,7 +43,7 @@ const Header = () => {
 
           {isAuthenticated && (
             <div className="header__user-panel">
-              <p className="header__user-greeting">Hola, {user?.email ?? 'usuario'}</p>
+              <p className="header__user-greeting">Hola, {profile?.nombre || profile?.data?.nombre || user?.email || 'usuario'}</p>
               <div className="header__user-row header__user-row--icons">
                 <button
                   type="button"
