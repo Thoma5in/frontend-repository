@@ -24,3 +24,23 @@ export async function getCurrentUsuario(token) {
     throw new Error(error.message || 'Error al cargar el perfil del usuario')
   }
 }
+
+export async function updateUsuario(data, token) {
+  const response = await fetch(`${BASE_URL}/usuarios/`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+
+    },
+    body: JSON.stringify(data),
+  })
+
+  const payload = await response.json()
+
+  if (!response.ok) {
+    throw new Error(payload?.message || 'No se pudo actualizar el usuario')
+  }
+
+  return payload
+}
