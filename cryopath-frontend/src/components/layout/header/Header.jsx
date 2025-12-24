@@ -67,7 +67,11 @@ const Header = () => {
               <button type="button" className="header__user-button header__user-button--stacked">
                 Mis Compras
               </button>
-              <button type="button" className="header__user-button header__user-button--stacked">
+              <button
+                type="button"
+                className="header__user-button header__user-button--stacked"
+                onClick={() => navigate('/profile')}
+              >
                 Perfil
               </button>
               <button

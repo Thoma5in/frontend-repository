@@ -74,12 +74,21 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => setAuthState(null)
 
+  
+
+  const updateProfile = (newProfile) => {
+    setAuthState((prev) =>
+      prev ? { ...prev, profile: newProfile } : prev
+    )
+  }
+
   const value = useMemo(() => ({
     session: authState?.session || null,
     user: authState?.user || null,
     profile: authState?.profile || null,
     login,
     logout,
+    updateProfile,
     isAuthenticated: Boolean(authState?.session?.access_token),
   }), [authState])
 

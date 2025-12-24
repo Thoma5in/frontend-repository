@@ -7,6 +7,7 @@ import Profile from './pages/profile/Profile.jsx'
 import Home from './pages/home/Home.jsx'
 import Register from './pages/register/Register.jsx'
 import Login from './pages/login/Login.jsx'
+import PerfilEditar from './pages/editar-perfil/EditarPerfil.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
+            <Route path='/edit' element={<PerfilEditar />} />
           </Routes>
         </Layout>
       </BrowserRouter>

@@ -61,7 +61,11 @@ const Profile = () => {
                     </div>
 
                     <div className="profile-actions">
-                        <button className="action-button">
+                        <button
+                            type="button"
+                            className="action-button"
+                            onClick={() => navigate('/edit')}
+                        >
                             <span className="button-icon"></span>
                             Actualiza tus datos
                         </button>
