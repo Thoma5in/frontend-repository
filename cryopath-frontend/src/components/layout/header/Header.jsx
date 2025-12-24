@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const navigate = useNavigate();
+  const showUserPanel = true; // toggle to preview the post-login quick actions
+  const isAuthenticated = showUserPanel;
 
   return (
     <header className="header">
@@ -24,10 +26,43 @@ const Header = () => {
             </button>
           </search>
 
-          <div className="header__nav">
-            <a onClick={() => navigate('/login')}>Iniciar Sesión</a>
-            <a onClick={() => navigate('/register')}>Registrate</a>
-          </div>
+          {!isAuthenticated && (
+            <div className="header__nav">
+              <a onClick={() => navigate('/login')}>Iniciar Sesión</a>
+              <a onClick={() => navigate('/register')}>Registrate</a>
+            </div>
+          )}
+
+          {showUserPanel && (
+            <div className="header__user-panel">
+              <div className="header__user-row header__user-row--icons">
+                <button
+                  type="button"
+                  className="header__user-button header__user-button--icon"
+                  aria-label="Notificaciones"
+                >
+                  <span className="header__user-icon" aria-hidden="true">
+                    🔔
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="header__user-button header__user-button--icon"
+                  aria-label="Carrito"
+                >
+                  <span className="header__user-icon" aria-hidden="true">
+                    🛒
+                  </span>
+                </button>
+              </div>
+              <button type="button" className="header__user-button header__user-button--stacked">
+                Mis Compras
+              </button>
+              <button type="button" className="header__user-button header__user-button--stacked">
+                Perfil
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="header__actions">

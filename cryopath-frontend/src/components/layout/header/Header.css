@@ -126,3 +126,60 @@
     border-top: 6px solid white;
 }
 
+.header__user-panel {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: flex-end;
+}
+
+.header__user-row {
+    display: flex;
+    gap: 0.65rem;
+}
+
+.header__user-row--icons {
+    justify-content: flex-end;
+}
+
+.header__user-button {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    padding: 0.6rem 1.1rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    transition: transform 175ms ease, background-color 175ms ease, box-shadow 175ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.header__user-button--icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.header__user-button--stacked {
+    width: 168px;
+    justify-content: flex-start;
+    padding-left: 1rem;
+}
+
+.header__user-button:hover {
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+}
+
+.header__user-icon {
+    font-size: 1.35rem;
+}
+
