@@ -1,11 +1,16 @@
 import "./Header.css"
 import LupeIcon from "../../../assets/icons/LupeIcon"
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const showUserPanel = true; // toggle to preview the post-login quick actions
-  const isAuthenticated = showUserPanel;
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  }
 
   return (
     <header className="header">
@@ -33,8 +38,9 @@ const Header = () => {
             </div>
           )}
 
-          {showUserPanel && (
+          {isAuthenticated && (
             <div className="header__user-panel">
+              <p className="header__user-greeting">Hola, {user?.email ?? 'usuario'}</p>
               <div className="header__user-row header__user-row--icons">
                 <button
                   type="button"
@@ -60,6 +66,13 @@ const Header = () => {
               </button>
               <button type="button" className="header__user-button header__user-button--stacked">
                 Perfil
+              </button>
+              <button
+                type="button"
+                className="header__user-button header__user-button--stacked"
+                onClick={handleLogout}
+              >
+                Cerrar sesión
               </button>
             </div>
           )}

@@ -134,6 +134,13 @@
     align-items: flex-end;
 }
 
+.header__user-greeting {
+    margin: 0;
+    color: white;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
 .header__user-row {
     display: flex;
     gap: 0.65rem;
