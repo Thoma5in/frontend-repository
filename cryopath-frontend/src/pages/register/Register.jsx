@@ -1,5 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Register.css';
+import { loginRequest, registerRequest } from '../../services/authApi';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +16,8 @@ const Register = () => {
 
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const { login } = useAuth()
 
   const handleChange = (e) => {
     setFormData({
@@ -50,27 +55,17 @@ const Register = () => {
     try {
       setLoading(true)
 
-      const response = await fetch('http://localhost:3001/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nombre,
-          apellido,
-          correo,
-          password,
-          direccion
-        })
+      await registerRequest({
+        nombre,
+        apellido,
+        correo,
+        password,
+        direccion
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || data.error || 'Error en el registro.')
-      }
-
-      alert('Registro exitoso. Ahora puede iniciar sesión.')
+      const authResponse = await loginRequest(correo, password)
+      login({ session: authResponse.session, user: authResponse.user })
+      navigate('/')
 
     } catch (err) {
       setError(err.message)

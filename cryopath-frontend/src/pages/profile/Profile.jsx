@@ -1,6 +1,44 @@
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../context/AuthContext"
 import "./Profile.css"
 
 const Profile = () => {
+    const { profile, user, isAuthenticated } = useAuth()
+    const navigate = useNavigate()
+    const isLoading = !profile
+
+    if (!isAuthenticated) {
+        return (
+            <div className="profile-page">
+                <div className="profile-content">
+                    <div className="profile-card profile-guest-card">
+                        <h2 className="profile-guest-title">Debes iniciar sesion</h2>
+                        <p className="profile-guest-text">
+                            Accede para ver y actualizar tus datos personales.
+                        </p>
+                        <button
+                            type="button"
+                            className="profile-guest-button"
+                            onClick={() => navigate('/login')}
+                        >
+                            Iniciar sesion
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const fullName = profile?.nombre && profile?.apellido
+        ? `${profile.nombre} ${profile.apellido}`
+        : user?.email?.split('@')[0] || 'Perfil sin nombre'
+
+    const email = profile?.correo || user?.email || 'Sin correo registrado'
+    const phone = profile?.telefono || 'Sin telefono registrado'
+    const address = profile?.direccion || 'Sin direccion registrada'
+    const status = profile?.estado || 'Sin estado'
+    const userId = profile?.id || user?.id || 'Sin identificador'
+
     return (
         <div className="profile-page">
             <div className="profile-content">
@@ -13,11 +51,12 @@ const Profile = () => {
                             </svg>
                         </div>
                         <div className="profile-info">
-                            <h2 className="profile-name">Samuel Ospina</h2>
-                            <p className="profile-detail">samiospina2006@gmail.com</p>
-                            <p className="profile-detail">Tel: 3182261316</p>
-                            <p className="profile-detail">Carrera 93 #45-113</p>
-                            <span className="profile-status">Activo</span>
+                            <h2 className="profile-name">{isLoading ? 'Cargando perfil...' : fullName}</h2>
+                            <p className="profile-detail">{email}</p>
+                            <p className="profile-detail">Tel: {phone}</p>
+                            <p className="profile-detail">Direccion: {address}</p>
+                            <p className="profile-detail">Id: {userId}</p>
+                            <span className="profile-status">{status}</span>
                         </div>
                     </div>
 
@@ -36,7 +75,7 @@ const Profile = () => {
                         </button>
                         <button className="action-button">
                             <span className="button-icon"></span>
-                            Guarda Direcciones
+                            Guarda direcciones
                         </button>
                     </div>
                 </div>

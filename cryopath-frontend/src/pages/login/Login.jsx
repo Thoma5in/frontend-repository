@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { loginRequest } from '../../services/authApi';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth()
+  const navigate = useNavigate()
 
   const togglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -17,12 +20,12 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
-    setSuccess('');
 
     try {
       setLoading(true);
-      await loginRequest(email, password);
-      setSuccess('Inicio de sesión exitoso. ¡Bienvenido de vuelta!');
+      const response = await loginRequest(email, password);
+      login({ session: response.session, user: response.user });
+      navigate('/');
     } catch (err) {
       setError(err.message || 'Error al iniciar sesión');
     } finally {
@@ -83,7 +86,6 @@ const Login = () => {
         </form>
 
         {error && <p className="login-error">{error}</p>}
-        {success && <p className="login-success">{success}</p>}
 
         <div className="login-divider">
           <span className="login-divider-line" />

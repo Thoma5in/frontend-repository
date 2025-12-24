@@ -14,3 +14,21 @@ export async function loginRequest(email, password) {
 
   return response.json();
 }
+
+export async function registerRequest(payload) {
+  const response = await fetch('http://localhost:3001/auth/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    const errorJson = await response.json().catch(() => null)
+    const errorMessage = errorJson?.message || errorJson?.error || 'Error en el registro'
+    throw new Error(errorMessage)
+  }
+
+  return response.json()
+}
