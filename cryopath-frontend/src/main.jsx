@@ -9,6 +9,8 @@ import Register from './pages/register/Register.jsx'
 import Login from './pages/login/Login.jsx'
 import PerfilEditar from './pages/editar-perfil/EditarPerfil.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import Assistant from './pages/assistant/assistant.jsx'
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -21,6 +23,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/edit' element={<PerfilEditar />} />
+            <Route path='/assistant' element={<Assistant />} />
           </Routes>
         </Layout>
       </BrowserRouter>
