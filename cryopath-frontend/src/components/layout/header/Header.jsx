@@ -92,7 +92,7 @@ const Header = () => {
           </button>
           <button className="header__action">Supermercado</button>
           <button className="header__action">Vender</button>
-          <button className="header__action">Ayuda</button>
+          <button className="header__action" onClick={() => navigate('/assistant')}>Ayuda</button>
         </div>
       </div>
     </header>
