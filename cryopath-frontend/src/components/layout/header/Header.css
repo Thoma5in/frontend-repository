@@ -266,3 +266,144 @@
     font-size: 1.35rem;
 }
 
+/* Hamburger + mobile menu */
+.header__hamburger {
+    display: none;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+    margin-left: auto;
+}
+
+.header__hamburger:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.header__mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    background-color: #3BA7C2;
+    padding: 1rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    animation: slideDown 0.25s ease-out;
+}
+
+.header__mobile-menu.active {
+    display: flex;
+}
+
+.header__mobile-menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.header__mobile-menu a:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.header__mobile-divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0.25rem 1rem;
+}
+
+.header__mobile-user-info {
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    background-color: rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    margin: 0 1rem 0.25rem 1rem;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .header {
+        padding: 0.5rem 1rem;
+    }
+
+    .header__top {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-between;
+    }
+
+    .header__logo {
+        order: 1;
+    }
+
+    .header__nav,
+    .header__actions,
+    .header__user-menu {
+        display: none;
+    }
+
+    .header__hamburger {
+        display: inline-flex;
+        order: 2;
+        align-self: center;
+        margin-left: auto;
+    }
+
+    .header__user-panel {
+        order: 3;
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .header__search {
+        order: 4;
+        width: 100%;
+        max-width: none;
+        margin-top: 0.5rem;
+        flex-basis: 100%;
+    }
+    
+    .header__user-greeting {
+        display: none;
+    }
+
+    .header__mobile-menu {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .header__nav {
+        gap: 0.5rem;
+    }
+
+    .header__nav a {
+        font-size: 0.8rem;
+        padding: 0.2rem 0.5rem;
+        height: 1.8rem;
+    }
+    
+    .header__user-panel {
+        gap: 0.5rem;
+    }
+}
+

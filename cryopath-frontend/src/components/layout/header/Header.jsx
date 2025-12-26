@@ -8,10 +8,8 @@ const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, profile, logout } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
-
-  console.log('USER:', user)
-  console.log('PROFILE:', profile)
 
   const handleLogout = () => {
     logout();
@@ -45,10 +43,12 @@ const Header = () => {
               className="header__search-input"
               placeholder="Busca tu proximo producto......"
             />
-            <button className="header__search-button">
+            <button type="button" className="header__search-button">
               <LupeIcon />
             </button>
           </search>
+
+          
 
           {!isAuthenticated && (
             <div className="header__nav">
@@ -135,6 +135,18 @@ const Header = () => {
               </div>
             </div>
           )}
+          <button
+            type="button"
+            className="header__hamburger"
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            aria-label="Menú"
+          >
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
         </div>
 
         <div className="header__actions">
@@ -145,6 +157,29 @@ const Header = () => {
           <button className="header__action">Supermercado</button>
           <button className="header__action">Vender</button>
           <button className="header__action" onClick={() => navigate('/assistant')}>Ayuda</button>
+        </div>
+
+        <div className={`header__mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}>
+          {!isAuthenticated && (
+            <>
+              <a onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}>Iniciar Sesión</a>
+              <a onClick={() => { navigate('/register'); setIsMobileMenuOpen(false); }}>Registrate</a>
+            </>
+          )}
+          {isAuthenticated && (
+            <>
+              <div className="header__mobile-user-info">
+                <p>Hola, {profile?.nombre || profile?.data?.nombre || user?.email || 'usuario'}</p>
+              </div>
+              <a onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>Perfil</a>
+              <a onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>Cerrar Sesión</a>
+            </>
+          )}
+          <div className="header__mobile-divider"></div>
+          <a onClick={() => setIsMobileMenuOpen(false)}>Categorías</a>
+          <a onClick={() => setIsMobileMenuOpen(false)}>Supermercado</a>
+          <a onClick={() => setIsMobileMenuOpen(false)}>Vender</a>
+          <a onClick={() => { navigate('/assistant'); setIsMobileMenuOpen(false); }}>Ayuda</a>
         </div>
       </div>
     </header>
