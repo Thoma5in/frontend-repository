@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 
+
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, profile, logout } = useAuth();
+  const { isAuthenticated, user, profile, logout, isAdmin, loading } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -119,6 +120,16 @@ const Header = () => {
                     >
                       Perfil
                     </button>
+
+                    {isAdmin && (
+                    <button
+                      type="button"
+                      className="header__user-menu-item"
+                      onClick={() => navigate('/admin')}
+                    >
+                      Panel Admin
+                    </button>
+                  )}
                     <button
                       type="button"
                       className="header__user-menu-item"

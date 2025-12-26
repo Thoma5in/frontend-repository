@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { getCurrentUsuario } from '../services/usuarioApi.js'
+import { checkAdmin } from '../services/adminApi.js'
 
 const STORAGE_KEY = 'cryopath-auth'
 
@@ -21,6 +22,8 @@ const AuthContext = createContext({
   login: () => {},
   logout: () => {},
   isAuthenticated: false,
+  isAdmin: false,
+  loading: true,
 })
 
 export const AuthProvider = ({ children }) => {
@@ -29,8 +32,13 @@ export const AuthProvider = ({ children }) => {
     return readStoredAuth()
   })
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+
   const token = authState?.session?.access_token
 
+  //Guardar sesión en localstorage
   useEffect(() => {
     if (!authState) {
       localStorage.removeItem(STORAGE_KEY)
@@ -40,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(authState))
   }, [authState])
 
+  // Cargar perfil del usuario
   useEffect(() => {
     if (!token) {
       setAuthState((prev) => {
@@ -67,12 +76,46 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token])
 
+
+   //Verificar si es admin
+  useEffect(() => {
+    if (!token) {
+      setIsAdmin(false);
+      setLoading(false);
+      return;
+    }
+
+    let isActive = true;
+    setLoading(true);
+
+    checkAdmin(token)
+      .then(() => {
+        if (!isActive) return;
+        setIsAdmin(true);
+      })
+      .catch(() => {
+        if (!isActive) return;
+        setIsAdmin(false);
+      })
+      .finally(() => {
+        if (!isActive) return;
+        setLoading(false);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [token]);
+
   const login = ({ session, user, profile = null }) => {
     if (!session) return
     setAuthState({ session, user: user ?? null, profile })
   }
 
-  const logout = () => setAuthState(null)
+  const logout = () => {
+    setAuthState(null)
+    setIsAdmin(false);
+  }
 
   
 
@@ -90,7 +133,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateProfile,
     isAuthenticated: Boolean(authState?.session?.access_token),
-  }), [authState])
+    isAdmin,
+    loading,
+  }), [authState, isAdmin, loading])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
