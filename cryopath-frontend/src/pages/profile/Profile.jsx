@@ -53,7 +53,7 @@ const Profile = () => {
                         <div className="profile-info">
                             <h2 className="profile-name">{isLoading ? 'Cargando perfil...' : fullName}</h2>
                             <p className="profile-detail">{email}</p>
-                            <p className="profile-detail">Tel: {phone}</p>
+                            <p className="profile-detail">Tel: {profile?.telefono || 'Sin telefono registrado'}</p>
                             <p className="profile-detail">Direccion: {address}</p>
                             <p className="profile-detail">Id: {userId}</p>
                             <span className="profile-status">{status}</span>

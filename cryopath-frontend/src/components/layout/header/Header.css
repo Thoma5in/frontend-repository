@@ -58,11 +58,11 @@
     position: relative;
     display: flex;
     align-items: center;
-    margin-left: 2rem;
+    flex: 1;
     background-color: white;
     border-radius: 16px;
-    height: 4dvh;
-    width: 30dvh;
+    height: 44px;
+    max-width: 560px;
     padding: 0 1rem;
 }
 
@@ -80,6 +80,8 @@
     border: none;
     outline: none;
     background: transparent;
+    width: 100%;
+    font-size: 0.95rem;
 
 
 }
@@ -148,6 +150,80 @@
 
 .header__user-row--icons {
     justify-content: flex-end;
+}
+
+.header__user-menu {
+    position: relative;
+    margin-top: 0.35rem;
+}
+
+.header__user-menu-trigger {
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 18px;
+    padding: 0.65rem 0.95rem;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: transform 175ms ease, background-color 175ms ease, box-shadow 175ms ease;
+}
+
+.header__user-menu-trigger:hover {
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+    transform: translateY(-2px);
+}
+
+.header__user-avatar {
+    display: inline-flex;
+    width: 40px;
+    height: 40px;
+}
+
+.header__user-avatar svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
+}
+
+.header__user-menu-chevron {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid white;
+}
+
+.header__user-menu-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 180px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    z-index: 200;
+}
+
+.header__user-menu-item {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 0.9rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.header__user-menu-item:hover {
+    background: rgba(59, 167, 194, 0.10);
 }
 
 .header__user-button {

@@ -13,6 +13,7 @@ const EditProfile = () => {
     nombre: "",
     apellido: "",
     direccion: "",
+    telefono: "",
   })
 
   const [loading, setLoading] = useState(false)
@@ -23,6 +24,7 @@ const EditProfile = () => {
         nombre: profile.nombre || "",
         apellido: profile.apellido || "",
         direccion: profile.direccion || "",
+        telefono: profile.telefono || "",
       })
     }
   }, [profile])
@@ -103,6 +105,22 @@ const EditProfile = () => {
             required
           />
         </div>
+
+        <div className="field">
+          <label>
+            Teléfono <span>*</span>
+          </label>
+          <input
+            type="text"
+            name="telefono"
+            placeholder="Teléfono"
+            value={form.telefono}
+            onChange={handleChange}
+            
+          />
+        </div>
+
+
 
         <button className="submit-button" type="submit" disabled={loading}>
           {loading ? "Guardando..." : "Guardar cambios"}
