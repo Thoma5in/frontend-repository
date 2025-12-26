@@ -5,10 +5,13 @@ import { loginRequest, registerRequest } from '../../services/authApi';
 import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
     apellido: '',
     correo: '',
+    telefono: '',
     password: '',
     confirmPassword: '',
     direccion: ''
@@ -34,13 +37,14 @@ const Register = () => {
       nombre,
       apellido,
       correo,
+      telefono,
       password,
       confirmPassword,
       direccion
     } = formData
 
     //Validaciones
-    if (!nombre || !apellido || !correo || !password || !confirmPassword || !direccion) {
+    if (!nombre || !apellido || !correo || !telefono || !password || !confirmPassword || !direccion) {
       return setError('Por favor, complete todos los campos.')
     }
 
@@ -52,6 +56,11 @@ const Register = () => {
       return setError('Las contraseñas no coinciden.')
     }
 
+    if (formData.telefono && !/^[0-9+\s-]{7,15}$/.test(formData.telefono)) {
+      alert("Teléfono inválido")
+      return
+    }
+
     try {
       setLoading(true)
 
@@ -60,6 +69,7 @@ const Register = () => {
         apellido,
         correo,
         password,
+        telefono,
         direccion
       })
 
@@ -116,24 +126,54 @@ const Register = () => {
         </div>
 
         <div className="field">
-          <label> Contraseña <span>*</span></label>
+          <label> Telefono <span>*</span></label>
           <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
+            type="text"
+            name="telefono"
+            placeholder="Telefono"
             onChange={handleChange}
           />
+        </div>
+
+        <div className="field">
+          <label> Contraseña <span>*</span></label>
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              placeholder="Contraseña"
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowPassword((prev) => !prev)}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            >
+              {showPassword ? 'Ocultar' : 'Ver'}
+            </button>
+          </div>
           <small>Usa mayúsculas, números y símbolos para mayor seguridad</small>
         </div>
 
         <div className="field">
           <label> Confirmar Contraseña <span>*</span></label>
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirmar contraseña"
-            onChange={handleChange}
-          />
+          <div className="password-wrapper">
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              placeholder="Confirmar contraseña"
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="toggle-password"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              aria-label={showConfirmPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            >
+              {showConfirmPassword ? 'Ocultar' : 'Ver'}
+            </button>
+          </div>
         </div>
 
         <div className="field">

@@ -85,6 +85,12 @@
   padding-right: 70px;
 }
 
+/* Hide native password reveal/clear icons (Edge/IE) so only our text toggle is shown */
+.login-password-wrapper input::-ms-reveal,
+.login-password-wrapper input::-ms-clear {
+  display: none;
+}
+
 .login-eye-button {
   position: absolute;
   right: 10px;
