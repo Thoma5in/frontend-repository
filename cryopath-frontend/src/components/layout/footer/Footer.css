@@ -75,3 +75,40 @@
 .footer__list a:hover {
     color: #4CAF50;
 }
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .footer__container {
+        flex-wrap: wrap;
+        gap: 2rem;
+    }
+
+    .footer__column {
+        flex: 1 1 45%; /* Two columns per row */
+        min-width: 150px;
+    }
+
+    .footer__logo {
+        width: 100%;
+        flex: 1 1 100%;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer__container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer__column {
+        width: 100%;
+        align-items: center;
+    }
+    
+    .footer__logo {
+        align-items: center;
+    }
+}
