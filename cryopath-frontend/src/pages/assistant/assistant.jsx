@@ -29,7 +29,7 @@ const Assistant = () => {
     const reply = {
       id: Date.now() + 1,
       role: 'assistant',
-      text: 'Estoy aquí para ayudarte. (Respuesta de ejemplo)'
+      text: 'Samuel es re marica'
     }
     // Limitar a los últimos 30 mensajes
     setMessages((prev) => {
