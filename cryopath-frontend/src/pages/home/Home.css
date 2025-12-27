@@ -12,6 +12,8 @@
     gap: 16px;
     padding: 10px;
     margin-left: 50px;
+    align-content: start; /* evita que las filas se estiren para rellenar todo el alto */
+    align-items: start;   /* evita que las tarjetas se estiren verticalmente */
 }
 
 .product-card {

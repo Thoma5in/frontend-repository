@@ -36,13 +36,7 @@ export default function Home() {
         { id: 28, name: 'Producto 28', description: 'Descripción breve del producto 28.', price: '$299.99', image: 'https://via.placeholder.com/300x80?text=Producto+28' },
         { id: 29, name: 'Producto 29', description: 'Descripción breve del producto 29.', price: '$309.99', image: 'https://via.placeholder.com/300x80?text=Producto+29' },
         { id: 30, name: 'Producto 30', description: 'Descripción breve del producto 30.', price: '$319.99', image: 'https://via.placeholder.com/300x80?text=Producto+30' },
-        { id: 31, name: 'Producto 31', description: 'Descripción breve del producto 31.', price: '$329.99', image: 'https://via.placeholder.com/300x80?text=Producto+31' },
-        { id: 32, name: 'Producto 32', description: 'Descripción breve del producto 32.', price: '$339.99', image: 'https://via.placeholder.com/300x80?text=Producto+32' },
-        { id: 33, name: 'Producto 33', description: 'Descripción breve del producto 33.', price: '$349.99', image: 'https://via.placeholder.com/300x80?text=Producto+33' },
-        { id: 34, name: 'Producto 34', description: 'Descripción breve del producto 34.', price: '$359.99', image: 'https://via.placeholder.com/300x80?text=Producto+34' },
-        { id: 35, name: 'Producto 35', description: 'Descripción breve del producto 35.', price: '$369.99', image: 'https://via.placeholder.com/300x80?text=Producto+35' },
-        
-    ];
+        ];
     // obtenemos precios mínimos y máximos para el slider
     const numericPrices = products.map((p) => parseFloat(p.price.replace('$', '')));
     const minPrice = Math.min(...numericPrices);
