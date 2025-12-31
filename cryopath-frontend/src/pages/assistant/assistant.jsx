@@ -1,13 +1,17 @@
-// Simple assistant/help page
-import React, { useState, useRef, useEffect } from 'react'
-import './asisstan.css'
+import React, { useState, useRef, useEffect } from 'react';
+import { sendMessage as sendMessageToApi } from '../../services/assistantApi';
+import { useAuth } from '../../context/AuthContext';
+import './asisstan.css';
 
 const Assistant = () => {
   const [messages, setMessages] = useState([
-    { id: 1, role: 'assistant', text: '¿Qué te gustaría saber?' }
-  ])
-  const [input, setInput] = useState('')
-  const chatRef = useRef(null)
+    { id: 1, role: 'assistant', text: '¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+  const chatRef = useRef(null);
+  const { currentUser } = useAuth();
 
   const handleChatScroll = () => {
     // opcional: lógica adicional si se necesita
@@ -20,25 +24,57 @@ const Assistant = () => {
     handleChatScroll()
   }, [messages])
 
-  const sendMessage = (e) => {
-    e.preventDefault()
-    const text = input.trim()
-    if (!text) return
-    const userMsg = { id: Date.now(), role: 'user', text }
-    // Mock assistant reply
-    const reply = {
-      id: Date.now() + 1,
-      role: 'assistant',
-      text: 'Samuel es re marica'
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    const text = input.trim();
+    if (!text || isLoading) return;
+
+    // Add user message to chat
+    const userMsg = { id: Date.now(), role: 'user', text };
+    setMessages(prev => {
+      const updated = [...prev, userMsg];
+      return updated.length > 30 ? updated.slice(updated.length - 30) : updated;
+    });
+    
+    setInput('');
+    setIsLoading(true);
+
+    try {
+      // Send message to API
+      const response = await sendMessageToApi(
+        text,
+        currentUser?.uid || 'anonymous',
+        conversationId
+      );
+
+      // Update conversation ID if this is a new conversation
+      if (response.data?.conversationId && !conversationId) {
+        setConversationId(response.data.conversationId);
+      }
+
+      // Add assistant's response to chat
+      const assistantMsg = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        text: response.data?.response || 'Lo siento, no pude procesar tu solicitud.'
+      };
+      
+      setMessages(prev => {
+        const updated = [...prev, assistantMsg];
+        return updated.length > 30 ? updated.slice(updated.length - 30) : updated;
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      const errorMsg = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        text: 'Lo siento, hubo un error al procesar tu mensaje. Por favor, inténtalo de nuevo.'
+      };
+      setMessages(prev => [...prev, errorMsg]);
+    } finally {
+      setIsLoading(false);
     }
-    // Limitar a los últimos 30 mensajes
-    setMessages((prev) => {
-      const next = [...prev, userMsg, reply]
-      const MAX = 30
-      return next.length > MAX ? next.slice(next.length - MAX) : next
-    })
-    setInput('')
-  }
+  };
 
   return (
     <div className="assistant-page">
@@ -57,8 +93,11 @@ const Assistant = () => {
             placeholder="¿Qué te gustaría saber?"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            disabled={isLoading}
           />
-          <button type="submit">Enviar</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Enviando...' : 'Enviar'}
+          </button>
         </form>
       </div>
       <div className="assistant-right">
