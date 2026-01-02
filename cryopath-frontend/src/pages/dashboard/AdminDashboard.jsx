@@ -2,18 +2,21 @@ import { useAuth } from "../../context/AuthContext";
 import "./AdminDashboard.css";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminDashboard() {
   const { profile, user, isAdmin } = useAuth();
 
-  if (!profile || !isAdmin) return null
+  if (!profile || !isAdmin) return null;
 
   const [softTone, setSoftTone] = useState(false);
+  const userId = profile?.id || user?.id || "";
+  const navigate = useNavigate();
 
-  const fullName = profile?.nombre && profile?.apellido
-        ? `${profile.nombre} ${profile.apellido}`
-        : user?.email?.split('@')[0] || 'Perfil sin nombre'
-  const userId = profile?.id || user?.id || 'Sin identificador'
+  const fullName =
+    profile?.nombre && profile?.apellido
+      ? `${profile.nombre} ${profile.apellido}`
+      : user?.email?.split("@")[0] || "Perfil sin nombre";
 
   return (
     <div className={softTone ? "admin-page admin-page--soft" : "admin-page"}>
@@ -36,6 +39,14 @@ export default function AdminDashboard() {
           </div>
 
           <div className="admin-actions">
+            <button
+              type="button"
+              className="admin-action-button admin-action-button--primary"
+              onClick={() => navigate("/admin/productos/nuevo")}
+            >
+              <span className="admin-button-icon" aria-hidden="true"></span>
+              Agregar producto
+            </button>
             <button type="button" className="admin-action-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
               Editar productos

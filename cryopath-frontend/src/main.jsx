@@ -12,6 +12,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import AdminDashboard from './pages/dashboard/AdminDashboard.jsx'
 import Assistant from './pages/assistant/assistant.jsx'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx'
+import AgregarProducto from './pages/dashboard/AgregarProducto.jsx'
 
 
 
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/edit' element={<PerfilEditar />} />
             <Route path='/assistant' element={<Assistant />} />
             <Route path = '/admin' element = {<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
+            <Route path='/admin/productos/nuevo' element={<ProtectedAdminRoute> <AgregarProducto /> </ProtectedAdminRoute>} />
           </Routes>
         </Layout>
       </BrowserRouter>
