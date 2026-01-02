@@ -148,3 +148,13 @@
     background-color: #0f5fa5;
     transform: translateY(-1px);
 }
+
+.action-button.danger {
+  border: 1px solid #d32f2f;
+  color: #d32f2f;
+}
+
+.action-button.danger:hover {
+  background-color: #d32f2f;
+  color: white;
+}
