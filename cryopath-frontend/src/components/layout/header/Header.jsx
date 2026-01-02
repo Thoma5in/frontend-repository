@@ -10,6 +10,7 @@ const Header = () => {
   const { isAuthenticated, user, profile, logout, isAdmin, loading } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartFloating, setIsCartFloating] = useState(false);
   const userMenuRef = useRef(null);
 
   const handleLogout = () => {
@@ -27,6 +28,26 @@ const Header = () => {
     document.addEventListener('mousedown', handleDocumentMouseDown);
     return () => {
       document.removeEventListener('mousedown', handleDocumentMouseDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const FLOAT_THRESHOLD_PX = 700;
+    let rafId = 0;
+
+    const onScroll = () => {
+      if (rafId) return;
+      rafId = window.requestAnimationFrame(() => {
+        rafId = 0;
+        setIsCartFloating(window.scrollY > FLOAT_THRESHOLD_PX);
+      });
+    };
+
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      if (rafId) window.cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
@@ -73,76 +94,76 @@ const Header = () => {
                 </button>
                 <button
                   type="button"
-                  className="header__user-button header__user-button--icon"
+                  className={`header__user-button header__user-button--icon header__user-button--cart ${isCartFloating ? 'header__user-button--cart-floating' : ''}`}
                   aria-label="Carrito"
                 >
                   <span className="header__user-icon" aria-hidden="true">
                     🛒
                   </span>
                 </button>
-              </div>
-              <div className="header__user-menu" ref={userMenuRef}>
-                <button
-                  type="button"
-                  className="header__user-menu-trigger"
-                  onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                  aria-haspopup="menu"
-                  aria-expanded={isUserMenuOpen}
-                  aria-label="Menú de usuario"
-                >
-                  <span className="header__user-avatar" aria-hidden="true">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                      <circle cx="50" cy="35" r="15" />
-                      <path d="M 20 70 Q 20 50 50 50 Q 80 50 80 70" />
-                    </svg>
-                  </span>
-                  <span className="header__user-menu-chevron" aria-hidden="true" />
-                </button>
+                <div className="header__user-menu" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    className="header__user-menu-trigger"
+                    onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                    aria-haspopup="menu"
+                    aria-expanded={isUserMenuOpen}
+                    aria-label="Menú de usuario"
+                  >
+                    <span className="header__user-avatar" aria-hidden="true">
+                      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="35" r="15" />
+                        <path d="M 20 70 Q 20 50 50 50 Q 80 50 80 70" />
+                      </svg>
+                    </span>
+                    <span className="header__user-menu-chevron" aria-hidden="true" />
+                  </button>
 
-                {isUserMenuOpen && (
-                  <div className="header__user-menu-dropdown" role="menu">
-                    <button
-                      type="button"
-                      className="header__user-menu-item"
-                      role="menuitem"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      Mis Compras
-                    </button>
-                    <button
-                      type="button"
-                      className="header__user-menu-item"
-                      role="menuitem"
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                        navigate('/profile');
-                      }}
-                    >
-                      Perfil
-                    </button>
+                  {isUserMenuOpen && (
+                    <div className="header__user-menu-dropdown" role="menu">
+                      <button
+                        type="button"
+                        className="header__user-menu-item"
+                        role="menuitem"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Mis Compras
+                      </button>
+                      <button
+                        type="button"
+                        className="header__user-menu-item"
+                        role="menuitem"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          navigate('/profile');
+                        }}
+                      >
+                        Perfil
+                      </button>
 
-                    {isAdmin && (
-                    <button
-                      type="button"
-                      className="header__user-menu-item"
-                      onClick={() => navigate('/admin')}
-                    >
-                      Panel Admin
-                    </button>
+                      {isAdmin && (
+                      <button
+                        type="button"
+                        className="header__user-menu-item"
+                        onClick={() => navigate('/admin')}
+                      >
+                        Panel Admin
+                      </button>
+                    )}
+                      <button
+                        type="button"
+                        className="header__user-menu-item"
+                        role="menuitem"
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          handleLogout();
+                        }}
+                      >
+                        Cerrar sesión
+                      </button>
+                    </div>
                   )}
-                    <button
-                      type="button"
-                      className="header__user-menu-item"
-                      role="menuitem"
-                      onClick={() => {
-                        setIsUserMenuOpen(false);
-                        handleLogout();
-                      }}
-                    >
-                      Cerrar sesión
-                    </button>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           )}
