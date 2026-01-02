@@ -71,21 +71,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <button
-        type="button"
-        className="admin-tone-toggle"
-        onClick={() => setSoftTone((current) => !current)}
-        aria-pressed={softTone}
-        aria-label="Cambiar tono"
-        title="Cambiar tono"
-      >
-        <img
-          className="admin-tone-icon"
-          src="/img/theme-logo.png"
-          alt=""
-          aria-hidden="true"
-        />
-      </button>
+
     </div>
   );
 }
