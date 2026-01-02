@@ -1,11 +1,37 @@
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../context/AuthContext"
+import { deleteMyAccount } from "../../services/usuarioApi"
 import "./Profile.css"
 
 const Profile = () => {
-    const { profile, user, isAuthenticated } = useAuth()
+    const { profile, user, isAuthenticated, logout, session } = useAuth()
     const navigate = useNavigate()
     const isLoading = !profile
+
+    const handleDeleteAccount = async () => {
+        const firstConfirm = window.confirm(
+            "¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer."
+        )
+
+        if (!firstConfirm) return
+
+        const secondConfirm = window.confirm(
+            "Tu cuenta será eliminada permanentemente. ¿Deseas continuar?"
+        )
+
+        if (!secondConfirm) return
+
+        try {
+            await deleteMyAccount(session.access_token)
+            logout()
+            navigate('/login')
+        } catch (error) {
+            console.error("Error deleting account:", error)
+
+            alert(error?.response?.data?.message ||
+                "Hubo un error al eliminar tu cuenta. Por favor, intenta nuevamente más tarde.")
+        }
+    }
 
     if (!isAuthenticated) {
         return (
@@ -73,7 +99,8 @@ const Profile = () => {
                             <span className="button-icon"></span>
                             Revisa tus compras
                         </button>
-                        <button className="action-button">
+                        <button className="action-button danger"
+                        onClick={handleDeleteAccount}>
                             <span className="button-icon"></span>
                             Elimina la cuenta
                         </button>

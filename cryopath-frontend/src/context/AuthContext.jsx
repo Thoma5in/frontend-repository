@@ -68,7 +68,8 @@ export const AuthProvider = ({ children }) => {
       .catch((error) => {
         console.error('No se pudo cargar el perfil del usuario.', error)
         if (!isActive) return
-        setAuthState((prev) => (prev ? { ...prev, profile: null } : prev))
+       
+        logout()
       })
 
     return () => {
