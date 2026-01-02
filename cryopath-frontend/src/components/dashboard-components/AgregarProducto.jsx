@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { crearProductoRequest } from "../../services/productosApi";
-import "./AdminDashboard.css";
+import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
   const { profile, user, isAdmin, session } = useAuth();
