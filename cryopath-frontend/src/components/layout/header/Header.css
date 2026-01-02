@@ -13,7 +13,7 @@
 }
 
 .header__container {
-    margin-top: 1rem;
+    margin-top: 0;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
@@ -131,9 +131,9 @@
 .header__user-panel {
     margin-left: auto;
     display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    align-items: flex-end;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: center;
 }
 
 .header__user-greeting {
@@ -141,11 +141,13 @@
     color: white;
     font-size: 0.9rem;
     text-transform: capitalize;
+    white-space: nowrap;
 }
 
 .header__user-row {
     display: flex;
     gap: 0.65rem;
+    align-items: center;
 }
 
 .header__user-row--icons {
@@ -154,13 +156,12 @@
 
 .header__user-menu {
     position: relative;
-    margin-top: 0.35rem;
 }
 
 .header__user-menu-trigger {
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 18px;
-    padding: 0.65rem 0.95rem;
+    padding: 0.5rem 0.75rem;
     background: rgba(255, 255, 255, 0.08);
     color: white;
     cursor: pointer;
@@ -178,8 +179,8 @@
 
 .header__user-avatar {
     display: inline-flex;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
 }
 
 .header__user-avatar svg {
@@ -243,8 +244,8 @@
 }
 
 .header__user-button--icon {
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     border-radius: 16px;
     padding: 0;
     font-size: 1rem;
@@ -264,6 +265,14 @@
 
 .header__user-icon {
     font-size: 1.35rem;
+}
+
+.header__user-button--cart-floating {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 1000;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
 }
 
 /* Hamburger + mobile menu */
