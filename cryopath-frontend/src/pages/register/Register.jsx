@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Register.css';
 import { loginRequest, registerRequest } from '../../services/authApi';
 import { useAuth } from '../../context/AuthContext';
+import { checkEmail, reactivateAccount } from '../../services/usuarioApi';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -64,6 +65,13 @@ const Register = () => {
     try {
       setLoading(true)
 
+      //Verificar estado del correo
+      const status = await checkEmail(correo)
+
+      console.log('Email status:', status)
+
+      //Caso 1 no existe -> registro normal
+      if (!status.exists) {
       await registerRequest({
         nombre,
         apellido,
@@ -76,9 +84,34 @@ const Register = () => {
       const authResponse = await loginRequest(correo, password)
       login({ session: authResponse.session, user: authResponse.user })
       navigate('/')
+    }
+
+    //Caso 2 existe y está activo
+    if (status.exists && status.estado === 'activo') {
+      setError('Este Correo ya está registrado')
+      return
+    }
+
+    //Caso 3 existe y está inactivo
+    if (status.exists && status.estado === 'inactivo') {
+      const confirmReactivate = window.confirm(
+        'Esta cuenta está inactiva. ¿Desea reactivarla?'
+      )
+
+     if (!confirmReactivate) return
+
+      console.log('Reactivating account for:', formData.correo)
+
+      await reactivateAccount(formData.correo)
+      console.log('Cuenta reactivada correctamente.')
+      alert('Cuenta reactivada. Por favor, inicie sesión.')
+        navigate('/login')
+        return
+      
+    }
 
     } catch (err) {
-      setError(err.message)
+      setError(err.message || 'Error en el registro. Por favor, intente nuevamente.')
     } finally {
       setLoading(false)
     }
