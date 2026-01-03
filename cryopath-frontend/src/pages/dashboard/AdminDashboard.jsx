@@ -78,9 +78,21 @@ export default function AdminDashboard() {
               <span className="admin-button-icon" aria-hidden="true"></span>
               Agregar producto
             </button>
-            <button type="button" className="admin-nav-button">
+            <button
+              type="button"
+              className="admin-nav-button"
+              onClick={() => {
+                if (!productos || productos.length === 0) return;
+                const producto = productos[0];
+                const productId = producto.id ?? producto.id_producto;
+                if (!productId) return;
+                navigate(`/admin/productos/${productId}/editar`, {
+                  state: { producto },
+                });
+              }}
+            >
               <span className="admin-button-icon" aria-hidden="true"></span>
-              Editar productos
+              Editar producto
             </button>
             <button type="button" className="admin-nav-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
@@ -122,9 +134,11 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {productos.map((producto, index) => (
-                    <tr key={producto.id_producto || index}>
-                      <td>#{producto.id_producto}</td>
+                  {productos.map((producto, index) => {
+                    const productId = producto.id ?? producto.id_producto;
+                    return (
+                    <tr key={productId || index}>
+                      <td>#{productId}</td>
                       <td>{producto.nombre}</td>
                       <td>{producto.descripcion}</td>
                       <td>${typeof producto.precio_base === 'number' ? producto.precio_base.toFixed(2) : producto.precio_base}</td>
@@ -137,11 +151,21 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td>
-                        <button className="icon-button">✏️</button>
+                        <button
+                          className="icon-button"
+                          type="button"
+                          onClick={() =>
+                            navigate(`/admin/productos/${productId}/editar`, {
+                              state: { producto },
+                            })
+                          }
+                        >
+                          ✏️
+                        </button>
                         <button className="icon-button">🗑️</button>
                       </td>
                     </tr>
-                  ))}
+                  )})}
                   {productos.length === 0 && (
                     <tr>
                       <td colSpan="6" style={{ textAlign: "center" }}>

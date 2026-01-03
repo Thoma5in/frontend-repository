@@ -13,6 +13,7 @@ import AdminDashboard from './pages/dashboard/AdminDashboard.jsx'
 import Assistant from './pages/assistant/assistant.jsx'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx'
 import AgregarProducto from './components/dashboard-components/AgregarProducto.jsx'
+import EditarProducto from './components/dashboard-components/EditarProducto.jsx'
 
 
 
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/assistant' element={<Assistant />} />
             <Route path = '/admin' element = {<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
             <Route path='/admin/productos/nuevo' element={<ProtectedAdminRoute> <AgregarProducto /> </ProtectedAdminRoute>} />
+            <Route path='/admin/productos/:id/editar' element={<ProtectedAdminRoute> <EditarProducto /> </ProtectedAdminRoute>} />
           </Routes>
         </Layout>
       </BrowserRouter>
