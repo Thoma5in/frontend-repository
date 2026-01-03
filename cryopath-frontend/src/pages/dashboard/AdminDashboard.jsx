@@ -123,11 +123,11 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {productos.map((producto, index) => (
-                    <tr key={producto.id || index}>
-                      <td>#{producto.id}</td>
+                    <tr key={producto.id_producto || index}>
+                      <td>#{producto.id_producto}</td>
                       <td>{producto.nombre}</td>
                       <td>{producto.descripcion}</td>
-                      <td>${typeof producto.precio === 'number' ? producto.precio.toFixed(2) : producto.precio}</td>
+                      <td>${typeof producto.precio_base === 'number' ? producto.precio_base.toFixed(2) : producto.precio_base}</td>
                       <td>
                         <span
                           className={`status-badge ${producto.stock > 0 ? "status-active" : "status-inactive"
