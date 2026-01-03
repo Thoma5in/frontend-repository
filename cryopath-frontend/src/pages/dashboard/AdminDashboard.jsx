@@ -1,8 +1,9 @@
 import { useAuth } from "../../context/AuthContext";
 import "./AdminDashboard.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { obtenerProductosRequest } from "../../services/productosApi";
 
 export default function AdminDashboard() {
   const { profile, user, isAdmin } = useAuth();
@@ -10,8 +11,35 @@ export default function AdminDashboard() {
   if (!profile || !isAdmin) return null;
 
   const [softTone, setSoftTone] = useState(false);
+  const [productos, setProductos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const userId = profile?.id || user?.id || "";
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchProductos = async () => {
+      try {
+        const data = await obtenerProductosRequest(user?.token);
+
+        if (data && Array.isArray(data.productos)) {
+          setProductos(data.productos);
+        } else if (Array.isArray(data)) {
+          setProductos(data);
+        } else {
+          console.error("API response unexpected structure:", data);
+          setError("Error: Estructura de datos inesperada.");
+        }
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError("Error al cargar productos.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProductos();
+  }, [user]);
 
   const fullName =
     profile?.nombre && profile?.apellido
@@ -76,57 +104,55 @@ export default function AdminDashboard() {
         <section className="admin-dashboard-content">
           <h3 className="admin-section-title">Gestión de Productos</h3>
 
-          <div className="admin-table-container">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Descripción</th>
-                  <th>Precio</th>
-                  <th>Estado</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Mock Data for Design */}
-                <tr>
-                  <td>#001</td>
-                  <td>Producto Ejemplo 1</td>
-                  <td>Descripción breve del producto...</td>
-                  <td>$25.00</td>
-                  <td><span className="status-badge status-active">Activo</span></td>
-                  <td>
-                    <button className="icon-button">✏️</button>
-                    <button className="icon-button">🗑️</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#002</td>
-                  <td>Producto Ejemplo 2</td>
-                  <td>Otra descripción de ejemplo...</td>
-                  <td>$40.50</td>
-                  <td><span className="status-badge status-inactive">Inactivo</span></td>
-                  <td>
-                    <button className="icon-button">✏️</button>
-                    <button className="icon-button">🗑️</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>#003</td>
-                  <td>Producto Ejemplo 3</td>
-                  <td>Descripción del tercer producto...</td>
-                  <td>$15.00</td>
-                  <td><span className="status-badge status-active">Activo</span></td>
-                  <td>
-                    <button className="icon-button">✏️</button>
-                    <button className="icon-button">🗑️</button>
-                  </td>
-                </tr>
-                
-              </tbody>
-            </table>
-          </div>
+          {loading ? (
+            <p>Cargando productos...</p>
+          ) : error ? (
+            <p className="error-message">{error}</p>
+          ) : (
+            <div className="admin-table-container">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productos.map((producto, index) => (
+                    <tr key={producto.id || index}>
+                      <td>#{producto.id}</td>
+                      <td>{producto.nombre}</td>
+                      <td>{producto.descripcion}</td>
+                      <td>${typeof producto.precio === 'number' ? producto.precio.toFixed(2) : producto.precio}</td>
+                      <td>
+                        <span
+                          className={`status-badge ${producto.stock > 0 ? "status-active" : "status-inactive"
+                            }`}
+                        >
+                          {producto.stock > 0 ? "En Stock" : "Agotado"}
+                        </span>
+                      </td>
+                      <td>
+                        <button className="icon-button">✏️</button>
+                        <button className="icon-button">🗑️</button>
+                      </td>
+                    </tr>
+                  ))}
+                  {productos.length === 0 && (
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: "center" }}>
+                        No hay productos registrados via API.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       </main>
     </div>
