@@ -27,8 +27,6 @@ export async function crearProductoRequest(producto, token) {
   return payload;
 }
 
-
-
 export async function obtenerProductosRequest(token) {
   const url = `${BASE_URL}/productos`;
 
@@ -49,6 +47,33 @@ export async function obtenerProductosRequest(token) {
 
   if (!response.ok) {
     const message = payload?.message || payload?.error || 'No se pudo obtener la lista de productos';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
+export async function actualizarProductoRequest(id, producto, token) {
+  const url = `${BASE_URL}/productos/${id}`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'PUT',
+    headers,
+    body: JSON.stringify(producto),
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.error || 'No se pudo actualizar el producto';
     throw new Error(message);
   }
 
