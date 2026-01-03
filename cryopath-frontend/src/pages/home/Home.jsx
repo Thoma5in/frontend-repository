@@ -1,31 +1,69 @@
-import React, { useState } from 'react';
 import './Home.css';
 import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
-
+import { useState, useEffect } from "react";
+import { obtenerProductosRequest } from "../../services/productosApi";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Home() {
-    const products = [
-        { id: 30, name: 'Producto 30', description: 'Descripción breve del producto 30.', price: '$319.99', image: 'https://via.placeholder.com/300x80?text=Producto+30' },
-        ];
-    // obtenemos precios mínimos y máximos para el slider
-    const numericPrices = products.map((p) => parseFloat(p.price.replace('$', '')));
-    const minPrice = Math.min(...numericPrices);
-    const maxPrice = Math.max(...numericPrices);
+    const { profile, user } = useAuth();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const userId = profile?.id || user?.id || "";
+
+    useEffect(() => {
+        const fetchProductos = async () => {
+            try {
+                const data = await obtenerProductosRequest(user?.token);
+                if (data && Array.isArray(data.productos)) {
+                    setProducts(data.productos);
+                } else if (Array.isArray(data)) {
+                    setProducts(data);
+                } else {
+                    console.error("Estructura de datos inesperada:", data);
+                    // Fallback para evitar romper la UI si no hay array
+                    setProducts([]);
+                }
+            } catch (err) {
+                console.error("Error al cargar productos en Home:", err);
+                setError("Error al cargar productos.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProductos();
+    }, [user]);
+
+    // Calcular precios solo si hay productos
+    const validProducts = products.filter(p => typeof p.precio_base === 'number');
+    const numericPrices = validProducts.map((p) => p.precio_base);
+    // Valores por defecto si no hay productos para evitar -Infinity/Infinity
+    const minPrice = numericPrices.length > 0 ? Math.min(...numericPrices) : 0;
+    const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 1000;
 
     const pageSize = 9;
     const [currentPage, setCurrentPage] = useState(1);
-    const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice);
+    const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice || 1000); // Inicializar con un valor seguro
     const [sortOrder, setSortOrder] = useState('asc');
+
+    // Actualizar el filtro cuando cambien los productos (y por ende el maxPrice)
+    useEffect(() => {
+        if (maxPrice > 0) {
+            setMaxPriceFilter(maxPrice);
+        }
+    }, [maxPrice]);
 
     const filteredAndSortedProducts = products
         .filter((product) => {
-            const priceValue = parseFloat(product.price.replace('$', ''));
+            const priceValue = Number(product.precio_base) || 0;
             return priceValue <= maxPriceFilter;
         })
         .sort((a, b) => {
-            const priceA = parseFloat(a.price.replace('$', ''));
-            const priceB = parseFloat(b.price.replace('$', ''));
+            const priceA = Number(a.precio_base) || 0;
+            const priceB = Number(b.precio_base) || 0;
             return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
         });
 
@@ -65,25 +103,40 @@ export default function Home() {
             />
 
             <div className="home-products">
-                {currentProducts.map((product) => (
-                    <div className="product-card" key={product.id}>
-                        <div className="product-image">
-                            <img src={product.image} alt={product.name} />
+                {loading ? (
+                    <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>Cargando catálogo...</p>
+                ) : error ? (
+                    <p style={{ color: 'red', textAlign: 'center', width: '100%' }}>{error}</p>
+                ) : currentProducts.length === 0 ? (
+                    <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>No se encontraron productos.</p>
+                ) : (
+                    currentProducts.map((product) => (
+                        <div className="product-card" key={product.id_producto || Math.random()}>
+                            <div className="product-image">
+                                <img
+                                    src={product.imagen_url || "https://placehold.co/300x200?text=No+Image"}
+                                    alt={product.nombre}
+                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200?text=Sin+Imagen"; }}
+                                />
+                            </div>
+                            <h2>{product.nombre}</h2>
+                            <p>{product.descripcion}</p>
+                            <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
+                            <button className="details-button">Ver más detalles</button>
+                            <button className="buy-button">Comprar</button>
+                            <button className="cart-button">Añadir al carrito</button>
                         </div>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        <p>Precio: {product.price}</p>
-                        <button className="details-button">Ver más detalles</button>
-                        <button className="buy-button">Comprar</button>
-                        <button className="cart-button">Añadir al carrito</button>
-                    </div>
-                ))}
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPrev={handlePrev}
-                    onNext={handleNext}
-                />
+                    ))
+                )}
+
+                {!loading && !error && currentProducts.length > 0 && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPrev={handlePrev}
+                        onNext={handleNext}
+                    />
+                )}
             </div>
         </div>
     );
