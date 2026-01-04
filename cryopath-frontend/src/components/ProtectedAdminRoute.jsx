@@ -2,7 +2,7 @@ import {Navigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 
 export default function ProtectedAdminRoute({children}) {
-    const {isAuthenticated, isAdmin, loading} = useAuth();
+    const {isAuthenticated, canManageProducts, loading} = useAuth();
 
     if (loading) return null
 
@@ -10,7 +10,7 @@ export default function ProtectedAdminRoute({children}) {
         return <Navigate to="/login"/>;
     }
 
-    if (!isAdmin) {
+    if (!canManageProducts) {
         return <Navigate to="/"/>;
     }
 

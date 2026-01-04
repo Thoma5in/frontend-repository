@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { getCurrentUsuario } from '../services/usuarioApi.js'
-import { checkAdmin } from '../services/adminApi.js'
+import { getCurrentUsuario, getUserRoles } from '../services/usuarioApi.js'
 
 const STORAGE_KEY = 'cryopath-auth'
 
@@ -9,22 +8,12 @@ const readStoredAuth = () => {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return null
     return JSON.parse(raw)
-  } catch (error) {
-    console.warn('No se pudo recuperar la sesion del almacenamiento local.', error)
+  } catch {
     return null
   }
 }
 
-const AuthContext = createContext({
-  session: null,
-  user: null,
-  profile: null,
-  login: () => {},
-  logout: () => {},
-  isAuthenticated: false,
-  isAdmin: false,
-  loading: true,
-})
+const AuthContext = createContext(null)
 
 export const AuthProvider = ({ children }) => {
   const [authState, setAuthState] = useState(() => {
@@ -32,119 +21,87 @@ export const AuthProvider = ({ children }) => {
     return readStoredAuth()
   })
 
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+  const [roles, setRoles] = useState([])
+  const [loading, setLoading] = useState(true)
 
   const token = authState?.session?.access_token
 
-  //Guardar sesión en localstorage
+  // Persistencia
   useEffect(() => {
     if (!authState) {
       localStorage.removeItem(STORAGE_KEY)
       return
     }
-
     localStorage.setItem(STORAGE_KEY, JSON.stringify(authState))
   }, [authState])
 
-  // Cargar perfil del usuario
+  // Perfil
+  useEffect(() => {
+    if (!token) return
+
+    let active = true
+
+    getCurrentUsuario(token)
+      .then((profile) => {
+        if (!active) return
+        setAuthState((prev) => prev ? { ...prev, profile } : prev)
+      })
+      .catch(() => logout())
+
+    return () => { active = false }
+  }, [token])
+
+  // Admin
   useEffect(() => {
     if (!token) {
-      setAuthState((prev) => {
-        if (!prev || !prev.profile) return prev
-        return { ...prev, profile: null }
-      })
+      setRoles([])
+      setLoading(false)
       return
     }
 
-    let isActive = true
+    setLoading(true)
 
-    getCurrentUsuario(token)
-      .then((usuario) => {
-        if (!isActive) return
-        setAuthState((prev) => (prev ? { ...prev, profile: usuario } : prev))
-      })
-      .catch((error) => {
-        console.error('No se pudo cargar el perfil del usuario.', error)
-        if (!isActive) return
-       
-        logout()
-      })
-
-    return () => {
-      isActive = false
-    }
+    getUserRoles(token)
+    .then (({ roles }) => setRoles(roles))
+    .catch(() => setRoles([]))
+    .finally(() => setLoading(false))
   }, [token])
 
 
-   //Verificar si es admin
-  useEffect(() => {
-    if (!token) {
-      setIsAdmin(false);
-      setLoading(false);
-      return;
-    }
-
-    let isActive = true;
-    setLoading(true);
-
-    checkAdmin(token)
-      .then(() => {
-        if (!isActive) return;
-        setIsAdmin(true);
-      })
-      .catch(() => {
-        if (!isActive) return;
-        setIsAdmin(false);
-      })
-      .finally(() => {
-        if (!isActive) return;
-        setLoading(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [token]);
-
   const login = ({ session, user, profile = null }) => {
-    if (!session) return
-    setAuthState({ session, user: user ?? null, profile })
+    setAuthState({ session, user, profile })
   }
 
   const logout = () => {
     setAuthState(null)
-    setIsAdmin(false);
+    setRoles([])
   }
 
-  
-
-  const updateProfile = (newProfile) => {
-    setAuthState((prev) =>
-      prev ? { ...prev, profile: newProfile } : prev
-    )
-  }
+  const isAdmin = roles.includes('admin')
+  const isWorker = roles.includes('trabajador')
 
   const value = useMemo(() => ({
     session: authState?.session || null,
     user: authState?.user || null,
     profile: authState?.profile || null,
+    isAuthenticated: Boolean(token),
+    isAdmin,
+    isWorker,
+    canManageProducts: isAdmin || isWorker,
+    loading,
     login,
     logout,
-    updateProfile,
-    isAuthenticated: Boolean(authState?.session?.access_token),
-    isAdmin,
-    loading,
-  }), [authState, isAdmin, loading])
+  }), [authState, roles, loading])
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider')
-  }
-  return context
+  const ctx = useContext(AuthContext)
+  if (!ctx) throw new Error('useAuth debe usarse dentro de AuthProvider')
+  return ctx
 }

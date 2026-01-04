@@ -106,3 +106,17 @@ export async function reactivateAccount(correo) {
 
   return response.json()
 }
+
+export async function getUserRoles(token) {
+  const response = await fetch('http://localhost:3001/usuarios/roles', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('No se pudieron obtener los roles');
+  }
+
+  return response.json(); // { roles: [...] }
+}

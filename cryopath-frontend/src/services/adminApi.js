@@ -17,3 +17,22 @@ export async function checkAdmin(token) {
 
   return true;
 }
+
+export async function asignarRol(token, payload) {
+  const res = await fetch(`${BASE_URL}/admin/asignar-rol`, {
+    method: 'POST',
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  })
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || 'Error al asignar rol');
+  }
+
+  return data;
+}

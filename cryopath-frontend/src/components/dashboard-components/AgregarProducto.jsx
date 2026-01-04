@@ -5,10 +5,10 @@ import { crearProductoRequest } from "../../services/productosApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
-  const { profile, user, isAdmin, session } = useAuth();
+  const { profile, user, canManageProducts, session } = useAuth();
   const navigate = useNavigate();
 
-  if (!profile || !isAdmin) return null;
+  if (!profile || !canManageProducts) return null;
 
   const userId = profile?.id || user?.id || "";
   const token = session?.access_token;

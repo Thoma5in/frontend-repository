@@ -5,12 +5,11 @@ import { actualizarProductoRequest } from "../../services/productosApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function EditarProducto() {
-  const { profile, user, isAdmin, session } = useAuth();
+  const { profile, user, canManageProducts, session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  if (!profile || !isAdmin) return null;
-
+  if (!profile || !canManageProducts) return null;
   const userId = profile?.id || user?.id || "";
   const token = session?.access_token;
 
