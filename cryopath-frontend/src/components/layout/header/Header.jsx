@@ -7,7 +7,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, profile, logout, isAdmin, loading } = useAuth();
+  const { isAuthenticated, user, profile, logout, canManageProducts, loading } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartFloating, setIsCartFloating] = useState(false);
@@ -141,7 +141,7 @@ const Header = () => {
                         Perfil
                       </button>
 
-                      {isAdmin && (
+                      {canManageProducts && (
                       <button
                         type="button"
                         className="header__user-menu-item"

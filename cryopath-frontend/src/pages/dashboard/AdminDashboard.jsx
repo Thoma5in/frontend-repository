@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
 
 export default function AdminDashboard() {
-  const { profile, user, isAdmin } = useAuth();
+  const { profile, user, isAdmin, isWorker, canManageProducts } = useAuth();
 
-  if (!profile || !isAdmin) return null;
+  
+  if (!profile || (!isAdmin && !isWorker)) return null;
 
   const [softTone, setSoftTone] = useState(false);
   const [productos, setProductos] = useState([]);
@@ -46,6 +47,9 @@ export default function AdminDashboard() {
       ? `${profile.nombre} ${profile.apellido}`
       : user?.email?.split("@")[0] || "Perfil sin nombre";
 
+    const roleLabel = isAdmin ? "Administrador" : "Trabajador";
+
+
   return (
     <div className={softTone ? "admin-page admin-page--soft" : "admin-page"}>
       <header className="admin-header">
@@ -58,7 +62,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h2 className="admin-header-name">{fullName}</h2>
-            <span className="admin-header-role">Administrador</span>
+            <span className="admin-header-role">{roleLabel}</span>
           </div>
         </div>
         <div className="admin-header-right">
@@ -98,10 +102,17 @@ export default function AdminDashboard() {
               <span className="admin-button-icon" aria-hidden="true"></span>
               Eliminar productos
             </button>
-            <button type="button" className="admin-nav-button">
+
+              {isAdmin && (
+            <button type="button" 
+            className="admin-nav-button" 
+            onClick={() => navigate("/admin/asignar-roles")}>
               <span className="admin-button-icon" aria-hidden="true"></span>
               Asignar roles
             </button>
+              )}
+
+
             <button type="button" className="admin-nav-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
               Cambiar estado usuarios
@@ -151,6 +162,8 @@ export default function AdminDashboard() {
                         </span>
                       </td>
                       <td>
+                        {canManageProducts && (
+                          <>
                         <button
                           className="icon-button"
                           type="button"
@@ -163,6 +176,8 @@ export default function AdminDashboard() {
                           ✏️
                         </button>
                         <button className="icon-button">🗑️</button>
+                        </>
+                        )}
                       </td>
                     </tr>
                   )})}
