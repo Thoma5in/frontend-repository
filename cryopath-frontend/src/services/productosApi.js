@@ -80,3 +80,29 @@ export async function actualizarProductoRequest(id, producto, token) {
   return payload;
 }
 
+export async function eliminarProductoRequest(id, token) {
+  const url = `${BASE_URL}/productos/${id}`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.error || 'No se pudo eliminar el producto';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+

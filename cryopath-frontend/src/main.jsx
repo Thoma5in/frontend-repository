@@ -15,6 +15,7 @@ import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx'
 import AgregarProducto from './components/dashboard-components/AgregarProducto.jsx'
 import EditarProducto from './components/dashboard-components/EditarProducto.jsx'
 import AsignarRoles from './components/dashboard-components/AsignarRoles.jsx'
+import EliminarProducto from './components/dashboard-components/EliminarProducto.jsx'
 
 
 
@@ -34,6 +35,7 @@ createRoot(document.getElementById('root')).render(
             <Route path = '/admin' element = {<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
             <Route path='/admin/productos/nuevo' element={<ProtectedAdminRoute> <AgregarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/productos/:id/editar' element={<ProtectedAdminRoute> <EditarProducto /> </ProtectedAdminRoute>} />
+            <Route path='/admin/productos/:id/eliminar' element={<ProtectedAdminRoute> <EliminarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/asignar-roles' element={<ProtectedAdminRoute> <AsignarRoles /> </ProtectedAdminRoute>} />
           </Routes>
         </Layout>

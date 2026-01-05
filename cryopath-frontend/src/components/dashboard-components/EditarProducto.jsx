@@ -14,7 +14,7 @@ export default function EditarProducto() {
   const token = session?.access_token;
 
   const producto = location.state?.producto;
-  const productoId = producto?.id ?? producto?.id_producto;
+  const productoId = producto?.id_producto;
 
   if (!producto || !productoId) {
     return (
