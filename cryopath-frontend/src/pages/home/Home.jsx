@@ -2,7 +2,7 @@ import './Home.css';
 import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useState, useEffect } from "react";
-import { obtenerProductosRequest } from "../../services/productosApi";
+import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
@@ -11,6 +11,7 @@ export default function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [imageUrls, setImageUrls] = useState({});
     const navigate = useNavigate();
     const userId = profile?.id || user?.id || "";
 
@@ -36,6 +37,34 @@ export default function Home() {
         };
         fetchProductos();
     }, [user]);
+
+    useEffect(() => {
+        const fetchImagenes = async () => {
+            if (!products.length) return;
+            try {
+                const urls = {};
+                await Promise.all(
+                    products.map(async (product) => {
+                        const id = product.id_producto;
+                        if (!id) return;
+                        try {
+                            const data = await obtenerImagenProductoRequest(id, user?.token);
+                            if (data?.url) {
+                                urls[id] = data.url;
+                            }
+                        } catch (err) {
+                            // Silenciar error por producto individual
+                            console.error(`Error al obtener imagen para producto ${id}:`, err);
+                        }
+                    })
+                );
+                setImageUrls(urls);
+            } catch (err) {
+                console.error("Error al cargar imágenes de productos:", err);
+            }
+        };
+        fetchImagenes();
+    }, [products, user]);
 
     // Calcular precios solo si hay productos
     const validProducts = products.filter(p => typeof p.precio_base === 'number');
@@ -110,23 +139,51 @@ export default function Home() {
                 ) : currentProducts.length === 0 ? (
                     <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>No se encontraron productos.</p>
                 ) : (
-                    currentProducts.map((product) => (
-                        <div className="product-card" key={product.id_producto || Math.random()}>
-                            <div className="product-image">
-                                <img
-                                    src={product.imagen_url || "https://placehold.co/300x200?text=No+Image"}
-                                    alt={product.nombre}
-                                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/300x200?text=Sin+Imagen"; }}
-                                />
+                    currentProducts.map((product) => {
+                        const servicioImageUrl = product.id_producto
+                            ? imageUrls[product.id_producto]
+                            : null;
+
+                        return (
+                            <div className="product-card" key={product.id_producto || Math.random()}>
+                                <div className="product-image">
+                                    {(() => {
+                                        const imagenRelacionada = Array.isArray(product.producto_imagen)
+                                          ? product.producto_imagen[0]
+                                          : null;
+
+                                        const fallbackImageUrl =
+                                          imagenRelacionada?.url ||
+                                          imagenRelacionada?.url_imagen ||
+                                          product.imagen_url ||
+                                          product.imagen?.url ||
+                                          product.imagen?.secure_url ||
+                                          product.imagen;
+
+                                        const imageUrl =
+                                          servicioImageUrl || fallbackImageUrl;
+
+                                        return (
+                                          <img
+                                            src={imageUrl || "https://placehold.co/300x200?text=No+Image"}
+                                            alt={product.nombre}
+                                            onError={(e) => {
+                                              e.target.onerror = null;
+                                              e.target.src = "https://placehold.co/300x200?text=Sin+Imagen";
+                                            }}
+                                          />
+                                        );
+                                    })()}
+                                </div>
+                                <h2>{product.nombre}</h2>
+                                <p>{product.descripcion}</p>
+                                <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
+                                <button className="details-button">Ver más detalles</button>
+                                <button className="buy-button">Comprar</button>
+                                <button className="cart-button">Añadir al carrito</button>
                             </div>
-                            <h2>{product.nombre}</h2>
-                            <p>{product.descripcion}</p>
-                            <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
-                            <button className="details-button">Ver más detalles</button>
-                            <button className="buy-button">Comprar</button>
-                            <button className="cart-button">Añadir al carrito</button>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
 
                 {!loading && !error && currentProducts.length > 0 && (

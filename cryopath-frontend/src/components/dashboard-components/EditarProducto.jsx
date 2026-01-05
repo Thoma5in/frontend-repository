@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { actualizarProductoRequest } from "../../services/productosApi";
+import { actualizarProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function EditarProducto() {
@@ -42,10 +42,16 @@ export default function EditarProducto() {
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setProductForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setImageFile(file);
   };
 
   const handleSubmit = (event) => {
@@ -59,7 +65,15 @@ export default function EditarProducto() {
     };
 
     actualizarProductoRequest(productoId, payload, token)
-      .then(() => {
+      .then(async () => {
+        try {
+          if (imageFile) {
+            await uploadImagenProductoRequest(productoId, imageFile, token);
+          }
+        } catch (error) {
+          console.error("Error al subir la imagen del producto:", error);
+          // Opcional: mostrar mensaje pero seguir con la actualización
+        }
         navigate("/admin");
       })
       .catch((error) => {
@@ -113,6 +127,15 @@ export default function EditarProducto() {
                   min="0"
                   step="0.01"
                   required
+                />
+              </label>
+
+              <label className="admin-form-field">
+                <span>Imagen del producto</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                 />
               </label>
             </div>
