@@ -146,7 +146,7 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {productos.map((producto, index) => {
-                    const productId = producto.id ?? producto.id_producto;
+                    const productId = producto.id_producto;
                     return (
                     <tr key={productId || index}>
                       <td>#{productId}</td>
@@ -175,7 +175,17 @@ export default function AdminDashboard() {
                         >
                           ✏️
                         </button>
-                        <button className="icon-button">🗑️</button>
+                        <button
+                          className="icon-button"
+                          type="button"
+                          onClick={() =>
+                            navigate(`/admin/productos/${productId}/eliminar`, {
+                              state: { producto },
+                            })
+                          }
+                        >
+                          🗑️
+                        </button>
                         </>
                         )}
                       </td>
