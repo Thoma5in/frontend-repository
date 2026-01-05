@@ -106,3 +106,63 @@ export async function eliminarProductoRequest(id, token) {
   return payload;
 }
 
+async function uploadImagenRequest(relativePath, file, token) {
+  const url = `${BASE_URL}${relativePath.startsWith('/') ? '' : '/'}${relativePath}`;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const headers = {};
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: formData,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.error || 'No se pudo subir la imagen';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
+export async function uploadImagenProductoRequest(idProducto, file, token) {
+  return uploadImagenRequest(`/productos/${idProducto}/imagen`, file, token);
+}
+
+export async function obtenerImagenProductoRequest(idProducto, token) {
+  const url = `${BASE_URL}/productos/${idProducto}/imagen`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      payload?.message ||
+      payload?.error ||
+      'No se pudo obtener la imagen del producto';
+    throw new Error(message);
+  }
+
+  return payload; // { url: string }
+}
+

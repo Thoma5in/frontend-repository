@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { crearProductoRequest } from "../../services/productosApi";
+import { crearProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
@@ -22,10 +22,16 @@ export default function AgregarProducto() {
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setProductForm((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    setImageFile(file);
   };
 
   const handleSubmit = (event) => {
@@ -39,7 +45,16 @@ export default function AgregarProducto() {
     };
 
     crearProductoRequest(payload, token)
-      .then(() => {
+      .then(async (created) => {
+        try {
+          const newId = created?.producto?.id_producto ?? created?.id_producto;
+          if (imageFile && newId) {
+            await uploadImagenProductoRequest(newId, imageFile, token);
+          }
+        } catch (error) {
+          console.error("Error al subir la imagen del producto:", error);
+          // Opcional: mantener el mensaje de error en pantalla sin bloquear la creación del producto
+        }
         navigate("/admin");
       })
       .catch((error) => {
@@ -93,6 +108,15 @@ export default function AgregarProducto() {
                   min="0"
                   step="0.01"
                   required
+                />
+              </label>
+
+              <label className="admin-form-field">
+                <span>Imagen del producto</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                 />
               </label>
             </div>
