@@ -1,6 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
 import "./AdminDashboard.css";
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
@@ -122,21 +121,23 @@ export default function AdminDashboard() {
                 : "Eliminar productos"}
             </button>
 
-            {isAdmin && (
-              <button
-                type="button"
-                className="admin-nav-button"
-                onClick={() => navigate("/admin/asignar-roles")}
-              >
-                <span className="admin-button-icon" aria-hidden="true"></span>
-                Asignar roles
-              </button>
-            )}
+              {isAdmin && (
+            <button type="button" 
+            className="admin-nav-button" 
+            onClick={() => navigate("/admin/asignar-roles")}>
+              <span className="admin-button-icon" aria-hidden="true"></span>
+              Asignar roles
+            </button>
+              )}
+
 
             <button type="button" className="admin-nav-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
-              Cambiar estado usuarios
+              Cambiar estado usuario
             </button>
+              )}
+
+
             <button type="button" className="admin-nav-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
               Eliminar cuentas
