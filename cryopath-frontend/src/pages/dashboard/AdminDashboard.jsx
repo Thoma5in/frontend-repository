@@ -3,25 +3,34 @@ import "./AdminDashboard.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
+import EliminarProductodashboard from "../../components/dashboard-components/EliminarProductodashboard";
 
 export default function AdminDashboard() {
-  const { profile, user, isAdmin, isWorker, canManageProducts } = useAuth();
+  const {
+    profile,
+    user,
+    isAdmin,
+    isWorker,
+    canManageProducts,
+    session,
+  } = useAuth();
 
-  
   if (!profile || (!isAdmin && !isWorker)) return null;
 
   const [softTone, setSoftTone] = useState(false);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showEliminarProductos, setShowEliminarProductos] = useState(false);
 
   const userId = profile?.id || user?.id || "";
   const navigate = useNavigate();
+  const authToken = session?.access_token ?? user?.token ?? "";
 
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const data = await obtenerProductosRequest(user?.token);
+        const data = await obtenerProductosRequest(authToken);
 
         if (data && Array.isArray(data.productos)) {
           setProductos(data.productos);
@@ -39,15 +48,14 @@ export default function AdminDashboard() {
       }
     };
     fetchProductos();
-  }, [user]);
+  }, [authToken]);
 
   const fullName =
     profile?.nombre && profile?.apellido
       ? `${profile.nombre} ${profile.apellido}`
       : user?.email?.split("@")[0] || "Perfil sin nombre";
 
-    const roleLabel = isAdmin ? "Administrador" : "Trabajador";
-
+  const roleLabel = isAdmin ? "Administrador" : "Trabajador";
 
   return (
     <div className={softTone ? "admin-page admin-page--soft" : "admin-page"}>
@@ -97,9 +105,20 @@ export default function AdminDashboard() {
               <span className="admin-button-icon" aria-hidden="true"></span>
               Editar producto
             </button>
-            <button type="button" className="admin-nav-button">
+
+            <button
+              type="button"
+              className="admin-nav-button"
+              onClick={() => {
+                if (!canManageProducts || !productos.length || !authToken) return;
+                setShowEliminarProductos((prev) => !prev);
+              }}
+              disabled={!canManageProducts || !productos.length || !authToken}
+            >
               <span className="admin-button-icon" aria-hidden="true"></span>
-              Eliminar productos
+              {showEliminarProductos
+                ? "Cerrar eliminación"
+                : "Eliminar productos"}
             </button>
 
               {isAdmin && (
@@ -110,10 +129,9 @@ export default function AdminDashboard() {
               Asignar roles
             </button>
               )}
-              {isAdmin && (
-            <button type="button" 
-            className="admin-nav-button" 
-            onClick={() => navigate("/admin/cambiar-estado")}>
+
+
+            <button type="button" className="admin-nav-button">
               <span className="admin-button-icon" aria-hidden="true"></span>
               Cambiar estado usuario
             </button>
@@ -128,6 +146,23 @@ export default function AdminDashboard() {
         </aside>
 
         <section className="admin-dashboard-content">
+          {showEliminarProductos && (
+            <EliminarProductodashboard
+              productos={productos}
+              token={authToken}
+              onClose={() => setShowEliminarProductos(false)}
+              onDeleted={(deletedIds) =>
+                setProductos((prev) =>
+                  prev.filter(
+                    (producto) =>
+                      !deletedIds.includes(
+                        producto.id_producto ?? producto.id
+                      )
+                  )
+                )
+              }
+            />
+          )}
           <h3 className="admin-section-title">Gestión de Productos</h3>
 
           {loading ? (
@@ -151,49 +186,58 @@ export default function AdminDashboard() {
                   {productos.map((producto, index) => {
                     const productId = producto.id_producto;
                     return (
-                    <tr key={productId || index}>
-                      <td>#{productId}</td>
-                      <td>{producto.nombre}</td>
-                      <td>{producto.descripcion}</td>
-                      <td>${typeof producto.precio_base === 'number' ? producto.precio_base.toFixed(2) : producto.precio_base}</td>
-                      <td>
-                        <span
-                          className={`status-badge ${producto.stock > 0 ? "status-active" : "status-inactive"
+                      <tr key={productId || index}>
+                        <td>#{productId}</td>
+                        <td>{producto.nombre}</td>
+                        <td>{producto.descripcion}</td>
+                        <td>
+                          $
+                          {typeof producto.precio_base === "number"
+                            ? producto.precio_base.toFixed(2)
+                            : producto.precio_base}
+                        </td>
+                        <td>
+                          <span
+                            className={`status-badge ${
+                              producto.stock > 0
+                                ? "status-active"
+                                : "status-inactive"
                             }`}
-                        >
-                          {producto.stock > 0 ? "En Stock" : "Agotado"}
-                        </span>
-                      </td>
-                      <td>
-                        {canManageProducts && (
-                          <>
-                        <button
-                          className="icon-button"
-                          type="button"
-                          onClick={() =>
-                            navigate(`/admin/productos/${productId}/editar`, {
-                              state: { producto },
-                            })
-                          }
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="icon-button"
-                          type="button"
-                          onClick={() =>
-                            navigate(`/admin/productos/${productId}/eliminar`, {
-                              state: { producto },
-                            })
-                          }
-                        >
-                          🗑️
-                        </button>
-                        </>
-                        )}
-                      </td>
-                    </tr>
-                  )})}
+                          >
+                            {producto.stock > 0 ? "En Stock" : "Agotado"}
+                          </span>
+                        </td>
+                        <td>
+                          {canManageProducts && (
+                            <>
+                              <button
+                                className="icon-button"
+                                type="button"
+                                onClick={() =>
+                                  navigate(`/admin/productos/${productId}/editar`, {
+                                    state: { producto },
+                                  })
+                                }
+                              >
+                                ✏️
+                              </button>
+                              <button
+                                className="icon-button"
+                                type="button"
+                                onClick={() =>
+                                  navigate(`/admin/productos/${productId}/eliminar`, {
+                                    state: { producto },
+                                  })
+                                }
+                              >
+                                🗑️
+                              </button>
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                   {productos.length === 0 && (
                     <tr>
                       <td colSpan="6" style={{ textAlign: "center" }}>
