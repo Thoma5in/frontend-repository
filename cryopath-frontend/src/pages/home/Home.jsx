@@ -179,8 +179,10 @@ export default function Home() {
                                 <p>{product.descripcion}</p>
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
                                 <button className="details-button">Ver más detalles</button>
-                                <button className="buy-button">Comprar</button>
-                                <button className="cart-button">Añadir al carrito</button>
+                                <div className="product-actions-row">
+                                    <button className="buy-button">Comprar</button>
+                                    <button className="cart-button">Añadir al carrito</button>
+                                </div>
                             </div>
                         );
                     })
