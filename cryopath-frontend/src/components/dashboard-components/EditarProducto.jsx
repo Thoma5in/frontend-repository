@@ -43,6 +43,18 @@ export default function EditarProducto() {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const dropzoneStyles = {
+    border: "2px dashed var(--admin-border-color, #d1d5db)",
+    padding: "16px",
+    borderRadius: "12px",
+    textAlign: "center",
+    backgroundColor: isDragging
+      ? "rgba(34,197,94,0.08)"
+      : "rgba(148,163,184,0.08)",
+    transition: "background-color 0.2s ease",
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -52,6 +64,26 @@ export default function EditarProducto() {
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
     setImageFile(file);
+    setIsDragging(false);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+    if (submitting) return;
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    if (submitting) return;
+    const file = event.dataTransfer.files?.[0] || null;
+    setImageFile(file);
+    setIsDragging(false);
   };
 
   const handleSubmit = (event) => {
@@ -132,11 +164,28 @@ export default function EditarProducto() {
 
               <label className="admin-form-field">
                 <span>Imagen del producto</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
+                <div
+                  style={dropzoneStyles}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    disabled={submitting}
+                    style={{ width: "100%" }}
+                  />
+                  <p style={{ marginTop: "8px", fontSize: "0.9rem" }}>
+                    Arrastra y suelta la nueva imagen o haz clic para elegirla.
+                  </p>
+                  {imageFile && (
+                    <small style={{ display: "block", marginTop: "4px" }}>
+                      Archivo: {imageFile.name}
+                    </small>
+                  )}
+                </div>
               </label>
             </div>
 
