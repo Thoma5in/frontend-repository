@@ -36,3 +36,23 @@ export async function asignarRol(token, payload) {
 
   return data;
 }
+
+
+export async function cambiarEstadoUsuario(token, payload) {
+  const res = await fetch(`${BASE_URL}/admin/cambiar-estado`, {
+    method: 'PUT',
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || 'Error al cambiar estado');
+  }
+
+  return data;
+}
