@@ -131,7 +131,7 @@ export default function AdminDashboard() {
               )}
 
 
-            <button type="button" className="admin-nav-button">
+            <button type="button" className="admin-nav-button"  onClick={() => navigate("/admin/cambiar-estado")}>
               <span className="admin-button-icon" aria-hidden="true"></span>
               Cambiar estado usuario
             </button>
