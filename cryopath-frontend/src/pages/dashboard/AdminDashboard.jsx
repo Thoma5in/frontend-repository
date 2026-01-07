@@ -135,7 +135,7 @@ export default function AdminDashboard() {
               <span className="admin-button-icon" aria-hidden="true"></span>
               Cambiar estado usuario
             </button>
-              )}
+              
 
 
             <button type="button" className="admin-nav-button">
