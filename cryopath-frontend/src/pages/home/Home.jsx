@@ -5,20 +5,22 @@ import { useState, useEffect } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { agregarAlCarrito } from "../../services/cartApi";
 
 export default function Home() {
-    const { profile, user } = useAuth();
+const { session, profile, isAuthenticated } = useAuth();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
     const navigate = useNavigate();
-    const userId = profile?.id || user?.id || "";
+    
+
 
     useEffect(() => {
         const fetchProductos = async () => {
             try {
-                const data = await obtenerProductosRequest(user?.token);
+                const data = await obtenerProductosRequest(session?.access_token);
                 if (data && Array.isArray(data.productos)) {
                     setProducts(data.productos);
                 } else if (Array.isArray(data)) {
@@ -36,7 +38,7 @@ export default function Home() {
             }
         };
         fetchProductos();
-    }, [user]);
+    }, [session]);
 
     useEffect(() => {
         const fetchImagenes = async () => {
@@ -48,7 +50,7 @@ export default function Home() {
                         const id = product.id_producto;
                         if (!id) return;
                         try {
-                            const data = await obtenerImagenProductoRequest(id, user?.token);
+                            const data = await obtenerImagenProductoRequest(id, session?.access_token);
                             if (data?.url) {
                                 urls[id] = data.url;
                             }
@@ -64,7 +66,7 @@ export default function Home() {
             }
         };
         fetchImagenes();
-    }, [products, user]);
+    }, [products, session]);
 
     // Calcular precios solo si hay productos
     const validProducts = products.filter(p => typeof p.precio_base === 'number');
@@ -118,6 +120,34 @@ export default function Home() {
         setSortOrder(order);
         setCurrentPage(1);
     };
+
+const handleAddToCart = async (product) => {
+  try {
+    if (loading) return;
+
+    if (!isAuthenticated || !session || !profile?.id) {
+      alert("Debes iniciar sesión para agregar productos al carrito");
+      navigate("/login");
+      return;
+    }
+
+    const payload = {
+        id_producto: product.id_producto,
+        cantidad: 1,
+    }
+
+    await agregarAlCarrito(
+        session.access_token,
+        profile.id,
+        payload
+    )
+
+    console.log("Producto añadido al carrito con éxito");
+
+    } catch (error) {
+        console.error("Error al añadir al carrito", error)
+    }
+}
 
 
     return (
@@ -181,7 +211,8 @@ export default function Home() {
                                 <button className="details-button">Ver más detalles</button>
                                 <div className="product-actions-row">
                                     <button className="buy-button">Comprar</button>
-                                    <button className="cart-button">Añadir al carrito</button>
+                                    <button className="cart-button" onClick={() => handleAddToCart(product)}>Añadir al carrito</button>
+                                    
                                 </div>
                             </div>
                         );

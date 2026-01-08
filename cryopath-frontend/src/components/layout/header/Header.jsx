@@ -96,6 +96,7 @@ const Header = () => {
                   type="button"
                   className={`header__user-button header__user-button--icon header__user-button--cart ${isCartFloating ? 'header__user-button--cart-floating' : ''}`}
                   aria-label="Carrito"
+                  onClick={() => navigate('/cart')}
                 >
                   <span className="header__user-icon" aria-hidden="true">
                     🛒
