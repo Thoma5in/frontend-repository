@@ -17,6 +17,7 @@ import EditarProducto from './components/dashboard-components/EditarProducto.jsx
 import AsignarRoles from './components/dashboard-components/AsignarRoles.jsx'
 import EliminarProducto from './components/dashboard-components/EliminarProducto.jsx'
 import CambiarEstadoUsuario from './components/dashboard-components/CambiarEstadoUsuario.jsx'
+import EliminarUsuario from './components/dashboard-components/EliminarUsuario.jsx'
 
 
 
@@ -39,6 +40,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/admin/productos/:id/eliminar' element={<ProtectedAdminRoute> <EliminarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/asignar-roles' element={<ProtectedAdminRoute> <AsignarRoles /> </ProtectedAdminRoute>} />
             <Route path='/admin/cambiar-estado' element={<ProtectedAdminRoute> <CambiarEstadoUsuario /> </ProtectedAdminRoute>} />
+            <Route path='/admin/eliminar-usuarios' element={<ProtectedAdminRoute> <EliminarUsuario /> </ProtectedAdminRoute>} />
           </Routes>
         </Layout>
       </BrowserRouter>
