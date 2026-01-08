@@ -19,6 +19,7 @@ import EliminarProducto from './components/dashboard-components/EliminarProducto
 import CambiarEstadoUsuario from './components/dashboard-components/CambiarEstadoUsuario.jsx'
 import EliminarUsuario from './components/dashboard-components/EliminarUsuario.jsx'
 
+import Cart from './pages/carrito/Cart.jsx'
 
 
 
@@ -41,6 +42,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/admin/asignar-roles' element={<ProtectedAdminRoute> <AsignarRoles /> </ProtectedAdminRoute>} />
             <Route path='/admin/cambiar-estado' element={<ProtectedAdminRoute> <CambiarEstadoUsuario /> </ProtectedAdminRoute>} />
             <Route path='/admin/eliminar-usuarios' element={<ProtectedAdminRoute> <EliminarUsuario /> </ProtectedAdminRoute>} />
+            <Route path='/cart' element={<Cart/>} />
           </Routes>
         </Layout>
       </BrowserRouter>

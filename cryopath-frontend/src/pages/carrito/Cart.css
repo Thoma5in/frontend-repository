@@ -1,0 +1,208 @@
+/* ====== CONTENEDOR GENERAL ====== */
+.cart-container {
+  display: grid;
+  grid-template-columns: 2.5fr 1fr;
+  gap: 24px;
+  padding: 24px;
+  background-color: #f5f6f8;
+  min-height: 100vh;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ====== LISTA DEL CARRITO ====== */
+.cart-list {
+  background: transparent;
+}
+
+.cart-list h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ====== SELECCIONAR TODO ====== */
+.cart-select-all {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.cart-select-all input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #0bbcd6;
+}
+
+.delete-selected {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* ====== ITEM DEL CARRITO ====== */
+.cart-item {
+  display: grid;
+  grid-template-columns: auto 120px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #e6e8eb;
+}
+
+.cart-item.selected {
+  outline: 2px solid #1e90ff;
+}
+
+.cart-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #0bbcd6;
+}
+
+/* ====== IMAGEN ====== */
+.cart-item img {
+  width: 120px;
+  height: auto;
+  border-radius: 6px;
+}
+
+/* ====== INFO PRODUCTO ====== */
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cart-item-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.cart-item-prices {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.cart-item-prices .original {
+  text-decoration: line-through;
+  color: #8a8a8a;
+}
+
+.cart-item-prices .price {
+  font-weight: 700;
+  color: #000;
+}
+
+.cart-item-prices .discount {
+  color: #1dbf73;
+  font-weight: 600;
+}
+
+/* ====== CANTIDAD ====== */
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-item-qty button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #d0d0d0;
+  background: #fff;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.cart-item-qty span {
+  width: 24px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ====== ELIMINAR ====== */
+.cart-item .delete {
+  background: #ff4d4f;
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* ====== RESUMEN ====== */
+.cart-summary {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.cart-summary h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+/* ====== TOTAL ====== */
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ====== BOTÓN COMPRAR ====== */
+.cart-buy {
+  width: 100%;
+  padding: 12px;
+  background: #f5a623;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.cart-buy:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* ====== TEXTO LEGAL ====== */
+.cart-privacy {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+/* ====== MÉTODOS DE PAGO ====== */
+.cart-payments span {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.cart-payments div {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
