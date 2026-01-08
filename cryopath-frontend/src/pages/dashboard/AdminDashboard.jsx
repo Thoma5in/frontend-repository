@@ -6,25 +6,18 @@ import { obtenerProductosRequest } from "../../services/productosApi";
 import EliminarProductodashboard from "../../components/dashboard-components/EliminarProductodashboard";
 
 export default function AdminDashboard() {
-  const {
-    profile,
-    user,
-    isAdmin,
-    isWorker,
-    canManageProducts,
-    session,
-  } = useAuth();
+  const { profile, user, session, isAdmin, isWorker } = useAuth();
+  const navigate = useNavigate();
 
-  if (!profile || (!isAdmin && !isWorker)) return null;
-
-  const [softTone, setSoftTone] = useState(false);
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
   const [showEliminarProductos, setShowEliminarProductos] = useState(false);
 
-  const userId = profile?.id || user?.id || "";
-  const navigate = useNavigate();
+  const softTone = false;
+  const userId = profile?.id ?? user?.id ?? "—";
+  const canManageProducts = Boolean(isAdmin || isWorker);
+
   const authToken = session?.access_token ?? user?.token ?? "";
 
   useEffect(() => {
@@ -121,27 +114,36 @@ export default function AdminDashboard() {
                 : "Eliminar productos"}
             </button>
 
-              {isAdmin && (
+            {isAdmin && (
+              <button
+                type="button"
+                className="admin-nav-button"
+                onClick={() => navigate("/admin/asignar-roles")}
+              >
+                <span className="admin-button-icon" aria-hidden="true"></span>
+                Asignar roles
+              </button>
+            )}
+
+            {isAdmin && (
+              <button
+                type="button"
+                className="admin-nav-button"
+                onClick={() => navigate("/admin/cambiar-estado")}
+              >
+                <span className="admin-button-icon" aria-hidden="true"></span>
+                Cambiar estado usuario
+              </button>
+            )}
+
+            { isAdmin && (
             <button type="button" 
             className="admin-nav-button" 
-            onClick={() => navigate("/admin/asignar-roles")}>
-              <span className="admin-button-icon" aria-hidden="true"></span>
-              Asignar roles
-            </button>
-              )}
-
-
-            <button type="button" className="admin-nav-button"  onClick={() => navigate("/admin/cambiar-estado")}>
-              <span className="admin-button-icon" aria-hidden="true"></span>
-              Cambiar estado usuario
-            </button>
-              
-
-
-            <button type="button" className="admin-nav-button">
+            onClick={() => navigate("/admin/eliminar-usuarios")}>
               <span className="admin-button-icon" aria-hidden="true"></span>
               Eliminar cuentas
             </button>
+            )}
           </nav>
         </aside>
 
@@ -184,7 +186,7 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {productos.map((producto, index) => {
-                    const productId = producto.id_producto;
+                    const productId = producto.id_producto ?? producto.id;
                     return (
                       <tr key={productId || index}>
                         <td>#{productId}</td>
@@ -213,22 +215,24 @@ export default function AdminDashboard() {
                               <button
                                 className="icon-button"
                                 type="button"
-                                onClick={() =>
+                                onClick={() => {
+                                  if (!productId) return;
                                   navigate(`/admin/productos/${productId}/editar`, {
                                     state: { producto },
-                                  })
-                                }
+                                  });
+                                }}
                               >
                                 ✏️
                               </button>
                               <button
                                 className="icon-button"
                                 type="button"
-                                onClick={() =>
+                                onClick={() => {
+                                  if (!productId) return;
                                   navigate(`/admin/productos/${productId}/eliminar`, {
                                     state: { producto },
-                                  })
-                                }
+                                  });
+                                }}
                               >
                                 🗑️
                               </button>
