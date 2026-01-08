@@ -81,6 +81,7 @@ export default function EliminarUsuario() {
               <th>Correo</th>
               <th>Nombre</th>
               <th>Apellido</th>
+              <th>Estado</th>
               <th>Acción</th>
             </tr>
           </thead>
@@ -90,6 +91,16 @@ export default function EliminarUsuario() {
                 <td>{u.correo}</td>
                 <td>{u.nombre}</td>
                 <td>{u.apellido}</td>
+                <td>
+                    <span
+                      className={`status-badge ${
+                            u.estado === 'activo'
+                            ? 'status-active'
+                            : 'status-inactive'
+                        }`}>
+                          {u.estado}      
+                    </span>
+                </td>
                 <td>
                   <button
                     className="icon-button"
