@@ -37,14 +37,20 @@ export default function Cart() {
 
   const fetchCart = async () => {
     if (!isAuthenticated || !token || !userId) return;
+
     setLoading(true);
     setError(null);
+
     try {
-      const { data } = await obtenerCarrito(token, userId);
-      // Normaliza campos faltantes
+      const response = await obtenerCarrito(token, userId);
+
+      console.log("Datos del carrito obtenidos:", response);
+
+      const data = response.data ?? response;
+
       const normalized = (data || []).map(item => ({
         ...item,
-        id: item.id,
+        id: id_carrito_producto,
         cantidad: Math.max(1, Number(item.cantidad ||  1)),
         precio: Number(item.precio || item.precio_base || 0),
         precioOriginal: Number(item.precioOriginal || item.precio || 0),
@@ -116,7 +122,7 @@ export default function Cart() {
   };
 
   const total = cart
-    .filter(item => selectedIds.has(item.id))
+    .filter(item => selectedIds.has(id_carrito_producto))
     .reduce((sum, item) => sum + (Number(item.precio) || 0) * item.cantidad, 0);
 
   if (!isAuthenticated) {

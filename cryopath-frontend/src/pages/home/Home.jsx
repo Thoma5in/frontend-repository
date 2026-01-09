@@ -14,8 +14,7 @@ const { session, profile, isAuthenticated } = useAuth();
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
     const navigate = useNavigate();
-    
-
+    const [addingToCart, setAddingToCart] = useState(false);
 
     useEffect(() => {
         const fetchProductos = async () => {
@@ -123,13 +122,14 @@ const { session, profile, isAuthenticated } = useAuth();
 
 const handleAddToCart = async (product) => {
   try {
-    if (loading) return;
+    if (addingToCart) return;
 
     if (!isAuthenticated || !session || !profile?.id) {
       alert("Debes iniciar sesión para agregar productos al carrito");
       navigate("/login");
       return;
     }
+    setAddingToCart(true);
 
     const payload = {
         id_producto: product.id_producto,
@@ -140,14 +140,16 @@ const handleAddToCart = async (product) => {
         session.access_token,
         profile.id,
         payload
-    )
+    );
 
     console.log("Producto añadido al carrito con éxito");
 
     } catch (error) {
         console.error("Error al añadir al carrito", error)
+    }finally {
+        setAddingToCart(false);    
     }
-}
+};
 
 
     return (
