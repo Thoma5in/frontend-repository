@@ -50,7 +50,7 @@ export default function Cart() {
 
       const normalized = (data || []).map(item => ({
         ...item,
-        id: id_carrito_producto,
+        id: item.id,
         cantidad: Math.max(1, Number(item.cantidad ||  1)),
         precio: Number(item.precio || item.precio_base || 0),
         precioOriginal: Number(item.precioOriginal || item.precio || 0),
@@ -122,7 +122,7 @@ export default function Cart() {
   };
 
   const total = cart
-    .filter(item => selectedIds.has(id_carrito_producto))
+    .filter(item => selectedIds.has(item.id))
     .reduce((sum, item) => sum + (Number(item.precio) || 0) * item.cantidad, 0);
 
   if (!isAuthenticated) {
