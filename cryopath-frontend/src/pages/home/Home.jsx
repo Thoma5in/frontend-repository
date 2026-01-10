@@ -6,15 +6,45 @@ import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../ser
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { agregarAlCarrito } from "../../services/cartApi";
+import { getInventarioByProducto } from "../../services/inventarioApi";
 
 export default function Home() {
-const { session, profile, isAuthenticated } = useAuth();
+    const { session, profile, isAuthenticated } = useAuth();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
     const navigate = useNavigate();
     const [addingToCart, setAddingToCart] = useState(false);
+    const [inventarioMap, setInventarioMap] = useState({});
+
+
+    useEffect(() => {
+        const fetchInventario = async () => {
+            if (!products.length) return;
+
+            const map = {};
+
+            await Promise.all(
+                products.map(async (product) => {
+                    try {
+                        const data = await getInventarioByProducto(product.id_producto);
+                        if (data?.cantidad_disponible !== undefined) {
+                            map[product.id_producto] = data.cantidad_disponible;
+                        }
+                    } catch (e) {
+                        console.error("Inventario error", e);
+                    }
+                })
+            );
+
+            setInventarioMap(map);
+        };
+
+        fetchInventario();
+    }, [products]);
+
+
 
     useEffect(() => {
         const fetchProductos = async () => {
@@ -120,36 +150,36 @@ const { session, profile, isAuthenticated } = useAuth();
         setCurrentPage(1);
     };
 
-const handleAddToCart = async (product) => {
-  try {
-    if (addingToCart) return;
+    const handleAddToCart = async (product) => {
+        try {
+            if (addingToCart) return;
 
-    if (!isAuthenticated || !session || !profile?.id) {
-      alert("Debes iniciar sesión para agregar productos al carrito");
-      navigate("/login");
-      return;
-    }
-    setAddingToCart(true);
+            if (!isAuthenticated || !session || !profile?.id) {
+                alert("Debes iniciar sesión para agregar productos al carrito");
+                navigate("/login");
+                return;
+            }
+            setAddingToCart(true);
 
-    const payload = {
-        id_producto: product.id_producto,
-        cantidad: 1,
-    }
+            const payload = {
+                id_producto: product.id_producto,
+                cantidad: 1,
+            }
 
-    await agregarAlCarrito(
-        session.access_token,
-        profile.id,
-        payload
-    );
+            await agregarAlCarrito(
+                session.access_token,
+                profile.id,
+                payload
+            );
 
-    console.log("Producto añadido al carrito con éxito");
+            console.log("Producto añadido al carrito con éxito");
 
-    } catch (error) {
-        console.error("Error al añadir al carrito", error)
-    }finally {
-        setAddingToCart(false);    
-    }
-};
+        } catch (error) {
+            console.error("Error al añadir al carrito", error)
+        } finally {
+            setAddingToCart(false);
+        }
+    };
 
 
     return (
@@ -181,40 +211,43 @@ const handleAddToCart = async (product) => {
                                 <div className="product-image">
                                     {(() => {
                                         const imagenRelacionada = Array.isArray(product.producto_imagen)
-                                          ? product.producto_imagen[0]
-                                          : null;
+                                            ? product.producto_imagen[0]
+                                            : null;
 
                                         const fallbackImageUrl =
-                                          imagenRelacionada?.url ||
-                                          imagenRelacionada?.url_imagen ||
-                                          product.imagen_url ||
-                                          product.imagen?.url ||
-                                          product.imagen?.secure_url ||
-                                          product.imagen;
+                                            imagenRelacionada?.url ||
+                                            imagenRelacionada?.url_imagen ||
+                                            product.imagen_url ||
+                                            product.imagen?.url ||
+                                            product.imagen?.secure_url ||
+                                            product.imagen;
 
                                         const imageUrl =
-                                          servicioImageUrl || fallbackImageUrl;
+                                            servicioImageUrl || fallbackImageUrl;
 
                                         return (
-                                          <img
-                                            src={imageUrl || "https://placehold.co/300x200?text=No+Image"}
-                                            alt={product.nombre}
-                                            onError={(e) => {
-                                              e.target.onerror = null;
-                                              e.target.src = "https://placehold.co/300x200?text=Sin+Imagen";
-                                            }}
-                                          />
+                                            <img
+                                                src={imageUrl || "https://placehold.co/300x200?text=No+Image"}
+                                                alt={product.nombre}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = "https://placehold.co/300x200?text=Sin+Imagen";
+                                                }}
+                                            />
                                         );
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
                                 <p>{product.descripcion}</p>
+                                <p>
+                                    Cantidad disponible: {inventarioMap[product.id_producto] ?? "No disponible"}
+                                </p>
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
                                 <button className="details-button">Ver más detalles</button>
                                 <div className="product-actions-row">
                                     <button className="buy-button">Comprar</button>
                                     <button className="cart-button" onClick={() => handleAddToCart(product)}>Añadir al carrito</button>
-                                    
+
                                 </div>
                             </div>
                         );

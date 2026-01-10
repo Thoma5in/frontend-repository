@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { crearProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
+import { createInventario, getInventario, updateInventario } from "../../services/inventarioApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
@@ -17,6 +18,7 @@ export default function AgregarProducto() {
     nombre: "",
     descripcion: "",
     precio_base: "",
+    cantidad_disponible: 0,
     id_usuario: userId || "",
   });
 
@@ -36,10 +38,19 @@ export default function AgregarProducto() {
     transition: "background-color 0.2s ease",
   };
 
+  
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setProductForm((current) => ({ ...current, [name]: value }));
+
+    setProductForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "cantidad_disponible"
+          ? Math.max(0, parseInt(value, 10) || 0)
+          : value,
+    }));
   };
+
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
@@ -129,6 +140,20 @@ export default function AgregarProducto() {
                   required
                 />
               </label>
+
+              <label className="admin-form-field">
+                <span>Inventario inicial</span>
+                <input
+                  type="number"
+                  name="cantidad_disponible"
+                  value={productForm.cantidad_disponible}
+                  onChange={handleChange}
+                  min="0"
+                  step="1"
+                  required
+                />
+              </label>
+
 
               <label className="admin-form-field">
                 <span>Precio base</span>
