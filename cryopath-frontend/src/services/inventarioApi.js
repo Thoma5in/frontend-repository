@@ -8,7 +8,7 @@ export const getInventario = async () => {
 };
 
 export const getInventarioByProducto = async (id_producto) => {
-    const res = await fetch(`${BASE_URL}/inventario/${id_producto}`);
+    const res = await fetch(`${BASE_URL}/inventario/producto/${id_producto}`);
     if (!res.ok) throw new Error('Inventario no encontrado');
     return res.json();
 };

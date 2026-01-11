@@ -18,7 +18,7 @@ export default function AgregarProducto() {
     nombre: "",
     descripcion: "",
     precio_base: "",
-    cantidad_disponible: 0,
+    cantidad_disponible: 1,
     id_usuario: userId || "",
   });
 
@@ -46,7 +46,9 @@ export default function AgregarProducto() {
       ...prev,
       [name]:
         name === "cantidad_disponible"
-          ? Math.max(0, parseInt(value, 10) || 0)
+          ? value === ""
+            ? ""
+            : Math.max(1, parseInt(value, 10) || 1)
           : value,
     }));
   };
@@ -82,9 +84,21 @@ export default function AgregarProducto() {
     setSubmitting(true);
     setErrorMessage("");
 
+    const cantidadDisponible =
+      productForm.cantidad_disponible === ""
+        ? 1
+        : Number(productForm.cantidad_disponible);
+
+    if (!Number.isFinite(cantidadDisponible) || cantidadDisponible < 1) {
+      setErrorMessage("El inventario inicial debe ser un número mayor o igual a 1.");
+      setSubmitting(false);
+      return;
+    }
+
     const payload = {
       ...productForm,
       precio_base: Number(productForm.precio_base),
+      cantidad_disponible: cantidadDisponible,
     };
 
     crearProductoRequest(payload, token)
@@ -148,7 +162,7 @@ export default function AgregarProducto() {
                   name="cantidad_disponible"
                   value={productForm.cantidad_disponible}
                   onChange={handleChange}
-                  min="0"
+                  min="1"
                   step="1"
                   required
                 />

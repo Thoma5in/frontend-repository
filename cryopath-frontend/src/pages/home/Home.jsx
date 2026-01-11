@@ -6,7 +6,19 @@ import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../ser
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { agregarAlCarrito } from "../../services/cartApi";
-import { getInventarioByProducto } from "../../services/inventarioApi";
+import { getInventario, getInventarioByProducto } from "../../services/inventarioApi";
+
+const DESCRIPTION_WORD_LIMIT = 20;
+
+function truncateWords(text, limit = DESCRIPTION_WORD_LIMIT) {
+    if (text === null || text === undefined) return "";
+    const normalized = String(text).trim().replace(/\s+/g, " ");
+    if (!normalized) return "";
+
+    const words = normalized.split(" ");
+    if (words.length <= limit) return normalized;
+    return `${words.slice(0, limit).join(" ")}...`;
+}
 
 export default function Home() {
     const { session, profile, isAuthenticated } = useAuth();
@@ -21,28 +33,24 @@ export default function Home() {
 
     useEffect(() => {
         const fetchInventario = async () => {
-            if (!products.length) return;
+            try {
+                const data = await getInventario() 
+                const map = {}
 
-            const map = {};
-
-            await Promise.all(
-                products.map(async (product) => {
-                    try {
-                        const data = await getInventarioByProducto(product.id_producto);
-                        if (data?.cantidad_disponible !== undefined) {
-                            map[product.id_producto] = data.cantidad_disponible;
-                        }
-                    } catch (e) {
-                        console.error("Inventario error", e);
-                    }
+                data.forEach(item => {
+                    map [item.id_producto] = item.cantidad_disponible;
                 })
-            );
 
-            setInventarioMap(map);
-        };
+                setInventarioMap (map)
+            } catch (error) {
+                console.error("Error al obtener inventario:", error);
+            }
+        }
+
 
         fetchInventario();
-    }, [products]);
+        
+    }, []);
 
 
 
@@ -202,6 +210,10 @@ export default function Home() {
                     <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>No se encontraron productos.</p>
                 ) : (
                     currentProducts.map((product) => {
+
+                        const stock = inventarioMap[product.id_producto] ?? 0;
+                        const sinStock = stock <= 0;
+
                         const servicioImageUrl = product.id_producto
                             ? imageUrls[product.id_producto]
                             : null;
@@ -238,9 +250,10 @@ export default function Home() {
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
-                                <p>{product.descripcion}</p>
+                                <p>{truncateWords(product.descripcion)}</p>
                                 <p>
-                                    Cantidad disponible: {inventarioMap[product.id_producto] ?? "No disponible"}
+                                    Cantidad disponible: {" "}
+                                    <strong style = {{color: sinStock ? "red" : "green"}}>{stock}</strong>
                                 </p>
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
                                 <button className="details-button">Ver más detalles</button>
