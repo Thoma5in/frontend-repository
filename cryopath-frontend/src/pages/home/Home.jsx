@@ -117,6 +117,8 @@ export default function Home() {
     const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice || 1000); // Inicializar con un valor seguro
     const [sortOrder, setSortOrder] = useState('asc');
 
+    const skeletonItems = Array.from({ length: pageSize }, (_, index) => index);
+
     // Actualizar el filtro cuando cambien los productos (y por ende el maxPrice)
     useEffect(() => {
         if (maxPrice > 0) {
@@ -203,7 +205,25 @@ export default function Home() {
 
             <div className="home-products">
                 {loading ? (
-                    <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>Cargando catálogo...</p>
+                    skeletonItems.map((index) => (
+                        <div
+                            className="product-card product-card--skeleton"
+                            key={`skeleton-${index}`}
+                            aria-hidden="true"
+                        >
+                            <div className="product-image skeleton-block" />
+                            <div className="skeleton-line skeleton-line--title" />
+                            <div className="skeleton-line" />
+                            <div className="skeleton-line skeleton-line--short" />
+                            <div className="skeleton-line skeleton-line--medium" />
+                            <div className="skeleton-line skeleton-line--price" />
+                            <div className="skeleton-button skeleton-button--full" />
+                            <div className="skeleton-actions-row">
+                                <div className="skeleton-button" />
+                                <div className="skeleton-button" />
+                            </div>
+                        </div>
+                    ))
                 ) : error ? (
                     <p style={{ color: 'red', textAlign: 'center', width: '100%' }}>{error}</p>
                 ) : currentProducts.length === 0 ? (
