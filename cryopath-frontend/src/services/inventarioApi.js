@@ -1,3 +1,5 @@
+
+
 const BASE_URL = import.meta.env.VITE_PRODUCTOS_API_URL || 'http://localhost:3002';
 
 // Público o autenticado
@@ -13,6 +15,7 @@ export const getInventarioByProducto = async (id_producto) => {
     return res.json();
 };
 
+/** 
 // SOLO PANEL ADMIN
 export const createInventario = async (inventarioData, token) => {
     const res = await fetch(`${BASE_URL}/inventario`, {
@@ -28,6 +31,7 @@ export const createInventario = async (inventarioData, token) => {
     return res.json();
 };
 
+
 export const updateInventario = async (id_producto, cantidad_disponible, token) => {
     const res = await fetch(`${BASE_URL}/inventario/${id_producto}`, {
         method: 'PUT',
@@ -41,3 +45,4 @@ export const updateInventario = async (id_producto, cantidad_disponible, token) 
     if (!res.ok) throw new Error('Error actualizando inventario');
     return res.json();
 };
+*/

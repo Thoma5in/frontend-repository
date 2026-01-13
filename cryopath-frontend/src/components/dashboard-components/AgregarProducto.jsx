@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { crearProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
-import { createInventario, getInventario, updateInventario } from "../../services/inventarioApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
