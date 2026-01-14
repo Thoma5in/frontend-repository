@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Cart.css";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -9,7 +9,7 @@ import {
 } from "../../services/cartApi";
 
 export default function Cart() {
-  const { session, profile, isAuthenticated } = useAuth();
+  const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
   const token = session?.access_token;
   const userId =  profile?.id ;
 
@@ -52,6 +52,7 @@ export default function Cart() {
         ...item,
         id: item.id,
         cantidad: Math.max(1, Number(item.cantidad ||  1)),
+        stock: Number(item.stock ?? 0), 
         precio: Number(item.precio || item.precio_base || 0),
         precioOriginal: Number(item.precioOriginal || item.precio || 0),
         descuento: Number(item.descuento || 0)
@@ -59,6 +60,9 @@ export default function Cart() {
       }));
       setCart(normalized);
       setSelectedIds(new Set()); // limpia selección al recargar
+
+      // Mantiene el badge del header sincronizado sin otro request
+      refreshCartCount(normalized);
     } catch (e) {
       setError(e.message || 'Error al cargar carrito');
     } finally {
@@ -71,7 +75,13 @@ export default function Cart() {
   const handleQuantity = async (id, delta) => {
     const item = cart.find(i => i.id === id);
     if (!item) return;
+
     const nextCantidad = Math.max(1, item.cantidad + delta);
+
+    if (nextCantidad > item.stock) {
+      setError('No hay suficiente stock disponible');
+      return
+    }
 
     try {
       setOperatingId(id);
@@ -161,11 +171,19 @@ export default function Cart() {
           </button>
         </div>
 
-        {loading && <p>Cargando carrito...</p>}
+        {loading && (
+          <div className="cart-loading-overlay" aria-live="polite" aria-busy="true">
+            <div className="cart-loader" role="status" aria-label="Cargando carrito">
+              <span className="cart-spinner" aria-hidden="true" />
+              <span className="cart-loader-text">Cargando carrito…</span>
+            </div>
+          </div>
+        )}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {!loading && cart.length === 0 && <p>No tienes productos en el carrito.</p>}
 
         {cart.map(item => (
+          
           <div className={`cart-item ${selectedIds.has(item.id) ? "selected" : ""}`} key={item.id}>
             <input
               type="checkbox"
@@ -197,8 +215,14 @@ export default function Cart() {
               <span>{item.cantidad}</span>
               <button
                 onClick={() => handleQuantity(item.id, 1)}
-                disabled={operatingId === item.id}
+                disabled={operatingId === item.id || item.cantidad >= item.stock
+                  
+                  
+                }
               >+</button>
+              <small className="stock">
+                Stock disponible: {item.stock}
+              </small>
             </div>
 
             <button className="delete" onClick={() => handleDelete(item.id)} disabled={operatingId === item.id}>

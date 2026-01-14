@@ -251,6 +251,30 @@
     font-size: 1rem;
 }
 
+.header__user-button--cart {
+    position: relative;
+}
+
+.header__cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ff3b30;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    border: 2px solid #3BA7C2;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
 .header__user-button--stacked {
     width: 168px;
     justify-content: flex-start;
