@@ -8,8 +8,9 @@ export async function loginRequest(email, password) {
   });
 
   if (!response.ok) {
-    const errorText = await response.text().catch(() => 'Error al iniciar sesión');
-    throw new Error(errorText || 'Error al iniciar sesión');
+    const errorJson = await response.json().catch(() => null);
+    const errorMessage = errorJson?.message ;
+    throw new Error(errorMessage);
   }
 
   return response.json();
