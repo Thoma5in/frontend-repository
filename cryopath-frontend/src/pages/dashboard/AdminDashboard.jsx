@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
 import EliminarProductodashboard from "../../components/dashboard-components/EliminarProductodashboard";
+import {} from "../../services/categoriasApi";
+
 
 export default function AdminDashboard() {
   const { profile, user, session, isAdmin, isWorker } = useAuth();
@@ -136,6 +138,15 @@ export default function AdminDashboard() {
               </button>
             )}
 
+            {isAdmin && (
+            <button type="button" 
+            className="admin-nav-button" 
+            onClick={() => navigate("/admin/categorias")}>
+              <span className="admin-button-icon" aria-hidden="true"></span>
+              Gestionar categorías
+            </button>
+            )}
+            
             { isAdmin && (
             <button type="button" 
             className="admin-nav-button" 
