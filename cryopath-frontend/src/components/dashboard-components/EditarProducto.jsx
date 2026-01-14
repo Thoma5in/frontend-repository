@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
+import { getInventarioByProducto, updateInventario } from "../../services/inventarioApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function EditarProducto() {
@@ -40,6 +41,7 @@ export default function EditarProducto() {
     id_usuario: userId || "",
   });
 
+  const [cantidadDisponible, setCantidadDisponible] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
@@ -55,6 +57,16 @@ export default function EditarProducto() {
       : "rgba(148,163,184,0.08)",
     transition: "background-color 0.2s ease",
   };
+
+  useEffect(() => {
+    getInventarioByProducto(productoId)
+    .then((data) => {
+      setCantidadDisponible(data.cantidad_disponible);
+    })
+    .catch(() =>{
+      setCantidadDisponible(0);
+    })
+  }, [productoId]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -99,6 +111,9 @@ export default function EditarProducto() {
     actualizarProductoRequest(productoId, payload, token)
       .then(async () => {
         try {
+          
+          await updateInventario(productoId, cantidadDisponible, token);
+
           if (imageFile) {
             await uploadImagenProductoRequest(productoId, imageFile, token);
           }
@@ -147,6 +162,18 @@ export default function EditarProducto() {
                   rows={3}
                   required
                 />
+              </label>
+
+              <label className="admin-form-field">
+                <span>Editar Inventario</span>
+                <input
+                type="number"
+                min="0"
+                step="1"
+                value={cantidadDisponible}
+                name="cantidad_disponible"
+                onChange={(e) => setCantidadDisponible(Number(e.target.value))}
+                required/>
               </label>
 
               <label className="admin-form-field">
