@@ -30,10 +30,10 @@ export const createInventario = async (inventarioData, token) => {
     if (!res.ok) throw new Error('Error creando inventario');
     return res.json();
 };
-
+*/
 
 export const updateInventario = async (id_producto, cantidad_disponible, token) => {
-    const res = await fetch(`${BASE_URL}/inventario/${id_producto}`, {
+    const res = await fetch(`${BASE_URL}/inventario/producto/${id_producto}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -45,4 +45,3 @@ export const updateInventario = async (id_producto, cantidad_disponible, token) 
     if (!res.ok) throw new Error('Error actualizando inventario');
     return res.json();
 };
-*/
