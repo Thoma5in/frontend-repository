@@ -7,7 +7,7 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, profile, logout, canManageProducts, loading } = useAuth();
+  const { isAuthenticated, user, profile, logout, canManageProducts, loading, cartCount } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartFloating, setIsCartFloating] = useState(false);
@@ -101,6 +101,12 @@ const Header = () => {
                   <span className="header__user-icon" aria-hidden="true">
                     🛒
                   </span>
+                  {Number(cartCount) > 0 && (
+                    <span className="header__cart-badge" aria-label={`Productos en carrito: ${cartCount}`}
+                    >
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
                 </button>
                 <div className="header__user-menu" ref={userMenuRef}>
                   <button

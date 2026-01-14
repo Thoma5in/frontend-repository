@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { getCurrentUsuario, getUserRoles } from '../services/usuarioApi.js'
+import { obtenerCarrito } from '../services/cartApi.js'
 
 const STORAGE_KEY = 'cryopath-auth'
 
@@ -23,8 +24,54 @@ export const AuthProvider = ({ children }) => {
 
   const [roles, setRoles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [cartCount, setCartCount] = useState(0)
 
   const token = authState?.session?.access_token
+
+  const computeCartCountFromItems = useCallback((items) => {
+    if (!Array.isArray(items)) return 0
+
+    // Queremos contar productos distintos en el carrito, no la suma de cantidades.
+    // Preferimos id_producto si existe; si no, usamos id del item.
+    const unique = new Set()
+    for (const item of items) {
+      const key = item?.id_producto ?? item?.id
+      if (key !== null && key !== undefined) unique.add(String(key))
+    }
+    return unique.size
+  }, [])
+
+  const normalizeCartPayloadToItems = useCallback((payload) => {
+    if (!payload) return []
+    if (Array.isArray(payload)) return payload
+    if (Array.isArray(payload.items)) return payload.items
+    if (Array.isArray(payload.data)) return payload.data
+    if (Array.isArray(payload.carrito)) return payload.carrito
+    return []
+  }, [])
+
+  const refreshCartCount = useCallback(async (itemsOverride = null) => {
+    // Permite que páginas como Cart actualicen el contador sin otro request
+    if (Array.isArray(itemsOverride)) {
+      setCartCount(computeCartCountFromItems(itemsOverride))
+      return
+    }
+
+    const userId = authState?.profile?.id
+    if (!token || !userId) {
+      setCartCount(0)
+      return
+    }
+
+    try {
+      const payload = await obtenerCarrito(token, userId)
+      const items = normalizeCartPayloadToItems(payload)
+      setCartCount(computeCartCountFromItems(items))
+    } catch {
+      // No bloquear la UI del header si falla el conteo
+      setCartCount(0)
+    }
+  }, [authState?.profile?.id, computeCartCountFromItems, normalizeCartPayloadToItems, token])
 
   // Persistencia
   useEffect(() => {
@@ -51,6 +98,27 @@ export const AuthProvider = ({ children }) => {
     return () => { active = false }
   }, [token])
 
+  // Conteo carrito
+  useEffect(() => {
+    if (!token) {
+      setCartCount(0)
+      return
+    }
+
+    let active = true
+
+    ;(async () => {
+      try {
+        if (!active) return
+        await refreshCartCount()
+      } catch {
+        // noop
+      }
+    })()
+
+    return () => { active = false }
+  }, [token, authState?.profile?.id, refreshCartCount])
+
   // Admin
   useEffect(() => {
     if (!token) {
@@ -75,6 +143,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setAuthState(null)
     setRoles([])
+    setCartCount(0)
   }
 
   const isAdmin = roles.includes('admin')
@@ -88,10 +157,12 @@ export const AuthProvider = ({ children }) => {
     isAdmin,
     isWorker,
     canManageProducts: isAdmin || isWorker,
+    cartCount,
+    refreshCartCount,
     loading,
     login,
     logout,
-  }), [authState, roles, loading])
+  }), [authState, roles, loading, token, isAdmin, isWorker, cartCount, refreshCartCount])
 
   return (
     <AuthContext.Provider value={value}>
