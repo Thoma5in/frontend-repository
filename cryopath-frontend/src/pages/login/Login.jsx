@@ -27,7 +27,8 @@ const Login = () => {
       login({ session: response.session, user: response.user });
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Error al iniciar sesión');
+      const errorMessage = err.message || 'Error al iniciar sesión';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
