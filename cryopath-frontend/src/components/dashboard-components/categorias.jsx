@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Categorias.css';
+import './categorias.css';
 import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarCategoria,listarCategorias } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
 
@@ -111,7 +111,7 @@ const Categorias = () => {
                             rows="4"    
                         />
                     </div>
-                    <button type="submit" disabled={loading}>
+                    <button type="submit" disabled={loading} className="btn-crear">
                         {loading ? 'Guardando...' : 'Guardar'}
                     </button>
                 </form>
