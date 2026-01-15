@@ -3,6 +3,7 @@ import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
+import { listarCategorias } from "../../services/categoriasApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
@@ -26,6 +27,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
+    const [categoriasMap, setCategoriasMap] = useState({});
     const navigate = useNavigate();
     const [addingToCart, setAddingToCart] = useState(false);
     const [inventarioMap, setInventarioMap] = useState({});
@@ -45,6 +47,50 @@ export default function Home() {
         };
     }, []);
 
+    useEffect(() => {
+        let mounted = true;
+
+        listarCategorias()
+            .then((data) => {
+                if (!mounted) return;
+                const maybeList = data?.categorias ?? data;
+                const list = Array.isArray(maybeList) ? maybeList : [];
+                const nextMap = {};
+                list.forEach((categoria) => {
+                    const id = categoria?.id_categoria ?? categoria?.id;
+                    if (id !== null && id !== undefined) {
+                        nextMap[id] = categoria?.nombre;
+                    }
+                });
+                setCategoriasMap(nextMap);
+            })
+            .catch((err) => {
+                console.error("Error al cargar categorías en Home:", err);
+                if (mounted) setCategoriasMap({});
+            });
+
+        return () => {
+            mounted = false;
+        };
+    }, []);
+
+    const getNombreCategoria = (product) => {
+        const directName =
+            product?.categoria?.nombre ||
+            product?.categoria_nombre ||
+            product?.nombre_categoria ||
+            product?.categoriaNombre;
+
+        if (directName) return directName;
+
+        const idCategoria =
+            product?.id_categoria ||
+            product?.categoria?.id_categoria ||
+            product?.categoria_id;
+
+        if (idCategoria === null || idCategoria === undefined) return "";
+        return categoriasMap[idCategoria] || categoriasMap[String(idCategoria)] || "";
+    };
 
     useEffect(() => {
         const fetchInventario = async () => {
@@ -321,11 +367,17 @@ export default function Home() {
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
+                                {getNombreCategoria(product) && (
+                                    <p style={{ marginTop: "-6px", marginBottom: "10px", color: "#6b7280" }}>
+                                        {getNombreCategoria(product)}
+                                    </p>
+                                )}
                                 <p>{truncateWords(product.descripcion)}</p>
                                 <p>
                                     Cantidad disponible: {" "}
                                     <strong style = {{color: sinStock ? "red" : "green"}}>{stock}</strong>
                                 </p>
+
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
                                 <button className="details-button">Ver más detalles</button>
                                 <div className="product-actions-row">

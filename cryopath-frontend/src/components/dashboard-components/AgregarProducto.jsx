@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { crearProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
+import { listarCategorias } from "../../services/categoriasApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function AgregarProducto() {
@@ -19,12 +20,14 @@ export default function AgregarProducto() {
     precio_base: "",
     cantidad_disponible: 1,
     id_usuario: userId || "",
+    id_categoria: "",
   });
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [categorias, setCategorias] = useState([]);
 
   const dropzoneStyles = {
     border: "2px dashed var(--admin-border-color, #d1d5db)",
@@ -36,6 +39,25 @@ export default function AgregarProducto() {
       : "rgba(148,163,184,0.08)",
     transition: "background-color 0.2s ease",
   };
+
+  useEffect(() => {
+    let mounted = true;
+
+    listarCategorias()
+      .then((data) => {
+        if (!mounted) return;
+        const maybeList = data?.categorias ?? data;
+        setCategorias(Array.isArray(maybeList) ? maybeList : []);
+      })
+      .catch((error) => {
+        console.error("Error al cargar categorías:", error);
+        if (mounted) setCategorias([]);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   
   const handleChange = (event) => {
@@ -98,6 +120,7 @@ export default function AgregarProducto() {
       ...productForm,
       precio_base: Number(productForm.precio_base),
       cantidad_disponible: cantidadDisponible,
+      id_categoria: Number(productForm.id_categoria),
     };
 
     crearProductoRequest(payload, token)
@@ -165,6 +188,28 @@ export default function AgregarProducto() {
                   step="1"
                   required
                 />
+              </label>
+
+              <label className="admin-form-field">
+                <span>Categoría</span>
+                <select
+                  name="id_categoria"
+                  value={productForm.id_categoria}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Selecciona una categoría
+                  </option>
+                  {categorias.map((categoria) => (
+                    <option
+                      key={categoria.id_categoria ?? categoria.id}
+                      value={categoria.id_categoria ?? categoria.id}
+                    >
+                      {categoria.nombre}
+                    </option>
+                  ))}
+                </select>
               </label>
 
 
