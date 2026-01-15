@@ -91,6 +91,10 @@ const Categorias = () => {
                                     <div className="categoria-info">
                                         <strong>{categoria.nombre}</strong>
                                         <p>{categoria.descripcion}</p>
+                                        <button
+                                            className="eliminar-button"
+                                            onClick={() => handleEliminar(categoria.id_categoria)}
+                                            >Eliminar</button>
                                          </div>
                                 </li>
                             ))}

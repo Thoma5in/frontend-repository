@@ -12,8 +12,8 @@
     gap: 44px;
     padding: 32px;
     margin-left: 50px;
-    align-content: start; /* evita que las filas se estiren para rellenar todo el alto */
-    align-items: start;   /* evita que las tarjetas se estiren verticalmente */
+    height: auto;
+    align-content: start; /* evita que las filas se estiren para rellenar todo el alto */   /* evita que las tarjetas se estiren verticalmente */
 }
 
 /* Toast (abajo-derecha) */
