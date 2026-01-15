@@ -3,7 +3,7 @@ import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
-import { listarCategorias } from "../../services/categoriasApi";
+import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
@@ -14,7 +14,7 @@ const DESCRIPTION_WORD_LIMIT = 20;
 function truncateWords(text, limit = DESCRIPTION_WORD_LIMIT) {
     if (text === null || text === undefined) return "";
     const normalized = String(text).trim().replace(/\s+/g, " ");
-    if (!normalized) return "";
+    if (!normalized) return ""
 
     const words = normalized.split(" ");
     if (words.length <= limit) return normalized;
@@ -27,7 +27,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
-    const [categoriasMap, setCategoriasMap] = useState({});
+    const [categoriasPorProducto, setCategoriasPorProducto] = useState({});
     const navigate = useNavigate();
     const [addingToCart, setAddingToCart] = useState(false);
     const [inventarioMap, setInventarioMap] = useState({});
@@ -50,47 +50,49 @@ export default function Home() {
     useEffect(() => {
         let mounted = true;
 
-        listarCategorias()
-            .then((data) => {
+        const fetchCategoriasPorProducto = async () => {
+            try {
+                const idsToFetch = products
+                    .map((p) => p?.id_producto)
+                    .filter((id) => id !== null && id !== undefined)
+                    .filter((id) => categoriasPorProducto[id] === undefined);
+
+                if (!idsToFetch.length) return;
+
+                const results = await Promise.all(
+                    idsToFetch.map(async (idProducto) => {
+                        try {
+                            const data = await obtenerCategoriaDeProducto(idProducto);
+                            const nombre = data?.categoria?.nombre || "";
+                            return [idProducto, nombre];
+                        } catch {
+                            // 404 u otro error: lo dejamos vacío para no repetir request
+                            return [idProducto, ""]; 
+                        }
+                    })
+                );
+
                 if (!mounted) return;
-                const maybeList = data?.categorias ?? data;
-                const list = Array.isArray(maybeList) ? maybeList : [];
-                const nextMap = {};
-                list.forEach((categoria) => {
-                    const id = categoria?.id_categoria ?? categoria?.id;
-                    if (id !== null && id !== undefined) {
-                        nextMap[id] = categoria?.nombre;
-                    }
+
+                setCategoriasPorProducto((prev) => {
+                    const next = { ...prev };
+                    results.forEach(([id, nombre]) => {
+                        next[id] = nombre;
+                    });
+                    return next;
                 });
-                setCategoriasMap(nextMap);
-            })
-            .catch((err) => {
-                console.error("Error al cargar categorías en Home:", err);
-                if (mounted) setCategoriasMap({});
-            });
+            } catch (err) {
+                console.error("Error al cargar categorías por producto en Home:", err);
+            }
+        };
+
+        fetchCategoriasPorProducto();
 
         return () => {
             mounted = false;
         };
-    }, []);
-
-    const getNombreCategoria = (product) => {
-        const directName =
-            product?.categoria?.nombre ||
-            product?.categoria_nombre ||
-            product?.nombre_categoria ||
-            product?.categoriaNombre;
-
-        if (directName) return directName;
-
-        const idCategoria =
-            product?.id_categoria ||
-            product?.categoria?.id_categoria ||
-            product?.categoria_id;
-
-        if (idCategoria === null || idCategoria === undefined) return "";
-        return categoriasMap[idCategoria] || categoriasMap[String(idCategoria)] || "";
-    };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [products]);
 
     useEffect(() => {
         const fetchInventario = async () => {
@@ -112,7 +114,6 @@ export default function Home() {
         fetchInventario();
         
     }, []);
-
 
 
     useEffect(() => {
@@ -367,9 +368,9 @@ export default function Home() {
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
-                                {getNombreCategoria(product) && (
+                                {categoriasPorProducto[product.id_producto] && (
                                     <p style={{ marginTop: "-6px", marginBottom: "10px", color: "#6b7280" }}>
-                                        {getNombreCategoria(product)}
+                                        {categoriasPorProducto[product.id_producto]}
                                     </p>
                                 )}
                                 <p>{truncateWords(product.descripcion)}</p>
