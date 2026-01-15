@@ -1,8 +1,9 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
 import { getInventarioByProducto, updateInventario } from "../../services/inventarioApi";
+import { listarCategorias, obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import "../../pages/dashboard/AdminDashboard.css";
 
 export default function EditarProducto() {
@@ -39,6 +40,7 @@ export default function EditarProducto() {
     descripcion: producto.descripcion || "",
     precio_base: producto.precio_base ?? "",
     id_usuario: userId || "",
+    id_categoria: "",
   });
 
   const [cantidadDisponible, setCantidadDisponible] = useState(0);
@@ -46,6 +48,7 @@ export default function EditarProducto() {
   const [errorMessage, setErrorMessage] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [categorias, setCategorias] = useState([]);
 
   const dropzoneStyles = {
     border: "2px dashed var(--admin-border-color, #d1d5db)",
@@ -66,6 +69,45 @@ export default function EditarProducto() {
     .catch(() =>{
       setCantidadDisponible(0);
     })
+  }, [productoId]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    listarCategorias()
+      .then((data) => {
+        if (!mounted) return;
+        const maybeList = data?.categorias ?? data;
+        setCategorias(Array.isArray(maybeList) ? maybeList : []);
+      })
+      .catch((error) => {
+        console.error("Error al cargar categorías:", error);
+        if (mounted) setCategorias([]);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    obtenerCategoriaDeProducto(productoId)
+      .then((data) => {
+        if (!mounted) return;
+        const idCategoria = data?.categoria?.id_categoria;
+        if (idCategoria !== null && idCategoria !== undefined) {
+          setProductForm((prev) => ({ ...prev, id_categoria: String(idCategoria) }));
+        }
+      })
+      .catch(() => {
+        // Si no tiene categoría asignada o falla el endpoint, no bloqueamos la edición.
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, [productoId]);
 
   const handleChange = (event) => {
@@ -106,6 +148,9 @@ export default function EditarProducto() {
     const payload = {
       ...productForm,
       precio_base: Number(productForm.precio_base),
+      ...(productForm.id_categoria !== "" && productForm.id_categoria !== null && productForm.id_categoria !== undefined
+        ? { id_categoria: Number(productForm.id_categoria) }
+        : {}),
     };
 
     actualizarProductoRequest(productoId, payload, token)
@@ -174,6 +219,25 @@ export default function EditarProducto() {
                 name="cantidad_disponible"
                 onChange={(e) => setCantidadDisponible(Number(e.target.value))}
                 required/>
+              </label>
+
+              <label className="admin-form-field">
+                <span>Categoría</span>
+                <select
+                  name="id_categoria"
+                  value={productForm.id_categoria}
+                  onChange={handleChange}
+                >
+                  <option value="">Sin categoría</option>
+                  {categorias.map((categoria) => (
+                    <option
+                      key={categoria.id_categoria ?? categoria.id}
+                      value={categoria.id_categoria ?? categoria.id}
+                    >
+                      {categoria.nombre}
+                    </option>
+                  ))}
+                </select>
               </label>
 
               <label className="admin-form-field">

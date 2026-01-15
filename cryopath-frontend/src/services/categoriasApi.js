@@ -8,6 +8,15 @@ export const listarCategorias = async () => {
     return response.json();
 };
 
+export const obtenerCategoriaDeProducto = async (idProducto) => {
+    const response = await fetch(`${API_URL}/producto/${idProducto}/categoria`);
+    if (!response.ok) {
+        const error = await response.json().catch(() => null);
+        throw new Error(error?.message || 'Error al obtener la categoría del producto');
+    }
+    return response.json();
+};
+
 export const obtenerCategoria = async (id) => {
     const response = await fetch(`${API_URL}/categorias/${id}`);
     if (!response.ok) {

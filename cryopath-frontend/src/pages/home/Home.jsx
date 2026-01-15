@@ -3,6 +3,7 @@ import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
+import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
@@ -13,7 +14,7 @@ const DESCRIPTION_WORD_LIMIT = 20;
 function truncateWords(text, limit = DESCRIPTION_WORD_LIMIT) {
     if (text === null || text === undefined) return "";
     const normalized = String(text).trim().replace(/\s+/g, " ");
-    if (!normalized) return "";
+    if (!normalized) return ""
 
     const words = normalized.split(" ");
     if (words.length <= limit) return normalized;
@@ -26,6 +27,7 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
+    const [categoriasPorProducto, setCategoriasPorProducto] = useState({});
     const navigate = useNavigate();
     const [addingToCart, setAddingToCart] = useState(false);
     const [inventarioMap, setInventarioMap] = useState({});
@@ -45,6 +47,52 @@ export default function Home() {
         };
     }, []);
 
+    useEffect(() => {
+        let mounted = true;
+
+        const fetchCategoriasPorProducto = async () => {
+            try {
+                const idsToFetch = products
+                    .map((p) => p?.id_producto)
+                    .filter((id) => id !== null && id !== undefined)
+                    .filter((id) => categoriasPorProducto[id] === undefined);
+
+                if (!idsToFetch.length) return;
+
+                const results = await Promise.all(
+                    idsToFetch.map(async (idProducto) => {
+                        try {
+                            const data = await obtenerCategoriaDeProducto(idProducto);
+                            const nombre = data?.categoria?.nombre || "";
+                            return [idProducto, nombre];
+                        } catch {
+                            // 404 u otro error: lo dejamos vacío para no repetir request
+                            return [idProducto, ""]; 
+                        }
+                    })
+                );
+
+                if (!mounted) return;
+
+                setCategoriasPorProducto((prev) => {
+                    const next = { ...prev };
+                    results.forEach(([id, nombre]) => {
+                        next[id] = nombre;
+                    });
+                    return next;
+                });
+            } catch (err) {
+                console.error("Error al cargar categorías por producto en Home:", err);
+            }
+        };
+
+        fetchCategoriasPorProducto();
+
+        return () => {
+            mounted = false;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [products]);
 
     useEffect(() => {
         const fetchInventario = async () => {
@@ -66,7 +114,6 @@ export default function Home() {
         fetchInventario();
         
     }, []);
-
 
 
     useEffect(() => {
@@ -321,11 +368,17 @@ export default function Home() {
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
+                                {categoriasPorProducto[product.id_producto] && (
+                                    <p style={{ marginTop: "-6px", marginBottom: "10px", color: "#6b7280" }}>
+                                        {categoriasPorProducto[product.id_producto]}
+                                    </p>
+                                )}
                                 <p>{truncateWords(product.descripcion)}</p>
                                 <p>
                                     Cantidad disponible: {" "}
                                     <strong style = {{color: sinStock ? "red" : "green"}}>{stock}</strong>
                                 </p>
+
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
                                 <button className="details-button">Ver más detalles</button>
                                 <div className="product-actions-row">

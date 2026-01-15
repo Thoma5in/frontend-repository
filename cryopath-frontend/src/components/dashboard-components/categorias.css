@@ -115,7 +115,6 @@
 }
 
 .categoria-item:hover {
-    transform: translateX(5px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -137,7 +136,19 @@
     font-style: normal;
 }
 
-.btn-eliminar {
+.categoria-buttons {
+    justify-content: flex-end;
+    display: flex;
+    margin-top: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.categoria-item:hover .categoria-buttons {
+    opacity: 1;
+}
+
+.eliminar-button {
     background: linear-gradient(135deg, #e74c3c, #c0392b);
     color: white;
     border: none;
@@ -150,12 +161,55 @@
     margin-left: 1rem;
 }
 
-.btn-eliminar:hover {
+.eliminar-button:hover {
     transform: scale(1.05);
     box-shadow: 0 3px 10px rgba(231, 76, 60, 0.4);
 }
 
-.btn-eliminar:active {
+.eliminar-button:active {
+    transform: scale(0.98);
+}
+
+.actualizar-button {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-right: 0.5rem;
+}
+
+.actualizar-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(39, 174, 96, 0.4);
+}
+
+.actualizar-button:active {
+    transform: scale(0.98);
+}
+
+.cancelar-button {
+    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cancelar-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(149, 165, 166, 0.4);
+}
+
+.cancelar-button:active {
     transform: scale(0.98);
 }
 
@@ -170,7 +224,7 @@
         gap: 0.75rem;
     }
 
-    .btn-eliminar {
+    .eliminar-button {
         margin-left: 0;
         width: 100%;
     }
