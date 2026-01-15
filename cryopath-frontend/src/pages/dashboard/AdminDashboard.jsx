@@ -84,22 +84,7 @@ export default function AdminDashboard() {
               <span className="admin-button-icon" aria-hidden="true"></span>
               Agregar producto
             </button>
-            <button
-              type="button"
-              className="admin-nav-button"
-              onClick={() => {
-                if (!productos || productos.length === 0) return;
-                const producto = productos[0];
-                const productId = producto.id ?? producto.id_producto;
-                if (!productId) return;
-                navigate(`/admin/productos/${productId}/editar`, {
-                  state: { producto },
-                });
-              }}
-            >
-              <span className="admin-button-icon" aria-hidden="true"></span>
-              Editar producto
-            </button>
+
 
             <button
               type="button"
