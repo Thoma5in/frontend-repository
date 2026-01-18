@@ -3,7 +3,7 @@ import LupeIcon from "../../../assets/icons/LupeIcon"
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
-
+import { listarCategorias } from '../../../services/categoriasApi';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -12,6 +12,13 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartFloating, setIsCartFloating] = useState(false);
   const userMenuRef = useRef(null);
+
+
+  const [categorias, setCategorias] = useState([]);
+  const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
+
+
+
 
   const handleLogout = () => {
     logout();
@@ -51,6 +58,20 @@ const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isCategoriasOpen) {
+      const cargarCategorias = async () => {
+        try {
+          const data = await listarCategorias();
+          setCategorias(data);
+        } catch (error) {
+          console.error('Error al cargar categorías:', error);
+        }
+      };
+      cargarCategorias();
+    }
+  }, [isCategoriasOpen]);
+
   return (
     <header className="header">
       <div className="header__container">
@@ -70,7 +91,7 @@ const Header = () => {
             </button>
           </search>
 
-          
+
 
           {!isAuthenticated && (
             <div className="header__nav">
@@ -149,14 +170,14 @@ const Header = () => {
                       </button>
 
                       {canManageProducts && (
-                      <button
-                        type="button"
-                        className="header__user-menu-item"
-                        onClick={() => navigate('/admin')}
-                      >
-                        Panel Admin
-                      </button>
-                    )}
+                        <button
+                          type="button"
+                          className="header__user-menu-item"
+                          onClick={() => navigate('/admin')}
+                        >
+                          Panel Admin
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="header__user-menu-item"
@@ -189,13 +210,66 @@ const Header = () => {
         </div>
 
         <div className="header__actions">
-          <button className="header__action header__action--dropdown">
-            <span>Categorías</span>
-            <span className="header__chevron" aria-hidden="true" />
-          </button>
-          <button className="header__action">Supermercado</button>
-          <button className="header__action">Vender</button>
-          <button className="header__action" onClick={() => navigate('/assistant')}>Ayuda</button>
+          <div className="header__category-wrapper">
+
+            <button
+              type="button"
+              className="header__action header__action--dropdown"
+              onClick={() => setIsCategoriasOpen(prev => !prev)}
+            >
+              <span>Categorías</span>
+              <span className="header__chevron" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              className="header__action"
+              onClick={() => navigate('/')}
+            >
+              Supermercado
+            </button>
+
+            <button
+              type="button"
+              className="header__action"
+              onClick={() => navigate('/vender')}
+            >
+              Vender
+            </button>
+
+            <button
+              type="button"
+              className="header__action"
+              onClick={() => navigate('/assistant')}
+            >
+              Ayuda
+            </button>
+
+
+            {isCategoriasOpen && (
+              <div className="header__dropdown-menu">
+                {categorias.length === 0 && (
+                  <span className="header__dropdown-item">
+                    No hay categorías
+                  </span>
+                )}
+
+                {categorias.map(categoria => (
+                  <button
+                    key={categoria.id_categoria}
+                    className="header__dropdown-item"
+                    onClick={() => {
+                      navigate(`/categoria/${categoria.id_categoria}`);
+                      setIsCategoriasOpen(false);
+                    }}
+                  >
+                    {categoria.nombre}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
 
         <div className={`header__mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}>
