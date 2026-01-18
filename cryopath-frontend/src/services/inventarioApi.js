@@ -1,5 +1,3 @@
-
-
 const BASE_URL = import.meta.env.VITE_PRODUCTOS_API_URL || 'http://localhost:3002';
 
 // Público o autenticado
@@ -15,6 +13,14 @@ export const getInventarioByProducto = async (id_producto) => {
     return res.json();
 };
 
+export async function listarCategorias() {
+    const res = await fetch(`${BASE_URL}/categorias`);
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Error al listar categorías');
+    }
+    return res.json();
+}
 /** 
 // SOLO PANEL ADMIN
 export const createInventario = async (inventarioData, token) => {
@@ -26,7 +32,7 @@ export const createInventario = async (inventarioData, token) => {
         },
         body: JSON.stringify(inventarioData)
     });
-
+ 
     if (!res.ok) throw new Error('Error creando inventario');
     return res.json();
 };
