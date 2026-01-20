@@ -14,6 +14,19 @@ const HomeLeftPanel = ({
   onSortOrderChange,
 }) => {
 
+  const safeMinPrice = Number.isFinite(Number(minPrice)) ? Number(minPrice) : 0;
+  const safeMaxPrice = Number.isFinite(Number(maxPrice)) ? Number(maxPrice) : 0;
+  const sliderMinPrice = Math.floor(safeMinPrice);
+  const sliderMaxPrice = Math.ceil(Math.max(safeMinPrice, safeMaxPrice));
+  const sliderValuePrice = Math.min(Number(currentMaxPrice) || 0, sliderMaxPrice);
+
+  const priceStep = (() => {
+    const range = sliderMaxPrice - sliderMinPrice;
+    if (!Number.isFinite(range) || range <= 0) return 1;
+    // Aproximadamente 1000 pasos (evita saltos gigantes si el rango es grande)
+    return Math.max(1, Math.round(range / 1000));
+  })();
+
   const handlePriceChange = (event) => {
     onMaxPriceChange(Number(event.target.value));
   };
@@ -30,16 +43,16 @@ const HomeLeftPanel = ({
       <div className="price-slider-container">
         <input
           type="range"
-          min={minPrice}
-          max={maxPrice}
-          step="0.1"
-          value={currentMaxPrice}
+          min={sliderMinPrice}
+          max={sliderMaxPrice}
+          step={priceStep}
+          value={sliderValuePrice}
           onChange={handlePriceChange}
           className="price-slider"
         />
         <div className="price-values">
-          <span>Mín: ${minPrice}</span>
-          <span>Máx: ${currentMaxPrice}</span>
+          <span>Mín: ${sliderMinPrice.toLocaleString()}</span>
+          <span>Máx: ${Number(sliderValuePrice).toLocaleString()}</span>
         </div>
       </div>
 

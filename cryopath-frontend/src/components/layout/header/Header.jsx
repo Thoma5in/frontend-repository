@@ -11,7 +11,9 @@ const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartFloating, setIsCartFloating] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const notificationsRef = useRef(null);
 
 
   const [categorias, setCategorias] = useState([]);
@@ -19,7 +21,9 @@ const Header = () => {
 
 
 
-
+  const toggleDropDown = () => {
+    setIsOpen((prev) => !prev);
+  }
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -27,14 +31,31 @@ const Header = () => {
 
   useEffect(() => {
     const handleDocumentMouseDown = (event) => {
-      if (!userMenuRef.current) return;
-      if (userMenuRef.current.contains(event.target)) return;
-      setIsUserMenuOpen(false);
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleDocumentMouseDown);
     return () => {
       document.removeEventListener('mousedown', handleDocumentMouseDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key !== 'Escape') return;
+      setIsUserMenuOpen(false);
+      setIsOpen(false);
+      setIsCategoriasOpen(false);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
     };
   }, []);
 
@@ -104,15 +125,25 @@ const Header = () => {
             <div className="header__user-panel">
               <p className="header__user-greeting">Hola, {profile?.nombre || profile?.data?.nombre || user?.email || 'usuario'}</p>
               <div className="header__user-row header__user-row--icons">
-                <button
-                  type="button"
-                  className="header__user-button header__user-button--icon"
-                  aria-label="Notificaciones"
-                >
-                  <span className="header__user-icon" aria-hidden="true">
-                    🔔
-                  </span>
-                </button>
+                <div className="header__notifications" ref={notificationsRef}>
+                  <button
+                    type="button"
+                    className="header__user-button header__user-button--icon"
+                    aria-label="Notificaciones"
+                    aria-haspopup="menu"
+                    aria-expanded={isOpen}
+                    onClick={toggleDropDown}
+                  >
+                    <span className="header__user-icon" aria-hidden="true">
+                      🔔
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <div className="header__notifications-dropdown" role="menu">
+                      <p className="header__notification-item">No tienes nuevas notificaciones.</p>
+                    </div>
+                  )}
+                </div>
                 <button
                   type="button"
                   className={`header__user-button header__user-button--icon header__user-button--cart ${isCartFloating ? 'header__user-button--cart-floating' : ''}`}
