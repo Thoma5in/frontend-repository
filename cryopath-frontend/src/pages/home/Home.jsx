@@ -167,35 +167,102 @@ export default function Home() {
         fetchImagenes();
     }, [products, session]);
 
-    // Calcular precios solo si hay productos
-    const validProducts = products.filter(p => typeof p.precio_base === 'number');
-    const numericPrices = validProducts.map((p) => p.precio_base);
+    const parsePrice = (raw) => {
+        if (typeof raw === 'number') {
+            return Number.isFinite(raw) ? raw : null;
+        }
+
+        if (raw == null) return null;
+
+        if (typeof raw === 'string') {
+            const cleaned = raw.trim().replace(/[^0-9.,-]/g, '');
+            if (!cleaned) return null;
+
+            const lastDot = cleaned.lastIndexOf('.');
+            const lastComma = cleaned.lastIndexOf(',');
+
+            let normalized = cleaned;
+            if (lastDot !== -1 && lastComma !== -1) {
+                // If the last separator is a comma, assume comma decimal and dot thousands.
+                if (lastComma > lastDot) {
+                    normalized = cleaned.replace(/\./g, '').replace(',', '.');
+                } else {
+                    // Dot decimal, comma thousands
+                    normalized = cleaned.replace(/,/g, '');
+                }
+            } else if (lastComma !== -1) {
+                // Only comma present: assume decimal comma.
+                normalized = cleaned.replace(',', '.');
+            }
+
+            const n = Number.parseFloat(normalized);
+            return Number.isFinite(n) ? n : null;
+        }
+
+        const n = Number(raw);
+        return Number.isFinite(n) ? n : null;
+    };
+
+    const hasInventory = Object.keys(inventarioMap).length > 0;
+
+    // Calcular precios (soporta number o string formateado)
+    const numericPrices = products
+        .map((p) => parsePrice(p?.precio_base))
+        .filter((p) => typeof p === 'number');
+
     // Valores por defecto si no hay productos para evitar -Infinity/Infinity
     const minPrice = numericPrices.length > 0 ? Math.min(...numericPrices) : 0;
-    const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 1000;
+    const maxPrice = numericPrices.length > 0 ? Math.max(...numericPrices) : 0;
+
+    const numericQuantities = hasInventory
+        ? Object.values(inventarioMap)
+            .map((q) => Number(q))
+            .filter((q) => Number.isFinite(q) && q >= 0)
+        : [];
+
+    const minQuantity = numericQuantities.length > 0 ? Math.min(...numericQuantities) : 0;
+    const maxQuantity = numericQuantities.length > 0 ? Math.max(...numericQuantities) : 0;
 
     const pageSize = 9;
     const [currentPage, setCurrentPage] = useState(1);
-    const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice || 1000); // Inicializar con un valor seguro
+    const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice || 0);
+    const [maxQuantityFilter, setMaxQuantityFilter] = useState(maxQuantity || 0);
     const [sortOrder, setSortOrder] = useState('asc');
 
     const skeletonItems = Array.from({ length: pageSize }, (_, index) => index);
 
-    // Actualizar el filtro cuando cambien los productos (y por ende el maxPrice)
+    // Mantener el filtro dentro del rango real de precios.
     useEffect(() => {
-        if (maxPrice > 0) {
-            setMaxPriceFilter(maxPrice);
-        }
+        if (maxPrice <= 0) return;
+        setMaxPriceFilter((prev) => {
+            if (!Number.isFinite(prev) || prev <= 0) return maxPrice;
+            return Math.min(prev, maxPrice);
+        });
     }, [maxPrice]);
+
+    useEffect(() => {
+        if (!hasInventory || maxQuantity <= 0) return;
+        setMaxQuantityFilter((prev) => {
+            if (!Number.isFinite(prev) || prev <= 0) return maxQuantity;
+            return Math.min(prev, maxQuantity);
+        });
+    }, [hasInventory, maxQuantity]);
 
     const filteredAndSortedProducts = products
         .filter((product) => {
-            const priceValue = Number(product.precio_base) || 0;
+            const priceValue = parsePrice(product?.precio_base);
+            if (typeof priceValue !== 'number') return true;
             return priceValue <= maxPriceFilter;
         })
+        .filter((product) => {
+            if (!hasInventory) return true;
+            const stock = Number(inventarioMap?.[product?.id_producto]);
+            if (!Number.isFinite(stock)) return true;
+            return stock <= maxQuantityFilter;
+        })
         .sort((a, b) => {
-            const priceA = Number(a.precio_base) || 0;
-            const priceB = Number(b.precio_base) || 0;
+            const priceA = parsePrice(a?.precio_base) ?? 0;
+            const priceB = parsePrice(b?.precio_base) ?? 0;
             return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
         });
 
@@ -214,6 +281,11 @@ export default function Home() {
 
     const handleMaxPriceChange = (value) => {
         setMaxPriceFilter(value);
+        setCurrentPage(1);
+    };
+
+    const handleMaxQuantityChange = (value) => {
+        setMaxQuantityFilter(value);
         setCurrentPage(1);
     };
 
@@ -297,6 +369,10 @@ export default function Home() {
                 maxPrice={maxPrice}
                 currentMaxPrice={maxPriceFilter}
                 onMaxPriceChange={handleMaxPriceChange}
+                minQuantity={minQuantity}
+                maxQuantity={maxQuantity}
+                currentMaxQuantity={maxQuantityFilter}
+                onMaxQuantityChange={handleMaxQuantityChange}
                 sortOrder={sortOrder}
                 onSortOrderChange={handleSortOrderChange}
             />
