@@ -15,6 +15,16 @@ const Header = () => {
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
 
+  const [notificationTab, setNotificationTab] = useState('all'); // all | unread | read
+  const [notifications, setNotifications] = useState([
+    {
+      id: 'n1',
+      title: '¡Aprovecha ahora y compra Televisores Samsung! Más de 30% de descuento en...',
+      createdLabel: 'Hace 2 horas',
+      read: false,
+    },
+  ]);
+
 
   const [categorias, setCategorias] = useState([]);
   const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
@@ -24,6 +34,20 @@ const Header = () => {
   const toggleDropDown = () => {
     setIsOpen((prev) => !prev);
   }
+
+  const markAllNotificationsAsRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const visibleNotifications = notifications.filter((n) => {
+    if (notificationTab === 'unread') return !n.read;
+    if (notificationTab === 'read') return n.read;
+    return true;
+  });
+
+  const allCount = notifications.length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  const readCount = notifications.filter((n) => n.read).length;
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -140,7 +164,81 @@ const Header = () => {
                   </button>
                   {isOpen && (
                     <div className="header__notifications-dropdown" role="menu">
-                      <p className="header__notification-item">No tienes nuevas notificaciones.</p>
+                      <div className="header__notifications-panel">
+                        <div className="header__notifications-panel-top" />
+                        <div className="header__notifications-header">
+                          <h3 className="header__notifications-title">Notificaciones</h3>
+                          <button
+                            type="button"
+                            className="header__notifications-action"
+                            onClick={markAllNotificationsAsRead}
+                            disabled={unreadCount === 0}
+                            title={unreadCount === 0 ? 'No hay notificaciones nuevas' : 'Marcar todo como leído'}
+                          >
+                            Marcar todo como leído
+                          </button>
+                        </div>
+
+                        <div className="header__notifications-tabs" role="tablist" aria-label="Filtro de notificaciones">
+                          <button
+                            type="button"
+                            className={`header__notifications-tab ${notificationTab === 'all' ? 'active' : ''}`}
+                            onClick={() => setNotificationTab('all')}
+                            role="tab"
+                            aria-selected={notificationTab === 'all'}
+                          >
+                            Todos <span className="header__notifications-pill">{allCount}</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={`header__notifications-tab ${notificationTab === 'unread' ? 'active' : ''}`}
+                            onClick={() => setNotificationTab('unread')}
+                            role="tab"
+                            aria-selected={notificationTab === 'unread'}
+                          >
+                            Nuevos <span className="header__notifications-pill">{unreadCount}</span>
+                          </button>
+                          <button
+                            type="button"
+                            className={`header__notifications-tab ${notificationTab === 'read' ? 'active' : ''}`}
+                            onClick={() => setNotificationTab('read')}
+                            role="tab"
+                            aria-selected={notificationTab === 'read'}
+                          >
+                            Leídos <span className="header__notifications-pill">{readCount}</span>
+                          </button>
+                        </div>
+
+                        <div className="header__notifications-divider" />
+
+                        <div className="header__notifications-list" role="tabpanel">
+                          {visibleNotifications.length === 0 ? (
+                            <div className="header__notifications-empty">
+                              No tienes notificaciones.
+                            </div>
+                          ) : (
+                            visibleNotifications.map((n) => (
+                              <button
+                                key={n.id}
+                                type="button"
+                                className={`header__notifications-item ${n.read ? 'is-read' : 'is-unread'}`}
+                                onClick={() => setNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
+                              >
+                                <span className="header__notifications-avatar" aria-hidden="true">
+                                  <img src="/img/logo-header.png" alt="" />
+                                </span>
+                                <span className="header__notifications-item-body">
+                                  <span className="header__notifications-item-title">{n.title}</span>
+                                  <span className="header__notifications-item-meta">
+                                    {n.createdLabel}
+                                  </span>
+                                </span>
+                                {!n.read && <span className="header__notifications-dot" aria-hidden="true" />}
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
