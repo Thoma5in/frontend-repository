@@ -10,7 +10,6 @@ const Header = () => {
   const { isAuthenticated, user, profile, logout, canManageProducts, loading, cartCount } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCartFloating, setIsCartFloating] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
@@ -25,11 +24,8 @@ const Header = () => {
     },
   ]);
 
-
   const [categorias, setCategorias] = useState([]);
   const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
-
-
 
   const toggleDropDown = () => {
     setIsOpen((prev) => !prev);
@@ -84,26 +80,6 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    const FLOAT_THRESHOLD_PX = 700;
-    let rafId = 0;
-
-    const onScroll = () => {
-      if (rafId) return;
-      rafId = window.requestAnimationFrame(() => {
-        rafId = 0;
-        setIsCartFloating(window.scrollY > FLOAT_THRESHOLD_PX);
-      });
-    };
-
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      if (rafId) window.cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
-  useEffect(() => {
     if (isCategoriasOpen) {
       const cargarCategorias = async () => {
         try {
@@ -135,8 +111,6 @@ const Header = () => {
               <LupeIcon />
             </button>
           </search>
-
-
 
           {!isAuthenticated && (
             <div className="header__nav">
@@ -244,7 +218,7 @@ const Header = () => {
                 </div>
                 <button
                   type="button"
-                  className={`header__user-button header__user-button--icon header__user-button--cart ${isCartFloating ? 'header__user-button--cart-floating' : ''}`}
+                  className="header__user-button header__user-button--icon header__user-button--cart"
                   aria-label="Carrito"
                   onClick={() => navigate('/cart')}
                 >
