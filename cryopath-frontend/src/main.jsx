@@ -19,7 +19,7 @@ import EliminarProducto from './components/dashboard-components/EliminarProducto
 import CambiarEstadoUsuario from './components/dashboard-components/CambiarEstadoUsuario.jsx'
 import EliminarUsuario from './components/dashboard-components/EliminarUsuario.jsx'
 import Categorias from './components/dashboard-components/categorias.jsx'
-
+import ProductDetails from './pages/product-detail/ProductDetail.jsx'
 import Cart from './pages/carrito/Cart.jsx'
 
 
@@ -31,12 +31,13 @@ createRoot(document.getElementById('root')).render(
         <Layout>
           <Routes>
             <Route path="/*" element={<Home />} />
+            <Route path='/product-details/:id' element={<ProductDetails />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
             <Route path='/edit' element={<PerfilEditar />} />
             <Route path='/assistant' element={<Assistant />} />
-            <Route path = '/admin' element = {<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
+            <Route path='/admin' element={<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
             <Route path='/admin/productos/nuevo' element={<ProtectedAdminRoute> <AgregarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/productos/:id/editar' element={<ProtectedAdminRoute> <EditarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/productos/:id/eliminar' element={<ProtectedAdminRoute> <EliminarProducto /> </ProtectedAdminRoute>} />

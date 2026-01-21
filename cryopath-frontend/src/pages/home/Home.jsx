@@ -413,7 +413,7 @@ export default function Home() {
                             : null;
 
                         return (
-                            <div className="product-card" key={product.id_producto || Math.random()}>
+                            <div onClick={() => navigate(`/product-details/${product.id_producto}`)} className="product-card" key={product.id_producto}>
                                 <div className="product-image">
                                     {(() => {
                                         const imagenRelacionada = Array.isArray(product.producto_imagen)
@@ -456,7 +456,7 @@ export default function Home() {
                                 </p>
 
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
-                                <button className="details-button">Ver más detalles</button>
+                                <button className="details-button" onClick={() => navigate(`/product-details/${product.id_producto}`)}>Ver más detalles</button>
                                 <div className="product-actions-row">
                                     <button className="buy-button">Comprar</button>
                                     <button
