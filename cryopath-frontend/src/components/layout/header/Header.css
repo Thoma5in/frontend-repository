@@ -500,14 +500,6 @@
     font-size: 1.35rem;
 }
 
-.header__user-button--cart-floating {
-    position: fixed;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    z-index: 1000;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-}
-
 /* Hamburger + mobile menu */
 .header__hamburger {
     display: none;
