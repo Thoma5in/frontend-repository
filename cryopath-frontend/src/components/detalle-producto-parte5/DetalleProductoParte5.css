@@ -1,0 +1,192 @@
+
+.dp5{
+  width: 100%;
+  min-height: 100%;
+  background: #ffffff;
+  margin: 0;
+  padding: 24px 28px;
+  box-sizing: border-box;
+}
+
+.dp5__grid{
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 48px;
+  align-items: start;
+  width: 100%;
+}
+
+.dp5__title{
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dp5__ratingRow{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dp5__ratingValue{
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dp5__subtitle{
+  margin: 8px 0 18px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.dp5__stars,
+.dp5__cardStars{
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dp5__star{
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  background: #e5e7eb;
+  border-radius: 3px;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+
+.dp5__star--full{
+  background: #111827;
+}
+
+.dp5__star--half{
+  background: linear-gradient(90deg, #111827 50%, #e5e7eb 50%);
+}
+
+.dp5__breakdown{
+  display: grid;
+  gap: 10px;
+}
+
+.dp5__breakdownRow{
+  display: grid;
+  grid-template-columns: 1fr 18px 14px;
+  gap: 10px;
+  align-items: center;
+}
+
+.dp5__bar{
+  height: 4px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.dp5__barFill{
+  height: 100%;
+  background: #2563eb;
+  border-radius: 999px;
+}
+
+.dp5__breakdownLabel{
+  font-size: 12px;
+  color: #6b7280;
+  text-align: right;
+}
+
+.dp5__breakdownIcon{
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1;
+}
+
+.dp5__right{
+  display: grid;
+  gap: 18px;
+}
+
+.dp5__card{
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 18px 18px 14px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 0 rgba(17, 24, 39, 0.12);
+}
+
+.dp5__cardText{
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #111827;
+}
+
+.dp5__cardMeta{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.dp5__metaPill{
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 12px;
+  color: #111827;
+  background: #ffffff;
+}
+
+.dp5__like{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+}
+
+.dp5__like:active{
+  transform: translateY(1px);
+}
+
+.dp5__likeIcon{
+  font-size: 12px;
+  line-height: 1;
+}
+
+.dp5__likeCount{
+  font-size: 12px;
+}
+
+@media (max-width: 900px){
+  .dp5{
+    padding: 18px;
+  }
+
+  .dp5__grid{
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+}

@@ -4,16 +4,16 @@ import DetalleProductoParte4 from '../../components/detalle-producto-parte4/Deta
 import './ProductDetail.css'
 import DetalleProductoParte2 from "../../components/detalle-producto-parte2/Detalle-producto-parte2.jsx"
 import { productosRelacionados } from "../../components/detalle-producto-parte2/datos-ejemplo"
+import DetalleProductoParte5 from '../../components/detalle-producto-parte5/DetalleProductoParte5'
 
 const ProductDetail = () => {
     return (
         <div>
             <DetalleProductoParte1 />
-            
-
             <DetalleProductoParte2 productos={productosRelacionados} />
             <DetalleProductoParte3 />
             <DetalleProductoParte4 />
+            <DetalleProductoParte5 />
         </div>
     )
 }
