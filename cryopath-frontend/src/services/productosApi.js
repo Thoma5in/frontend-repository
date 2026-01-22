@@ -53,6 +53,32 @@ export async function obtenerProductosRequest(token) {
   return payload;
 }
 
+export async function obtenerProductoPorIdRequest(id, token) {
+  const url = `${BASE_URL}/productos/${id}`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.error || 'No se pudo obtener el producto';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
 export async function actualizarProductoRequest(id, producto, token) {
   const url = `${BASE_URL}/productos/${id}`;
 
