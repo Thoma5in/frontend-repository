@@ -271,6 +271,7 @@ const Header = () => {
                       >
                         Perfil
                       </button>
+                      
 
                       {canManageProducts && (
                         <button
