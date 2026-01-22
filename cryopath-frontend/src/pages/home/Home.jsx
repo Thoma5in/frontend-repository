@@ -4,7 +4,7 @@ import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
 import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
 import { getInventario, getInventarioByProducto } from "../../services/inventarioApi";
@@ -27,10 +27,34 @@ export default function Home() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageUrls, setImageUrls] = useState({});
+    // Map: { [id_producto]: { id: number|null, nombre: string } | null }
     const [categoriasPorProducto, setCategoriasPorProducto] = useState({});
     const navigate = useNavigate();
+    const location = useLocation();
     const [addingToCart, setAddingToCart] = useState(false);
     const [inventarioMap, setInventarioMap] = useState({});
+
+    const getCategoriaIdFromUrl = () => {
+        try {
+            const searchId = new URLSearchParams(location.search).get('categoria');
+            if (searchId != null && searchId !== '') {
+                const n = Number(searchId);
+                return Number.isFinite(n) ? n : null;
+            }
+
+            const match = String(location.pathname || '').match(/^\/categoria\/(\d+)(?:\/|$)/);
+            if (match?.[1]) {
+                const n = Number(match[1]);
+                return Number.isFinite(n) ? n : null;
+            }
+        } catch {
+            // ignore
+        }
+        return null;
+    };
+
+    const selectedCategoriaId = getCategoriaIdFromUrl();
+    const isCategoriaFilterActive = selectedCategoriaId !== null;
 
     const [toast, setToast] = useState(null);
     const toastTimerRef = useRef(null);
@@ -63,11 +87,14 @@ export default function Home() {
                     idsToFetch.map(async (idProducto) => {
                         try {
                             const data = await obtenerCategoriaDeProducto(idProducto);
-                            const nombre = data?.categoria?.nombre || "";
-                            return [idProducto, nombre];
+                            const categoria = data?.categoria || data?.data?.categoria || null;
+                            const nombre = categoria?.nombre || "";
+                            const rawId = categoria?.id_categoria ?? categoria?.id ?? data?.id_categoria ?? data?.id ?? null;
+                            const idCategoria = rawId == null ? null : Number(rawId);
+                            return [idProducto, { id: Number.isFinite(idCategoria) ? idCategoria : null, nombre }];
                         } catch {
                             // 404 u otro error: lo dejamos vacío para no repetir request
-                            return [idProducto, ""]; 
+                            return [idProducto, { id: null, nombre: "" }];
                         }
                     })
                 );
@@ -76,8 +103,8 @@ export default function Home() {
 
                 setCategoriasPorProducto((prev) => {
                     const next = { ...prev };
-                    results.forEach(([id, nombre]) => {
-                        next[id] = nombre;
+                    results.forEach(([id, info]) => {
+                        next[id] = info;
                     });
                     return next;
                 });
@@ -93,6 +120,12 @@ export default function Home() {
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [products]);
+
+    const categoryMetaLoading = isCategoriaFilterActive &&
+        products.some((p) => {
+            const id = p?.id_producto;
+            return id != null && categoriasPorProducto[id] === undefined;
+        });
 
     useEffect(() => {
         const fetchInventario = async () => {
@@ -250,6 +283,12 @@ export default function Home() {
 
     const filteredAndSortedProducts = products
         .filter((product) => {
+            if (!isCategoriaFilterActive) return true;
+            const info = categoriasPorProducto?.[product?.id_producto];
+            if (info === undefined) return false;
+            return Number(info?.id) === Number(selectedCategoriaId);
+        })
+        .filter((product) => {
             const priceValue = parsePrice(product?.precio_base);
             if (typeof priceValue !== 'number') return true;
             return priceValue <= maxPriceFilter;
@@ -400,6 +439,26 @@ export default function Home() {
                     ))
                 ) : error ? (
                     <p style={{ color: 'red', textAlign: 'center', width: '100%' }}>{error}</p>
+                ) : categoryMetaLoading ? (
+                    skeletonItems.map((index) => (
+                        <div
+                            className="product-card product-card--skeleton"
+                            key={`skeleton-category-${index}`}
+                            aria-hidden="true"
+                        >
+                            <div className="product-image skeleton-block" />
+                            <div className="skeleton-line skeleton-line--title" />
+                            <div className="skeleton-line" />
+                            <div className="skeleton-line skeleton-line--short" />
+                            <div className="skeleton-line skeleton-line--medium" />
+                            <div className="skeleton-line skeleton-line--price" />
+                            <div className="skeleton-button skeleton-button--full" />
+                            <div className="skeleton-actions-row">
+                                <div className="skeleton-button" />
+                                <div className="skeleton-button" />
+                            </div>
+                        </div>
+                    ))
                 ) : currentProducts.length === 0 ? (
                     <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>No se encontraron productos.</p>
                 ) : (
@@ -444,9 +503,9 @@ export default function Home() {
                                     })()}
                                 </div>
                                 <h2>{product.nombre}</h2>
-                                {categoriasPorProducto[product.id_producto] && (
+                                {categoriasPorProducto[product.id_producto]?.nombre && (
                                     <p style={{ marginTop: "-6px", marginBottom: "10px", color: "#6b7280" }}>
-                                        {categoriasPorProducto[product.id_producto]}
+                                        {categoriasPorProducto[product.id_producto].nombre}
                                     </p>
                                 )}
                                 <p>{truncateWords(product.descripcion)}</p>
