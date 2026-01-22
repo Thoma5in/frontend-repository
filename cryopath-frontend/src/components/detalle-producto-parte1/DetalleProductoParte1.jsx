@@ -5,11 +5,12 @@ import { obtenerProductoPorIdRequest, obtenerProductosRequest, obtenerImagenProd
 import { getInventarioByProducto } from '../../services/inventarioApi';
 import { obtenerCategoriaDeProducto } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
+import { agregarAlCarrito, actualizarCantidad, obtenerCarrito } from '../../services/cartApi';
 
 export default function DetalleProductoParte1() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { session, user } = useAuth();
+    const { session, user, isAuthenticated, profile, refreshCartCount } = useAuth();
     const [producto, setProducto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
@@ -89,9 +90,71 @@ export default function DetalleProductoParte1() {
         }
     }, [id, authToken]);
 
-    const handleAddToCart = () => {
-        console.log('Agregar al carrito:', producto);
-        // Implementar lógica del carrito
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [toast, setToast] = useState(null);
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        window.setTimeout(() => setToast(null), 2500);
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            if (addingToCart) return;
+
+            if (!isAuthenticated || !session || !profile?.id) {
+                alert('Debes iniciar sesión para agregar productos al carrito');
+                navigate('/login');
+                return;
+            }
+
+            setAddingToCart(true);
+
+            const stock = typeof inventarioCantidad === 'number' ? inventarioCantidad : (producto?.stock ?? 0);
+            if (stock <= 0) {
+                showToast('Producto sin stock', 'error');
+                return;
+            }
+
+            // Obtener carrito actual
+            let cartItems = [];
+            try {
+                const raw = await obtenerCarrito(session.access_token, profile.id);
+                const maybe = raw?.data ?? raw;
+                cartItems = Array.isArray(maybe) ? maybe : (Array.isArray(maybe?.items) ? maybe.items : []);
+            } catch {
+                cartItems = [];
+            }
+
+            const productId = producto.id_producto || producto.id;
+            const existing = cartItems.find((it) => Number(it?.id_producto) === Number(productId));
+
+            if (existing?.id) {
+                const currentQty = Math.max(1, Number(existing?.cantidad ?? 1) || 1);
+                const nextQty = currentQty + 1;
+
+                if (nextQty > stock) {
+                    showToast('No hay suficiente stock', 'error');
+                    return;
+                }
+
+                await actualizarCantidad(session.access_token, profile.id, existing.id, nextQty);
+                showToast('Cantidad actualizada', 'success');
+            } else {
+                const payload = {
+                    id_producto: productId,
+                    cantidad: 1,
+                };
+                await agregarAlCarrito(session.access_token, profile.id, payload);
+                showToast('Añadido al carrito', 'success');
+            }
+
+            await refreshCartCount();
+        } catch (error) {
+            console.error('Error al añadir al carrito', error);
+            showToast('No se pudo añadir al carrito', 'error');
+        } finally {
+            setAddingToCart(false);
+        }
     };
 
     const handleBuyNow = () => {
@@ -257,12 +320,17 @@ export default function DetalleProductoParte1() {
                         <button 
                             className="btn-add-cart" 
                             onClick={handleAddToCart}
-                            disabled={stockDisponible === 0}
+                            disabled={stockDisponible === 0 || addingToCart}
                         >
                             Agregar al Carrito
                         </button>
                         {stockDisponible === 0 && (
                             <p className="out-of-stock-message">Producto agotado</p>
+                        )}
+                        {toast && (
+                            <p style={{ textAlign: 'center', color: toast.type === 'error' ? '#d32f2f' : '#2e7d32', margin: 0 }}>
+                                {toast.message}
+                            </p>
                         )}
                     </div>
                 </div>

@@ -413,7 +413,7 @@ export default function Home() {
                             : null;
 
                         return (
-                            <div onClick={() => navigate(`/product-details/${product.id_producto}`)} className="product-card" key={product.id_producto}>
+                            <div className="product-card" key={product.id_producto}>
                                 <div className="product-image">
                                     {(() => {
                                         const imagenRelacionada = Array.isArray(product.producto_imagen)
