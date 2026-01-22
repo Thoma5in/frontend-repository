@@ -9,6 +9,8 @@ const ProductDetail = () => {
     return (
         <div>
             <DetalleProductoParte1 />
+            <DetalleProductoParte4 />
+
             <DetalleProductoParte2 productos={productosRelacionados} />
             <DetalleProductoParte3 />
             <DetalleProductoParte4 />

@@ -2,12 +2,14 @@
 .productos-relacionados-container {
     width: 100%;
     padding: 3rem 0;
+ 
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     background: #ffffff;
 }
 
 /* Header de la sección */
 .productos-relacionados-header {
-    max-width: 1400px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 0 2rem 2rem;
 }
@@ -36,10 +38,9 @@
 /* Wrapper con navegación */
 .productos-relacionados-wrapper {
     position: relative;
-    max-width: 860px;   /* MÁS PEQUEÑO que 3 cards */
+    max-width: 1200px;   /* MÁS PEQUEÑO que 3 cards */
     margin: 0 auto;
     padding: 0 2rem;
-    overflow: hidden;  /* (.) (.)*/
 }
 
 
@@ -52,6 +53,7 @@
     overflow-x: auto;
     overflow-y: hidden;
     scroll-behavior: smooth;
+    
 
     width: 100%;
 }
