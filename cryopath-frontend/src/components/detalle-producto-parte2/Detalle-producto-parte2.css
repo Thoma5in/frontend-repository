@@ -36,21 +36,37 @@
 /* Wrapper con navegación */
 .productos-relacionados-wrapper {
     position: relative;
-    max-width: 1400px;
+    max-width: 860px;   /* MÁS PEQUEÑO que 3 cards */
     margin: 0 auto;
     padding: 0 2rem;
+    overflow: hidden;  /* (.) (.)*/
 }
 
-/* Grid de productos */
+
+/* Grid de productos - Carrusel horizontal */
 .productos-relacionados-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: nowrap;
     gap: 1.5rem;
     padding: 1rem 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+
+    width: 100%;
+}
+
+
+/* Ocultar scrollbar en Chrome, Safari y Opera */
+.productos-relacionados-grid::-webkit-scrollbar {
+    display: none;
 }
 
 /* Card del producto */
 .producto-card {
+    flex: 0 0 280px;
+    /* Ancho fijo para cada tarjeta */
+    min-width: 280px;
     background: #ffffff;
     border-radius: 16px;
     overflow: hidden;
@@ -241,14 +257,28 @@
     height: 24px;
 }
 
+.nav-button-prev {
+    left: -24px;
+}
+
 .nav-button-next {
     right: -24px;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .productos-relacionados-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    .productos-relacionados-wrapper {
+        max-width: 780px;
+        /* 250px * 3 cards + 1.5rem * 2 gaps */
+    }
+
+    .producto-card {
+        flex: 0 0 250px;
+        min-width: 250px;
+    }
+
+    .nav-button-prev {
+        left: 1rem;
     }
 
     .nav-button-next {
@@ -270,12 +300,18 @@
     }
 
     .productos-relacionados-wrapper {
+        max-width: 520px;
+        /* 220px * 2 cards + 1.5rem gap + padding */
         padding: 0 1rem;
     }
 
     .productos-relacionados-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1rem;
+    }
+
+    .producto-card {
+        flex: 0 0 220px;
+        min-width: 220px;
     }
 
     .nav-button {
@@ -288,15 +324,24 @@
         height: 20px;
     }
 
+    .nav-button-prev {
+        left: 0.5rem;
+    }
+
     .nav-button-next {
         right: 0.5rem;
     }
 }
 
 @media (max-width: 480px) {
-    .productos-relacionados-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
+    .productos-relacionados-wrapper {
+        max-width: 380px;
+        /* ~1.5 cards visible to hint at scrolling */
+    }
+
+    .producto-card {
+        flex: 0 0 260px;
+        min-width: 260px;
     }
 
     .producto-info {

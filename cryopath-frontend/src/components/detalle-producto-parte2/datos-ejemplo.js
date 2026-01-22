@@ -1,5 +1,3 @@
-import DetalleProductoParte2 from './detalle-producto-parte2';
-
 // Datos de ejemplo para los productos relacionados
 export const productosRelacionados = [
     {
@@ -71,24 +69,5 @@ export const productosRelacionados = [
         precioOriginal: 2199900,
         precioActual: 1799900,
         descuento: 18
-    },
+    }
 ];
-
-const EjemploComponentePadre = () => {
-    return (
-        <div className="pagina-producto">
-            {/* Aquí irían otros componentes de la página */}
-            <div className="detalle-producto-parte1">
-                {/* Información principal del producto */}
-            </div>
-
-            {/* Componente de productos relacionados */}
-            <DetalleProductoParte2 productos={productosRelacionados} />
-
-            {/* Otros componentes */}
-        </div>
-    );
-};
-
-export default EjemploComponentePadre;
-
