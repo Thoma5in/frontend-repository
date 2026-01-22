@@ -2,19 +2,22 @@ import './DetalleProductoParte1.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { obtenerProductoPorIdRequest, obtenerProductosRequest, obtenerImagenProductoRequest } from '../../services/productosApi';
+import { getInventarioByProducto } from '../../services/inventarioApi';
 import { obtenerCategoriaDeProducto } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
+import { agregarAlCarrito, actualizarCantidad, obtenerCarrito } from '../../services/cartApi';
 
 export default function DetalleProductoParte1() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { session, user } = useAuth();
+    const { session, user, isAuthenticated, profile, refreshCartCount } = useAuth();
     const [producto, setProducto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [error, setError] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [categoria, setCategoria] = useState('No data');
+    const [inventarioCantidad, setInventarioCantidad] = useState(null);
 
     const authToken = session?.access_token ?? user?.token ?? '';
 
@@ -47,6 +50,21 @@ export default function DetalleProductoParte1() {
                         console.error('Error al obtener imagen:', imgErr);
                     }
                     
+                    // Obtener inventario del producto
+                    try {
+                        const invData = await getInventarioByProducto(productoData.id_producto || productoData.id);
+                        const cantidad =
+                            typeof invData?.cantidad_disponible === 'number'
+                                ? invData.cantidad_disponible
+                                : typeof invData?.inventario?.cantidad_disponible === 'number'
+                                    ? invData.inventario.cantidad_disponible
+                                    : 0;
+                        setInventarioCantidad(cantidad);
+                    } catch (invErr) {
+                        console.error('Error al obtener inventario:', invErr);
+                        setInventarioCantidad(null);
+                    }
+
                     // Obtener categoría del producto
                     try {
                         const catData = await obtenerCategoriaDeProducto(productoData.id_producto || productoData.id);
@@ -72,9 +90,71 @@ export default function DetalleProductoParte1() {
         }
     }, [id, authToken]);
 
-    const handleAddToCart = () => {
-        console.log('Agregar al carrito:', producto);
-        // Implementar lógica del carrito
+    const [addingToCart, setAddingToCart] = useState(false);
+    const [toast, setToast] = useState(null);
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+        window.setTimeout(() => setToast(null), 2500);
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            if (addingToCart) return;
+
+            if (!isAuthenticated || !session || !profile?.id) {
+                alert('Debes iniciar sesión para agregar productos al carrito');
+                navigate('/login');
+                return;
+            }
+
+            setAddingToCart(true);
+
+            const stock = typeof inventarioCantidad === 'number' ? inventarioCantidad : (producto?.stock ?? 0);
+            if (stock <= 0) {
+                showToast('Producto sin stock', 'error');
+                return;
+            }
+
+            // Obtener carrito actual
+            let cartItems = [];
+            try {
+                const raw = await obtenerCarrito(session.access_token, profile.id);
+                const maybe = raw?.data ?? raw;
+                cartItems = Array.isArray(maybe) ? maybe : (Array.isArray(maybe?.items) ? maybe.items : []);
+            } catch {
+                cartItems = [];
+            }
+
+            const productId = producto.id_producto || producto.id;
+            const existing = cartItems.find((it) => Number(it?.id_producto) === Number(productId));
+
+            if (existing?.id) {
+                const currentQty = Math.max(1, Number(existing?.cantidad ?? 1) || 1);
+                const nextQty = currentQty + 1;
+
+                if (nextQty > stock) {
+                    showToast('No hay suficiente stock', 'error');
+                    return;
+                }
+
+                await actualizarCantidad(session.access_token, profile.id, existing.id, nextQty);
+                showToast('Cantidad actualizada', 'success');
+            } else {
+                const payload = {
+                    id_producto: productId,
+                    cantidad: 1,
+                };
+                await agregarAlCarrito(session.access_token, profile.id, payload);
+                showToast('Añadido al carrito', 'success');
+            }
+
+            await refreshCartCount();
+        } catch (error) {
+            console.error('Error al añadir al carrito', error);
+            showToast('No se pudo añadir al carrito', 'error');
+        } finally {
+            setAddingToCart(false);
+        }
     };
 
     const handleBuyNow = () => {
@@ -106,6 +186,14 @@ export default function DetalleProductoParte1() {
     // Calcular calificación promedio (usar datos reales o valores por defecto)
     const calificacion = producto.calificacion_promedio || producto.rating || 0;
     const totalReviews = producto.total_reviews || producto.reviews_count || 0;
+
+    // Stock desde inventario (fallback al campo del producto si falta)
+    const stockDisponible =
+        typeof inventarioCantidad === 'number' && inventarioCantidad >= 0
+            ? inventarioCantidad
+            : typeof producto.stock === 'number'
+                ? producto.stock
+                : 0;
 
     return (
         <div className="product-detail-container">
@@ -179,7 +267,7 @@ export default function DetalleProductoParte1() {
                                 <strong>Categoría:</strong> {categoria}
                             </li>
                             <li>
-                                <strong>Stock disponible:</strong> {producto.stock || 0} unidades
+                                <strong>Stock disponible:</strong> {stockDisponible} {stockDisponible === 1 ? 'unidad' : 'unidades'}
                             </li>
                             <li>
                                 <strong>Estado:</strong> {producto.estado_producto || producto.estado || 'No data'}
@@ -225,19 +313,24 @@ export default function DetalleProductoParte1() {
                         <button 
                             className="btn-buy-now" 
                             onClick={handleBuyNow}
-                            disabled={producto.stock === 0}
+                            disabled={stockDisponible === 0}
                         >
                             Comprar Ahora
                         </button>
                         <button 
                             className="btn-add-cart" 
                             onClick={handleAddToCart}
-                            disabled={producto.stock === 0}
+                            disabled={stockDisponible === 0 || addingToCart}
                         >
                             Agregar al Carrito
                         </button>
-                        {producto.stock === 0 && (
+                        {stockDisponible === 0 && (
                             <p className="out-of-stock-message">Producto agotado</p>
+                        )}
+                        {toast && (
+                            <p style={{ textAlign: 'center', color: toast.type === 'error' ? '#d32f2f' : '#2e7d32', margin: 0 }}>
+                                {toast.message}
+                            </p>
                         )}
                     </div>
                 </div>
