@@ -24,58 +24,69 @@ export default function DetalleProductoParte1() {
     useEffect(() => {
         const fetchProducto = async () => {
             try {
-                // Intentar obtener producto individual primero
-                let productoData;
-                try {
-                    productoData = await obtenerProductoPorIdRequest(id, authToken);
-                } catch (err) {
-                    // Si falla, obtener todos y filtrar
-                    const data = await obtenerProductosRequest(authToken);
-                    const productos = data?.productos || data || [];
-                    productoData = productos.find(
-                        p => (p.id_producto || p.id) === parseInt(id)
-                    );
-                }
-                
-                if (productoData) {
-                    setProducto(productoData);
-                    
-                    // Obtener imagen del producto
-                    try {
-                        const imgData = await obtenerImagenProductoRequest(productoData.id_producto || productoData.id, authToken);
-                        if (imgData?.url) {
-                            setImageUrl(imgData.url);
-                        }
-                    } catch (imgErr) {
-                        console.error('Error al obtener imagen:', imgErr);
-                    }
-                    
-                    // Obtener inventario del producto
-                    try {
-                        const invData = await getInventarioByProducto(productoData.id_producto || productoData.id);
-                        const cantidad =
-                            typeof invData?.cantidad_disponible === 'number'
-                                ? invData.cantidad_disponible
-                                : typeof invData?.inventario?.cantidad_disponible === 'number'
-                                    ? invData.inventario.cantidad_disponible
-                                    : 0;
-                        setInventarioCantidad(cantidad);
-                    } catch (invErr) {
-                        console.error('Error al obtener inventario:', invErr);
-                        setInventarioCantidad(null);
-                    }
+                const productId = Number(id);
+                let productoData = null;
 
-                    // Obtener categoría del producto
+                // Intentar resolver desde la lista para evitar 404 del endpoint individual
+                try {
+                    const data = await obtenerProductosRequest(authToken);
+                    const productos = data?.productos;
+                    productoData = productos.find(
+                        (p) => Number(p.id_producto ) === productId
+                    );
+                } catch (listErr) {
+                    console.error('Error al obtener la lista de productos:', listErr);
+                }
+
+                // Si no se encontró en la lista, intentar el endpoint por ID
+                if (!productoData) {
                     try {
-                        const catData = await obtenerCategoriaDeProducto(productoData.id_producto || productoData.id);
-                        if (catData?.categoria?.nombre) {
-                            setCategoria(catData.categoria.nombre);
-                        }
-                    } catch (catErr) {
-                        console.error('Error al obtener categoría:', catErr);
+                        productoData = await obtenerProductoPorIdRequest(id, authToken);
+                    } catch (err) {
+                        console.error('Error al obtener producto por ID:', err);
                     }
-                } else {
+                }
+
+                if (!productoData) {
                     setError('Producto no encontrado');
+                    return;
+                }
+
+                setProducto(productoData);
+
+                // Obtener imagen del producto
+                try {
+                    const imgData = await obtenerImagenProductoRequest(productoData.id_producto, authToken);
+                    if (imgData?.url) {
+                        setImageUrl(imgData.url);
+                    }
+                } catch (imgErr) {
+                    console.error('Error al obtener imagen:', imgErr);
+                }
+
+                // Obtener inventario del producto
+                try {
+                    const invData = await getInventarioByProducto(productoData.id_producto);
+                    const cantidad =
+                        typeof invData?.cantidad_disponible === 'number'
+                            ? invData.cantidad_disponible
+                            : typeof invData?.inventario?.cantidad_disponible === 'number'
+                                ? invData.inventario.cantidad_disponible
+                                : 0;
+                    setInventarioCantidad(cantidad);
+                } catch (invErr) {
+                    console.error('Error al obtener inventario:', invErr);
+                    setInventarioCantidad(null);
+                }
+
+                // Obtener categoría del producto
+                try {
+                    const catData = await obtenerCategoriaDeProducto(productoData.id_producto);
+                    if (catData?.categoria?.nombre) {
+                        setCategoria(catData.categoria.nombre);
+                    }
+                } catch (catErr) {
+                    console.error('Error al obtener categoría:', catErr);
                 }
             } catch (err) {
                 console.error('Error al cargar producto:', err);
@@ -125,7 +136,7 @@ export default function DetalleProductoParte1() {
                 cartItems = [];
             }
 
-            const productId = producto.id_producto || producto.id;
+            const productId = producto.id_producto;
             const existing = cartItems.find((it) => Number(it?.id_producto) === Number(productId));
 
             if (existing?.id) {
