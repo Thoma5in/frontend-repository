@@ -271,7 +271,19 @@ const Header = () => {
                       >
                         Perfil
                       </button>
-                      
+
+                      <button
+                      type = "button"
+                      className = "header__user-menu-item"
+                      role = "menuitem"
+                      onClick = {() => {
+                        setIsUserMenuOpen(false);
+                        navigate('/vender');
+                      }}
+                    >
+                      Vender
+                        
+                        </button>
 
                       {canManageProducts && (
                         <button
