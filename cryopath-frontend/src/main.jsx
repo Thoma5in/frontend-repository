@@ -21,6 +21,7 @@ import EliminarUsuario from './components/dashboard-components/EliminarUsuario.j
 import Categorias from './components/dashboard-components/categorias.jsx'
 import ProductDetails from './pages/product-detail/ProductDetail.jsx'
 import Cart from './pages/carrito/Cart.jsx'
+import Vender from './pages/vender/Vender.jsx'
 
 
 
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/login' element={<Login />} />
             <Route path='/edit' element={<PerfilEditar />} />
             <Route path='/assistant' element={<Assistant />} />
+            <Route path='/vender' element={<Vender/>} />
             <Route path='/admin' element={<ProtectedAdminRoute> <AdminDashboard /> </ProtectedAdminRoute>}/>
             <Route path='/admin/productos/nuevo' element={<ProtectedAdminRoute> <AgregarProducto /> </ProtectedAdminRoute>} />
             <Route path='/admin/productos/:id/editar' element={<ProtectedAdminRoute> <EditarProducto /> </ProtectedAdminRoute>} />

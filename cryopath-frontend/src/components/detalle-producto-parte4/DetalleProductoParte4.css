@@ -1,7 +1,13 @@
 .dp4 {
 	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
 	padding: 28px 20px;
 	background: #f5f6f8;
+}
+
+.dp4 * {
+	box-sizing: border-box;
 }
 
 .dp4__title {
