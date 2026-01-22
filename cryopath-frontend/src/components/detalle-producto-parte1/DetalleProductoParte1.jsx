@@ -2,6 +2,7 @@ import './DetalleProductoParte1.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { obtenerProductoPorIdRequest, obtenerProductosRequest, obtenerImagenProductoRequest } from '../../services/productosApi';
+import { getInventarioByProducto } from '../../services/inventarioApi';
 import { obtenerCategoriaDeProducto } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
 
@@ -15,6 +16,7 @@ export default function DetalleProductoParte1() {
     const [error, setError] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [categoria, setCategoria] = useState('No data');
+    const [inventarioCantidad, setInventarioCantidad] = useState(null);
 
     const authToken = session?.access_token ?? user?.token ?? '';
 
@@ -47,6 +49,21 @@ export default function DetalleProductoParte1() {
                         console.error('Error al obtener imagen:', imgErr);
                     }
                     
+                    // Obtener inventario del producto
+                    try {
+                        const invData = await getInventarioByProducto(productoData.id_producto || productoData.id);
+                        const cantidad =
+                            typeof invData?.cantidad_disponible === 'number'
+                                ? invData.cantidad_disponible
+                                : typeof invData?.inventario?.cantidad_disponible === 'number'
+                                    ? invData.inventario.cantidad_disponible
+                                    : 0;
+                        setInventarioCantidad(cantidad);
+                    } catch (invErr) {
+                        console.error('Error al obtener inventario:', invErr);
+                        setInventarioCantidad(null);
+                    }
+
                     // Obtener categoría del producto
                     try {
                         const catData = await obtenerCategoriaDeProducto(productoData.id_producto || productoData.id);
@@ -106,6 +123,14 @@ export default function DetalleProductoParte1() {
     // Calcular calificación promedio (usar datos reales o valores por defecto)
     const calificacion = producto.calificacion_promedio || producto.rating || 0;
     const totalReviews = producto.total_reviews || producto.reviews_count || 0;
+
+    // Stock desde inventario (fallback al campo del producto si falta)
+    const stockDisponible =
+        typeof inventarioCantidad === 'number' && inventarioCantidad >= 0
+            ? inventarioCantidad
+            : typeof producto.stock === 'number'
+                ? producto.stock
+                : 0;
 
     return (
         <div className="product-detail-container">
@@ -179,7 +204,7 @@ export default function DetalleProductoParte1() {
                                 <strong>Categoría:</strong> {categoria}
                             </li>
                             <li>
-                                <strong>Stock disponible:</strong> {producto.stock || 0} unidades
+                                <strong>Stock disponible:</strong> {stockDisponible} {stockDisponible === 1 ? 'unidad' : 'unidades'}
                             </li>
                             <li>
                                 <strong>Estado:</strong> {producto.estado_producto || producto.estado || 'No data'}
@@ -225,18 +250,18 @@ export default function DetalleProductoParte1() {
                         <button 
                             className="btn-buy-now" 
                             onClick={handleBuyNow}
-                            disabled={producto.stock === 0}
+                            disabled={stockDisponible === 0}
                         >
                             Comprar Ahora
                         </button>
                         <button 
                             className="btn-add-cart" 
                             onClick={handleAddToCart}
-                            disabled={producto.stock === 0}
+                            disabled={stockDisponible === 0}
                         >
                             Agregar al Carrito
                         </button>
-                        {producto.stock === 0 && (
+                        {stockDisponible === 0 && (
                             <p className="out-of-stock-message">Producto agotado</p>
                         )}
                     </div>
