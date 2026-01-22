@@ -21,7 +21,7 @@ const DetalleProductoParte2 = ({ productos = [] }) => {
         }, 100);
 
         window.addEventListener('resize', checkScroll);
-        
+
         return () => {
             clearTimeout(timer);
             window.removeEventListener('resize', checkScroll);
@@ -54,7 +54,7 @@ const DetalleProductoParte2 = ({ productos = [] }) => {
     return (
         <div className="productos-relacionados-container">
             <div className="productos-relacionados-header">
-                <h2 className="productos-relacionados-title">Productos Relacionados</h2>
+                <h2 className="productos-relacionados-title">Productos relacionados</h2>
             </div>
 
             <div className="productos-relacionados-wrapper">

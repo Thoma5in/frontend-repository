@@ -9,7 +9,7 @@ const ProductDetail = () => {
         <div>
             <DetalleProductoParte1 />
             <DetalleProductoParte4 />
-            <h1>Product Detail</h1>
+
             <DetalleProductoParte2 productos={productosRelacionados} />
         </div>
     )
