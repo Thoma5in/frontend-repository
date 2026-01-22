@@ -689,3 +689,113 @@
 .header__dropdown-item:hover {
     background-color: #f5f5f5;
 }
+
+/* Auth modal */
+.header__modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    z-index: 999;
+    animation: headerModalFadeIn 150ms ease-out;
+}
+
+.header__modal {
+    width: 460px;
+    max-width: 100%;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    overflow: hidden;
+    transform-origin: center;
+    animation: headerModalPopIn 170ms ease-out;
+}
+
+.header__modal-top {
+    height: 6px;
+    background: #3BA7C2;
+}
+
+.header__modal-body {
+    padding: 16px 18px 18px;
+}
+
+.header__modal-title {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+}
+
+.header__modal-text {
+    margin: 0;
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.header__modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 14px;
+}
+
+.header__modal-button {
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+.header__modal-button:active {
+    transform: translateY(1px);
+}
+
+.header__modal-button--secondary {
+    background: #ffffff;
+    color: #111827;
+}
+
+.header__modal-button--secondary:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.header__modal-button--primary {
+    background: #F8A23A;
+    color: #111827;
+    border-color: rgba(0, 0, 0, 0.18);
+}
+
+.header__modal-button--primary:hover {
+    background: #e5942f;
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.22);
+}
+
+@keyframes headerModalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes headerModalPopIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}

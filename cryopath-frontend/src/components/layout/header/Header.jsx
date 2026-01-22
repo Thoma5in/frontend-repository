@@ -11,8 +11,10 @@ const Header = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
+  const loginPrimaryButtonRef = useRef(null);
 
   const [notificationTab, setNotificationTab] = useState('all'); // all | unread | read
   const [notifications, setNotifications] = useState([
@@ -44,6 +46,23 @@ const Header = () => {
   const allCount = notifications.length;
   const unreadCount = notifications.filter((n) => !n.read).length;
   const readCount = notifications.filter((n) => n.read).length;
+
+  const handleVenderClick = () => {
+    if (!isAuthenticated) {
+      setIsUserMenuOpen(false);
+      setIsOpen(false);
+      setIsCategoriasOpen(false);
+      setIsLoginModalOpen(true);
+      return;
+    }
+    navigate('/vender');
+  };
+
+  const handleGoToLogin = () => {
+    setIsLoginModalOpen(false);
+    navigate('/login');
+  };
+
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -71,6 +90,7 @@ const Header = () => {
       setIsUserMenuOpen(false);
       setIsOpen(false);
       setIsCategoriasOpen(false);
+      setIsLoginModalOpen(false);
     };
 
     window.addEventListener('keydown', onKeyDown);
@@ -78,6 +98,23 @@ const Header = () => {
       window.removeEventListener('keydown', onKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isLoginModalOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isLoginModalOpen]);
+
+  useEffect(() => {
+    if (!isLoginModalOpen) return;
+    const id = window.setTimeout(() => {
+      loginPrimaryButtonRef.current?.focus?.();
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [isLoginModalOpen]);
 
   useEffect(() => {
     if (isCategoriasOpen) {
@@ -348,7 +385,7 @@ const Header = () => {
             <button
               type="button"
               className="header__action"
-              onClick={() => navigate('/vender')}
+              onClick={handleVenderClick}
             >
               Vender
             </button>
@@ -407,9 +444,48 @@ const Header = () => {
           <div className="header__mobile-divider"></div>
           <a onClick={() => setIsMobileMenuOpen(false)}>Categorías</a>
           <a onClick={() => setIsMobileMenuOpen(false)}>Supermercado</a>
-          <a onClick={() => setIsMobileMenuOpen(false)}>Vender</a>
+          <a onClick={() => { handleVenderClick(); setIsMobileMenuOpen(false); }}>Vender</a>
           <a onClick={() => { navigate('/assistant'); setIsMobileMenuOpen(false); }}>Ayuda</a>
         </div>
+
+        {isLoginModalOpen && (
+          <div
+            className="header__modal-overlay"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setIsLoginModalOpen(false);
+            }}
+          >
+            <div className="header__modal" role="dialog" aria-modal="true" aria-labelledby="header-login-required-title">
+              <div className="header__modal-top" />
+              <div className="header__modal-body">
+                <h3 className="header__modal-title" id="header-login-required-title">
+                  Necesitas iniciar sesión
+                </h3>
+                <p className="header__modal-text">
+                  Para acceder a <strong>Vender</strong>, primero debes iniciar sesión.
+                </p>
+                <div className="header__modal-actions">
+                  <button
+                    type="button"
+                    className="header__modal-button header__modal-button--secondary"
+                    onClick={() => setIsLoginModalOpen(false)}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    ref={loginPrimaryButtonRef}
+                    type="button"
+                    className="header__modal-button header__modal-button--primary"
+                    onClick={handleGoToLogin}
+                  >
+                    Ir a iniciar sesión
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   )
