@@ -1,17 +1,45 @@
 import { useState } from 'react';
 import './DetalleProductoParte4.css';
+import {useAuth} from "../../context/AuthContext.jsx";
+import { crearConversacionRequest } from '../../services/conversacionesApi.js';
 
-const DetalleProductoParte4 = () => {
+const DetalleProductoParte4 = ({idProducto}) => {
     const [question, setQuestion] = useState('');
+    const [loading, setLoading] = useState(false);
+    const {session, user, profile} = useAuth();
 
-    const handleSubmit = (e) => {
+    const authToken = session?.access_token ?? user?.token ?? ""
+
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const value = question.trim();
         if (!value) return;
 
-        //Conectar con API/estado global cuando esté definido.
-       
-        setQuestion('');
+        try {
+            setLoading(true);
+
+            console.log({
+            idProducto,
+            mensaje: value,
+            });
+
+            await crearConversacionRequest(
+                {
+                    id_producto: idProducto,
+                    mensaje: value,
+                },
+                authToken
+            )
+
+            setQuestion('');
+        } catch (error) {
+            console.error(error);
+            alert((error.message))
+        } finally {
+            setLoading(false);
+        }
+
     };
 
     return (
@@ -25,15 +53,16 @@ const DetalleProductoParte4 = () => {
                     Escribe tu pregunta
                 </label>
                 <input
-                    id="dp4-question"
+                    
                     className="dp4__input"
                     type="text"
                     placeholder="Escribe tu pregunta..."
                     value={question}
                     onChange={(e) => setQuestion(e.target.value)}
+                    disabled={loading}
                 />
-                <button className="dp4__button" type="submit" disabled={!question.trim()}>
-                    Enviar
+                <button className="dp4__button" type="submit" disabled={!question.trim() || loading}>
+                    {loading ? 'Enviando...' : 'Enviar'}
                 </button>
             </form>
         </section>
