@@ -22,6 +22,7 @@ import Categorias from './components/dashboard-components/categorias.jsx'
 import ProductDetails from './pages/product-detail/ProductDetail.jsx'
 import Cart from './pages/carrito/Cart.jsx'
 import Vender from './pages/vender/Vender.jsx'
+import Mensaje from './pages/mensaje/Mensaje.jsx'
 
 
 
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/admin/eliminar-usuarios' element={<ProtectedAdminRoute> <EliminarUsuario /> </ProtectedAdminRoute>} />
             <Route path='/admin/categorias' element={<ProtectedAdminRoute> <Categorias /> </ProtectedAdminRoute>} />
             <Route path='/cart' element={<Cart/>} />
+            <Route path='/conversaciones/:id' element={<Mensaje />} />
           </Routes>
         </Layout>
       </BrowserRouter>

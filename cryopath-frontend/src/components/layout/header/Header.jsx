@@ -4,10 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { listarCategorias } from '../../../services/categoriasApi';
+import { obtenerNotificacionesRequest, 
+  marcarNotificacionLeidaRequest, 
+  marcarTodasLeidasRequest 
+} from "../../../services/notificacionesApi";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, profile, logout, canManageProducts, loading, cartCount } = useAuth();
+  const { isAuthenticated, user, profile, logout, canManageProducts, loading, session, cartCount } = useAuth();
+  const authToken = session?.access_token ?? user?.token ?? ""
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -17,14 +22,8 @@ const Header = () => {
   const loginPrimaryButtonRef = useRef(null);
 
   const [notificationTab, setNotificationTab] = useState('all'); // all | unread | read
-  const [notifications, setNotifications] = useState([
-    {
-      id: 'n1',
-      title: '¡Aprovecha ahora y compra Televisores Samsung! Más de 30% de descuento en...',
-      createdLabel: 'Hace 2 horas',
-      read: false,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const [categorias, setCategorias] = useState([]);
   const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
@@ -33,9 +32,17 @@ const Header = () => {
     setIsOpen((prev) => !prev);
   }
 
-  const markAllNotificationsAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+  const markAllNotificationsAsRead = async () => {
+    await marcarTodasLeidasRequest(authToken);
+    setNotifications(prev => prev.map(n => ({...n, read: true})));
+    setUnreadCount(0);
+  }
+
+  const handleClickNotification = async (n) => {
+    await marcarNotificacionLeidaRequest(n.id, authToken);
+
+    navigate(`/conversaciones/${n.id_conversacion}`)
+  }
 
   const visibleNotifications = notifications.filter((n) => {
     if (notificationTab === 'unread') return !n.read;
@@ -44,7 +51,6 @@ const Header = () => {
   });
 
   const allCount = notifications.length;
-  const unreadCount = notifications.filter((n) => !n.read).length;
   const readCount = notifications.filter((n) => n.read).length;
 
   const handleVenderClick = () => {
@@ -67,6 +73,33 @@ const Header = () => {
     logout();
     navigate("/");
   }
+
+  useEffect(() => {
+    if (!isAuthenticated || !authToken) return;
+
+    const cargarNotificaciones = async () => {
+      try {
+        const data = await obtenerNotificacionesRequest(authToken);
+
+        const mapped = data.notificaciones.map((n) => ({
+          id: n.id_notificacion,
+          id_conversacion: n.id_conversacion,
+          read: n.leida,
+          createdLabel: new Date(n.created_at).toLocaleString(),
+          title:
+          n.tipo === "pregunta."
+          ? "Tienes una nueva pregunta sobre tu producto."
+          : "Nueva notificación" ,
+        }))
+
+        setNotifications(mapped);
+        setUnreadCount(data.unreadCount);
+      } catch (error) {
+        console.error(error)
+      } 
+    }
+    cargarNotificaciones();
+  }, [isAuthenticated, authToken]);
 
   useEffect(() => {
     const handleDocumentMouseDown = (event) => {
@@ -129,6 +162,7 @@ const Header = () => {
       cargarCategorias();
     }
   }, [isCategoriasOpen]);
+
 
   return (
     <header className="header">
@@ -233,7 +267,16 @@ const Header = () => {
                                 key={n.id}
                                 type="button"
                                 className={`header__notifications-item ${n.read ? 'is-read' : 'is-unread'}`}
-                                onClick={() => setNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
+                                onClick={async () => {
+                                  if (!n.read) {
+                                    await marcarNotificacionLeidaRequest(n.id, authToken);
+                                    setNotifications(prev => 
+                                      prev.map(x => x.id === n.id ? { ...x, read: true } : x)
+                                    )
+                                    setUnreadCount(c => Math.max(0, c - 1));
+                                  }
+                                   handleClickNotification(n)
+                                }}
                               >
                                 <span className="header__notifications-avatar" aria-hidden="true">
                                   <img src="/img/logo-header.png" alt="" />
