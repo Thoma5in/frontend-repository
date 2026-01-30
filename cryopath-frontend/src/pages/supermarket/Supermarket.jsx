@@ -1,7 +1,32 @@
 import './Supermarket.css'
 import Home from '../home/Home';
+import { useState, useEffect } from 'react';
+import { listarSupercategorias } from '../../services/supercategoriasApi';
 
 const Supermarket = () =>{
+    const [idSupercategoriaSupermercado, setIdSupercategoriaSupermercado] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const obtenerSupercategoriaSupermercado = async () => {
+            try {
+                const supercategorias = await listarSupercategorias();
+                const supermercado = supercategorias.find(
+                    (sc) => sc.nombre.toLowerCase() === 'supermercado'
+                );
+                if (supermercado) {
+                    setIdSupercategoriaSupermercado(supermercado.id_super_categoria);
+                }
+            } catch (error) {
+                console.error('Error al obtener supercategoría supermercado:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        obtenerSupercategoriaSupermercado();
+    }, []);
+
     return(
         <section className="supermarket-page">
             <header className="supermarket-hero">
@@ -12,7 +37,9 @@ const Supermarket = () =>{
             </header>
 
             <div className="supermarket-content">
-                <Home />
+                {!loading && (
+                    <Home idSupercategoria={idSupercategoriaSupermercado} />
+                )}
             </div>
         </section>
     )
