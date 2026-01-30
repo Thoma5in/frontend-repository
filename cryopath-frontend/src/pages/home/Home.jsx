@@ -4,6 +4,7 @@ import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
 import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
 import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
+import { obtenerProductosPorSupercategoria } from "../../services/supercategoriasApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
@@ -21,7 +22,7 @@ function truncateWords(text, limit = DESCRIPTION_WORD_LIMIT) {
     return `${words.slice(0, limit).join(" ")}...`;
 }
 
-export default function Home() {
+export default function Home({ idSupercategoria = null }) {
     const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -148,20 +149,33 @@ export default function Home() {
         
     }, []);
 
-
     useEffect(() => {
         const fetchProductos = async () => {
             try {
-                const data = await obtenerProductosRequest(session?.access_token);
-                if (data && Array.isArray(data.productos)) {
-                    setProducts(data.productos);
-                } else if (Array.isArray(data)) {
-                    setProducts(data);
+                let productosData;
+
+                // Si hay un idSupercategoria, usar el endpoint de supercategorías
+                if (idSupercategoria) {
+                    const response = await obtenerProductosPorSupercategoria(idSupercategoria, {
+                        limit: 1000,
+                        offset: 0,
+                        estado: "activo"
+                    });
+                    productosData = response?.data || [];
                 } else {
-                    console.error("Estructura de datos inesperada:", data);
-                    // Fallback para evitar romper la UI si no hay array
-                    setProducts([]);
+                    // Comportamiento normal
+                    const data = await obtenerProductosRequest(session?.access_token);
+                    if (data && Array.isArray(data.productos)) {
+                        productosData = data.productos;
+                    } else if (Array.isArray(data)) {
+                        productosData = data;
+                    } else {
+                        console.error("Estructura de datos inesperada:", data);
+                        productosData = [];
+                    }
                 }
+
+                setProducts(productosData);
             } catch (err) {
                 console.error("Error al cargar productos en Home:", err);
                 setError("Error al cargar productos.");
@@ -170,7 +184,7 @@ export default function Home() {
             }
         };
         fetchProductos();
-    }, [session]);
+    }, [session, idSupercategoria]);
 
     useEffect(() => {
         const fetchImagenes = async () => {

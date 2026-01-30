@@ -23,6 +23,7 @@ import ProductDetails from './pages/product-detail/ProductDetail.jsx'
 import Cart from './pages/carrito/Cart.jsx'
 import Vender from './pages/vender/Vender.jsx'
 import Mensaje from './pages/mensaje/Mensaje.jsx'
+import Supermarket from './pages/supermarket/Supermarket.jsx'
 
 
 
@@ -34,6 +35,7 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/*" element={<Home />} />
             <Route path='/product-details/:id' element={<ProductDetails />} />
+            <Route path='/supermercado' element={<Supermarket />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />

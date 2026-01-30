@@ -420,7 +420,7 @@ const Header = () => {
             <button
               type="button"
               className="header__action"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/supermercado')}
             >
               Supermercado
             </button>
