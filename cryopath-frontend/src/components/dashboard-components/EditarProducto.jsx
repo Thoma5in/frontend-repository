@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { actualizarProductoRequest, uploadImagenProductoRequest, obtenerImagenesProductoRequest } from "../../services/productosApi";
+import { actualizarProductoRequest, uploadImagenProductoRequest, obtenerImagenesProductoRequest, eliminarImagenesProductoRequest } from "../../services/productosApi";
 import { getInventarioByProducto, updateInventario } from "../../services/inventarioApi";
 import { listarCategorias, obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import "../../pages/dashboard/AdminDashboard.css";
@@ -48,6 +48,7 @@ export default function EditarProducto() {
   const [errorMessage, setErrorMessage] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [existingImages, setExistingImages] = useState([]);
+  const [shouldDeleteExistingImages, setShouldDeleteExistingImages] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [categorias, setCategorias] = useState([]);
 
@@ -170,6 +171,7 @@ export default function EditarProducto() {
 
   const handleRemoveExistingImage = (index) => {
     setExistingImages(prev => prev.filter((_, i) => i !== index));
+    setShouldDeleteExistingImages(true);
   };
 
   const handleSubmit = (event) => {
@@ -191,6 +193,10 @@ export default function EditarProducto() {
           
           await updateInventario(productoId, cantidadDisponible, token);
 
+          if (shouldDeleteExistingImages) {
+            await eliminarImagenesProductoRequest(productoId, token);
+          }
+
           if (imageFiles.length > 0) {
             // Upload all new images sequentially
             for (const file of imageFiles) {
@@ -198,7 +204,7 @@ export default function EditarProducto() {
             }
           }
         } catch (error) {
-          console.error("Error al subir las imágenes del producto:", error);
+          console.error("Error al actualizar imágenes del producto:", error);
           // Opcional: mostrar mensaje pero seguir con la actualización
         }
         navigate("/admin");

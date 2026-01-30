@@ -233,3 +233,32 @@ export async function obtenerImagenesProductoRequest(idProducto, token) {
   return [];
 }
 
+export async function eliminarImagenesProductoRequest(idProducto, token) {
+  const url = `${BASE_URL}/productos/${idProducto}/imagenes`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      payload?.message ||
+      payload?.error ||
+      'No se pudieron eliminar las imágenes del producto';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
