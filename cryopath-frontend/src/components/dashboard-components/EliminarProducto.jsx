@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { eliminarProductoRequest } from "../../services/productosApi";
+import { eliminarProductoRequest, eliminarImagenesProductoRequest } from "../../services/productosApi";
 import "../../pages/dashboard/AdminDashboard.css";
 import { useState } from "react";
 
@@ -35,20 +35,19 @@ export default function EliminarProducto() {
     );
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     setSubmitting(true);
     setErrorMessage("");
 
-    eliminarProductoRequest(productoId, token)
-      .then(() => {
-        navigate("/admin");
-      })
-      .catch((error) => {
-        setErrorMessage(error.message || "Error al eliminar el producto");
-      })
-      .finally(() => {
-        setSubmitting(false);
-      });
+    try {
+      await eliminarImagenesProductoRequest(productoId, token);
+      await eliminarProductoRequest(productoId, token);
+      navigate("/admin");
+    } catch (error) {
+      setErrorMessage(error.message || "Error al eliminar el producto");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCancel = () => {

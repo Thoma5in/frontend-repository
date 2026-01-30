@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { eliminarProductoRequest } from "../../services/productosApi";
+import { eliminarProductoRequest, eliminarImagenesProductoRequest } from "../../services/productosApi";
 
 export default function EliminarProductodashboard({
   productos = [],
@@ -31,7 +31,10 @@ export default function EliminarProductodashboard({
     setErrorMessage("");
     try {
       await Promise.all(
-        selectedIds.map((id) => eliminarProductoRequest(id, token))
+        selectedIds.map(async (id) => {
+          await eliminarImagenesProductoRequest(id, token);
+          await eliminarProductoRequest(id, token);
+        })
       );
       onDeleted?.(selectedIds);
       setSelectedIds([]);
