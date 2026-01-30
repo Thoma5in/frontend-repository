@@ -31,7 +31,7 @@
  }
  
  .supermarket-content {
-     width: 100%;
+     width: 95%;
      margin-top: 14px;
  }
  
@@ -57,29 +57,7 @@
      height: 34px;
  }
  
- .supermarket-page .product-card .details-button {
-     background-color: #0ea5e9;
- }
- 
- .supermarket-page .product-card .details-button:hover {
-     background-color: #0284c7;
- }
- 
- .supermarket-page .product-actions-row .buy-button {
-     background-color: #22c55e;
- }
- 
- .supermarket-page .product-actions-row .buy-button:hover {
-     background-color: #16a34a;
- }
- 
- .supermarket-page .product-actions-row .cart-button {
-     background-color: #f59e0b;
- }
- 
- .supermarket-page .product-actions-row .cart-button:hover {
-     background-color: #d97706;
- }
+
  
  @media (max-width: 600px) {
      .supermarket-hero__content {

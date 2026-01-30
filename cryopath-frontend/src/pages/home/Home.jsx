@@ -2,7 +2,7 @@ import './Home.css';
 import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
-import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
+import { obtenerProductosRequest, obtenerImagenesProductoRequest } from "../../services/productosApi";
 import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import { obtenerProductosPorSupercategoria } from "../../services/supercategoriasApi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -196,13 +196,21 @@ export default function Home({ idSupercategoria = null }) {
                         const id = product.id_producto;
                         if (!id) return;
                         try {
-                            const data = await obtenerImagenProductoRequest(id, session?.access_token);
-                            if (data?.url) {
-                                urls[id] = data.url;
+                            const data = await obtenerImagenesProductoRequest(id, session?.access_token);
+                            console.log(`Imágenes para producto ${id}:`, data);
+                            // Backend returns array of objects with url property
+                            const images = Array.isArray(data) 
+                                ? data.map(img => (typeof img === 'string' ? img : img?.url)).filter(Boolean)
+                                : [];
+                            if (images.length > 0) {
+                                urls[id] = images[0]; // Use first image for product card
+                                console.log(`Imagen asignada para producto ${id}:`, images[0]);
+                            } else {
+                                console.log(`No se encontraron imágenes para producto ${id}`);
                             }
                         } catch (err) {
                             // Silenciar error por producto individual
-                            console.error(`Error al obtener imagen para producto ${id}:`, err);
+                            console.error(`Error al obtener imágenes para producto ${id}:`, err);
                         }
                     })
                 );

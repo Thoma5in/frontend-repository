@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { actualizarProductoRequest, uploadImagenProductoRequest } from "../../services/productosApi";
+import { actualizarProductoRequest, uploadImagenProductoRequest, obtenerImagenesProductoRequest } from "../../services/productosApi";
 import { getInventarioByProducto, updateInventario } from "../../services/inventarioApi";
 import { listarCategorias, obtenerCategoriaDeProducto } from "../../services/categoriasApi";
 import "../../pages/dashboard/AdminDashboard.css";
@@ -46,7 +46,8 @@ export default function EditarProducto() {
   const [cantidadDisponible, setCantidadDisponible] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [categorias, setCategorias] = useState([]);
 
@@ -70,6 +71,29 @@ export default function EditarProducto() {
       setCantidadDisponible(0);
     })
   }, [productoId]);
+
+  useEffect(() => {
+    if (!productoId || !token) {
+      console.log('No se puede cargar imágenes: productoId o token no disponibles');
+      return;
+    }
+    
+    console.log('Cargando imágenes para producto:', productoId);
+    obtenerImagenesProductoRequest(productoId, token)
+      .then((data) => {
+        console.log('Imágenes recibidas del backend:', data);
+        // Backend returns array of objects with url property
+        const images = Array.isArray(data) 
+          ? data.map(img => (typeof img === 'string' ? img : img?.url)).filter(Boolean)
+          : [];
+        console.log('Imágenes procesadas:', images);
+        setExistingImages(images);
+      })
+      .catch((error) => {
+        console.error("Error al cargar imágenes existentes:", error);
+        setExistingImages([]);
+      });
+  }, [productoId, token]);
 
   useEffect(() => {
     let mounted = true;
@@ -116,8 +140,8 @@ export default function EditarProducto() {
   };
 
   const handleFileChange = (event) => {
-    const file = event.target.files?.[0] || null;
-    setImageFile(file);
+    const files = Array.from(event.target.files || []);
+    setImageFiles(prev => [...prev, ...files]);
     setIsDragging(false);
   };
 
@@ -135,9 +159,17 @@ export default function EditarProducto() {
   const handleDrop = (event) => {
     event.preventDefault();
     if (submitting) return;
-    const file = event.dataTransfer.files?.[0] || null;
-    setImageFile(file);
+    const files = Array.from(event.dataTransfer.files || []);
+    setImageFiles(prev => [...prev, ...files]);
     setIsDragging(false);
+  };
+
+  const handleRemoveNewImage = (index) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingImage = (index) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (event) => {
@@ -159,11 +191,14 @@ export default function EditarProducto() {
           
           await updateInventario(productoId, cantidadDisponible, token);
 
-          if (imageFile) {
-            await uploadImagenProductoRequest(productoId, imageFile, token);
+          if (imageFiles.length > 0) {
+            // Upload all new images sequentially
+            for (const file of imageFiles) {
+              await uploadImagenProductoRequest(productoId, file, token);
+            }
           }
         } catch (error) {
-          console.error("Error al subir la imagen del producto:", error);
+          console.error("Error al subir las imágenes del producto:", error);
           // Opcional: mostrar mensaje pero seguir con la actualización
         }
         navigate("/admin");
@@ -254,7 +289,74 @@ export default function EditarProducto() {
               </label>
 
               <label className="admin-form-field">
-                <span>Imagen del producto</span>
+                <span>Imágenes del producto</span>
+                
+                {/* Existing Images */}
+                {existingImages.length > 0 ? (
+                  <div style={{ marginBottom: "16px" }}>
+                    <small style={{ display: "block", marginBottom: "8px", color: "#64748b", fontWeight: "500" }}>
+                      Imágenes actuales ({existingImages.length}):
+                    </small>
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+                      gap: "12px"
+                    }}>
+                      {existingImages.map((url, index) => (
+                        <div key={`existing-${index}`} style={{
+                          position: "relative",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          border: "2px solid var(--admin-border-color, #e5e7eb)",
+                          aspectRatio: "1"
+                        }}>
+                          <img
+                            src={url}
+                            alt={`Imagen existente ${index + 1}`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover"
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveExistingImage(index)}
+                            disabled={submitting}
+                            style={{
+                              position: "absolute",
+                              top: "4px",
+                              right: "4px",
+                              background: "rgba(239, 68, 68, 0.9)",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "50%",
+                              width: "24px",
+                              height: "24px",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "14px",
+                              fontWeight: "bold"
+                            }}
+                            title="Eliminar imagen"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ marginBottom: "16px" }}>
+                    <small style={{ display: "block", padding: "12px", backgroundColor: "#f8fafc", borderRadius: "8px", color: "#64748b" }}>
+                      Este producto aún no tiene imágenes. Agrega nuevas imágenes abajo.
+                    </small>
+                  </div>
+                )}
+
+                {/* New Images Upload */}
                 <div
                   style={dropzoneStyles}
                   onDragOver={handleDragOver}
@@ -264,19 +366,77 @@ export default function EditarProducto() {
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleFileChange}
                     disabled={submitting}
                     style={{ width: "100%" }}
                   />
                   <p style={{ marginTop: "8px", fontSize: "0.9rem" }}>
-                    Arrastra y suelta la nueva imagen o haz clic para elegirla.
+                    Arrastra y suelta nuevas imágenes o haz clic para elegirlas.
                   </p>
-                  {imageFile && (
-                    <small style={{ display: "block", marginTop: "4px" }}>
-                      Archivo: {imageFile.name}
-                    </small>
-                  )}
+                  <small style={{ display: "block", marginTop: "4px", color: "#64748b" }}>
+                    {imageFiles.length > 0 ? `${imageFiles.length} imagen(es) nueva(s) seleccionada(s)` : "Sin imágenes nuevas seleccionadas"}
+                  </small>
                 </div>
+
+                {/* New Images Preview */}
+                {imageFiles.length > 0 && (
+                  <div style={{ marginTop: "16px" }}>
+                    <small style={{ display: "block", marginBottom: "8px", color: "#64748b", fontWeight: "500" }}>
+                      Nuevas imágenes a subir:
+                    </small>
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+                      gap: "12px"
+                    }}>
+                      {imageFiles.map((file, index) => (
+                        <div key={`new-${index}`} style={{
+                          position: "relative",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                          border: "2px solid #10b981",
+                          aspectRatio: "1"
+                        }}>
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt={`Nueva imagen ${index + 1}`}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover"
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveNewImage(index)}
+                            disabled={submitting}
+                            style={{
+                              position: "absolute",
+                              top: "4px",
+                              right: "4px",
+                              background: "rgba(239, 68, 68, 0.9)",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "50%",
+                              width: "24px",
+                              height: "24px",
+                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              fontSize: "14px",
+                              fontWeight: "bold"
+                            }}
+                            title="Eliminar imagen"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </label>
             </div>
 
