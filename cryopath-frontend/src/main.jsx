@@ -54,6 +54,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/cart' element={<Cart/>} />
             <Route path='/pagos' element={<PasarelaPagos />} />
             <Route path='/conversaciones/:id' element={<Mensaje />} />
+            <Route path='/mensajes/:id' element={<Mensaje />} />
           </Routes>
         </Layout>
       </BrowserRouter>

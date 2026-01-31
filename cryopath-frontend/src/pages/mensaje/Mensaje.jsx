@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { obtenerConversacionRequest, enviarMensajeRequest } from "../../services/conversacionesApi";
+import ChatsList from "../chat-list/ChatList.jsx";
 import "./Mensaje.css";
 
 const Mensaje = () => {
   const { id } = useParams(); // id_conversacion
-  const { session, user } = useAuth();
+  const { session, user, profile } = useAuth();
   const token = session?.access_token ?? user?.token ?? "";
 
   const [conversacion, setConversacion] = useState(null);
@@ -108,14 +109,15 @@ const Mensaje = () => {
               mensajes.map((m) => {
                 
 
-                const isOwn = m.id_usuario_emisor === session?.user?.id;
-                const fecha = m.created_at
-                  ? new Date(m.created_at).toLocaleString()
+                const myId = session?.user?.id ?? profile?.id ?? null;
+                const isOwn = myId ? String(m.id_usuario_emisor) === String(myId) : false;
+                const fecha = m.fecha_envio
+                  ? new Date(m.fecha_envio).toLocaleString()
                   : "";
 
                 return (
                   <div
-                    key={m.id_mensaje ?? `${m.created_at}-${Math.random()}`}
+                    key={m.id_mensaje ?? `${m.fecha_envio}-${Math.random()}`}
                     className={`chat__row ${isOwn ? "chat__row--own" : ""}`}
                   >
                     {!isOwn && (
