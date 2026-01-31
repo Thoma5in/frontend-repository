@@ -24,6 +24,7 @@ import Cart from './pages/carrito/Cart.jsx'
 import Vender from './pages/vender/Vender.jsx'
 import Mensaje from './pages/mensaje/Mensaje.jsx'
 import Supermarket from './pages/supermarket/Supermarket.jsx'
+import PasarelaPagos from './pages/pagos/PasarelaPagos.jsx'
 
 
 
@@ -51,6 +52,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/admin/eliminar-usuarios' element={<ProtectedAdminRoute> <EliminarUsuario /> </ProtectedAdminRoute>} />
             <Route path='/admin/categorias' element={<ProtectedAdminRoute> <Categorias /> </ProtectedAdminRoute>} />
             <Route path='/cart' element={<Cart/>} />
+            <Route path='/pagos' element={<PasarelaPagos />} />
             <Route path='/conversaciones/:id' element={<Mensaje />} />
           </Routes>
         </Layout>
