@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
 import { getInventario, getInventarioByProducto } from "../../services/inventarioApi";
+import ChatList from "../chat-list/ChatList.jsx";
 
 const DESCRIPTION_WORD_LIMIT = 20;
 
@@ -564,6 +565,10 @@ export default function Home({ idSupercategoria = null }) {
                     />
                 )}
             </div>
+
+            {isAuthenticated && (
+                <ChatList />
+            )}
 
             {toast && (
                 <div

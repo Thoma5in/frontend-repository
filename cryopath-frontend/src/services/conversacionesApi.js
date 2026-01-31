@@ -30,6 +30,31 @@ export async function crearConversacionRequest({id_producto, mensaje}, token) {
     return payload;
 }
 
+  /**
+   * Listar conversaciones del usuario autenticado
+   */
+  export async function listarConversacionesRequest(token) {
+    const url = `${BASE_URL}/conversaciones`;
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      const message =
+        payload?.message ||
+        payload?.error ||
+        'No se pudieron obtener las conversaciones';
+      throw new Error(message);
+    }
+
+    return payload;
+  }
+
 export async function obtenerConversacionRequest(id_conversacion, token) {
   const response = await fetch(
     `${BASE_URL}/conversaciones/${id_conversacion}`,
