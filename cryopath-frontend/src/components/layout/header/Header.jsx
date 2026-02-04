@@ -4,10 +4,47 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { listarCategorias } from '../../../services/categoriasApi';
+import { obtenerNotificacionesRequest, 
+  marcarNotificacionLeidaRequest, 
+  marcarTodasLeidasRequest 
+} from "../../../services/notificacionesApi";
+import { buscarProductosRequest } from "../../../services/productosApi";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user, profile, logout, canManageProducts, loading, cartCount } = useAuth();
+  const { isAuthenticated, user, profile, logout, canManageProducts, loading, session, cartCount } = useAuth();
+  const authToken = session?.access_token ?? user?.token ?? ""
+
+  const getProductId = (product) => (
+    product?.id_producto ??
+    product?.id ??
+    product?.idProducto ??
+    product?.producto_id ??
+    product?.product_id
+  );
+
+  const formatNotificationDate = (raw) => {
+    if (!raw) return null;
+
+    const timestamp = typeof raw === 'number' ? raw : Date.parse(raw);
+    if (!Number.isFinite(timestamp)) return null;
+
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return null;
+
+    try {
+      return new Intl.DateTimeFormat('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date);
+    } catch {
+      return date.toLocaleString();
+    }
+  };
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -17,25 +54,32 @@ const Header = () => {
   const loginPrimaryButtonRef = useRef(null);
 
   const [notificationTab, setNotificationTab] = useState('all'); // all | unread | read
-  const [notifications, setNotifications] = useState([
-    {
-      id: 'n1',
-      title: '¡Aprovecha ahora y compra Televisores Samsung! Más de 30% de descuento en...',
-      createdLabel: 'Hace 2 horas',
-      read: false,
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const [categorias, setCategorias] = useState([]);
   const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef(null);
 
   const toggleDropDown = () => {
     setIsOpen((prev) => !prev);
   }
 
-  const markAllNotificationsAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
+  const markAllNotificationsAsRead = async () => {
+    await marcarTodasLeidasRequest(authToken);
+    setNotifications(prev => prev.map(n => ({...n, read: true})));
+    setUnreadCount(0);
+  }
+
+  const handleClickNotification = async (n) => {
+    await marcarNotificacionLeidaRequest(n.id, authToken);
+
+    navigate(`/conversaciones/${n.id_conversacion}`)
+  }
 
   const visibleNotifications = notifications.filter((n) => {
     if (notificationTab === 'unread') return !n.read;
@@ -44,7 +88,6 @@ const Header = () => {
   });
 
   const allCount = notifications.length;
-  const unreadCount = notifications.filter((n) => !n.read).length;
   const readCount = notifications.filter((n) => n.read).length;
 
   const handleVenderClick = () => {
@@ -67,6 +110,33 @@ const Header = () => {
     logout();
     navigate("/");
   }
+
+  useEffect(() => {
+    if (!isAuthenticated || !authToken) return;
+
+    const cargarNotificaciones = async () => {
+      try {
+        const data = await obtenerNotificacionesRequest(authToken);
+
+        const mapped = data.notificaciones.map((n) => ({
+          id: n.id_notificacion,
+          id_conversacion: n.id_conversacion,
+          read: Boolean(n.leido ?? n.leida),
+          createdLabel: formatNotificationDate(n.fecha ?? n.created_at) ?? 'Sin fecha',
+          title:
+          n.tipo === "pregunta."
+          ? "Tienes una nueva pregunta sobre tu producto."
+          : "Nueva notificación" ,
+        }))
+
+        setNotifications(mapped);
+        setUnreadCount(data.unreadCount);
+      } catch (error) {
+        console.error(error)
+      } 
+    }
+    cargarNotificaciones();
+  }, [isAuthenticated, authToken]);
 
   useEffect(() => {
     const handleDocumentMouseDown = (event) => {
@@ -130,6 +200,38 @@ const Header = () => {
     }
   }, [isCategoriasOpen]);
 
+  useEffect(() => {
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      setSearchResults([]);
+      return
+    }
+
+    const delay = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        const data = await buscarProductosRequest(searchTerm);
+        setSearchResults(data);
+      } catch (error) {
+        console.error('Error al buscar productos:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400)
+    return () => clearTimeout(delay);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchResults([]);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [])
+
+
   return (
     <header className="header">
       <div className="header__container">
@@ -138,15 +240,61 @@ const Header = () => {
             <img src="./img/logo-header.png" alt="Cryopath Logo" />
           </div>
 
-          <search className="header__search">
+          <search className="header__search" ref={searchRef}>
             <input
               type="text"
               className="header__search-input"
               placeholder="Busca tu proximo producto......"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  navigate(`/buscar?q=${searchTerm}`)
+                  setSearchResults([])
+                }
+              }}
             />
-            <button type="button" className="header__search-button">
+            <button type="button" className="header__search-button"
+            onClick={() => {
+              navigate(`/buscar?q=${searchTerm}`)
+              setSearchResults([])
+            }}
+            >
               <LupeIcon />
             </button>
+
+            {searchResults.length > 0 && (
+              <div className = "header__search-dropdown">
+                {searchResults.slice(0, 6).map((p) => (
+                  <div
+                  key={getProductId(p) ?? `${p?.nombre ?? 'producto'}-${p?.imagen ?? ''}`}
+                  className="header__search-item"
+                  onClick={() => {
+                    const productId = getProductId(p);
+                    if (!productId) return;
+                    navigate(`/product-details/${productId}`);
+                    setSearchTerm("");
+                    setSearchResults([]);
+                  }}
+                  >
+                    <img src={p.imagen} alt={p.nombre} />
+                    <div>
+                      <span className="title">{p.nombre}</span>
+                      <span className="price"> 
+                        ${Number(p.precio_base).toLocaleString("es-CO")}
+                        </span>
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+            )}
+
+            {isSearching && (
+              <div className="header__search-loading">
+                Buscando...
+              </div >
+            )}
           </search>
 
           {!isAuthenticated && (
@@ -233,7 +381,16 @@ const Header = () => {
                                 key={n.id}
                                 type="button"
                                 className={`header__notifications-item ${n.read ? 'is-read' : 'is-unread'}`}
-                                onClick={() => setNotifications((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
+                                onClick={async () => {
+                                  if (!n.read) {
+                                    await marcarNotificacionLeidaRequest(n.id, authToken);
+                                    setNotifications(prev => 
+                                      prev.map(x => x.id === n.id ? { ...x, read: true } : x)
+                                    )
+                                    setUnreadCount(c => Math.max(0, c - 1));
+                                  }
+                                   handleClickNotification(n)
+                                }}
                               >
                                 <span className="header__notifications-avatar" aria-hidden="true">
                                   <img src="/img/logo-header.png" alt="" />
@@ -377,7 +534,7 @@ const Header = () => {
             <button
               type="button"
               className="header__action"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/supermercado')}
             >
               Supermercado
             </button>

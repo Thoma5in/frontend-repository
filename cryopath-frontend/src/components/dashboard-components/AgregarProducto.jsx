@@ -25,7 +25,7 @@ export default function AgregarProducto() {
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const [categorias, setCategorias] = useState([]);
 
@@ -76,8 +76,8 @@ export default function AgregarProducto() {
 
 
   const handleFileChange = (event) => {
-    const file = event.target.files?.[0] || null;
-    setImageFile(file);
+    const files = Array.from(event.target.files || []);
+    setImageFiles(prev => [...prev, ...files]);
     setIsDragging(false);
   };
 
@@ -95,9 +95,13 @@ export default function AgregarProducto() {
   const handleDrop = (event) => {
     event.preventDefault();
     if (submitting) return;
-    const file = event.dataTransfer.files?.[0] || null;
-    setImageFile(file);
+    const files = Array.from(event.dataTransfer.files || []);
+    setImageFiles(prev => [...prev, ...files]);
     setIsDragging(false);
+  };
+
+  const handleRemoveImage = (index) => {
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = (event) => {
@@ -127,11 +131,14 @@ export default function AgregarProducto() {
       .then(async (created) => {
         try {
           const newId = created?.producto?.id_producto ?? created?.id_producto;
-          if (imageFile && newId) {
-            await uploadImagenProductoRequest(newId, imageFile, token);
+          if (imageFiles.length > 0 && newId) {
+            // Upload all images sequentially
+            for (const file of imageFiles) {
+              await uploadImagenProductoRequest(newId, file, token);
+            }
           }
         } catch (error) {
-          console.error("Error al subir la imagen del producto:", error);
+          console.error("Error al subir las imágenes del producto:", error);
           // Opcional: mantener el mensaje de error en pantalla sin bloquear la creación del producto
         }
         navigate("/admin");
@@ -227,7 +234,7 @@ export default function AgregarProducto() {
               </label>
 
               <label className="admin-form-field">
-                <span>Imagen del producto</span>
+                <span>Imágenes del producto</span>
                 <div
                   style={dropzoneStyles}
                   onDragOver={handleDragOver}
@@ -237,19 +244,73 @@ export default function AgregarProducto() {
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={handleFileChange}
                     disabled={submitting}
                     style={{ width: "100%" }}
                   />
                   <p style={{ marginTop: "8px", fontSize: "0.9rem" }}>
-                    Arrastra y suelta la imagen o haz clic para seleccionarla.
+                    Arrastra y suelta las imágenes o haz clic para seleccionarlas.
                   </p>
-                  {imageFile && (
-                    <small style={{ display: "block", marginTop: "4px" }}>
-                      Archivo: {imageFile.name}
-                    </small>
-                  )}
+                  <small style={{ display: "block", marginTop: "4px", color: "#64748b" }}>
+                    {imageFiles.length > 0 ? `${imageFiles.length} imagen(es) seleccionada(s)` : "Sin imágenes seleccionadas"}
+                  </small>
                 </div>
+
+                {/* Image Preview Grid */}
+                {imageFiles.length > 0 && (
+                  <div style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
+                    gap: "12px",
+                    marginTop: "16px"
+                  }}>
+                    {imageFiles.map((file, index) => (
+                      <div key={index} style={{
+                        position: "relative",
+                        borderRadius: "8px",
+                        overflow: "hidden",
+                        border: "2px solid var(--admin-border-color, #e5e7eb)",
+                        aspectRatio: "1"
+                      }}>
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Preview ${index + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover"
+                          }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(index)}
+                          disabled={submitting}
+                          style={{
+                            position: "absolute",
+                            top: "4px",
+                            right: "4px",
+                            background: "rgba(239, 68, 68, 0.9)",
+                            color: "white",
+                            border: "none",
+                            borderRadius: "50%",
+                            width: "24px",
+                            height: "24px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "14px",
+                            fontWeight: "bold"
+                          }}
+                          title="Eliminar imagen"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </label>
             </div>
 

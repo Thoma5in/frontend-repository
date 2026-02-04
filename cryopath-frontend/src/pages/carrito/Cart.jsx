@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Cart.css";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
   obtenerCarrito,
@@ -10,6 +11,7 @@ import {
 
 export default function Cart() {
   const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
+  const navigate = useNavigate();
   const token = session?.access_token;
   const userId =  profile?.id ;
 
@@ -135,6 +137,23 @@ export default function Cart() {
     .filter(item => selectedIds.has(item.id))
     .reduce((sum, item) => sum + (Number(item.precio) || 0) * item.cantidad, 0);
 
+  const handleBuy = () => {
+    const selectedItems = cart.filter(item => selectedIds.has(item.id));
+    if (selectedItems.length === 0) return;
+
+    // Persistimos para soportar refresh en /pagos
+    try {
+      sessionStorage.setItem(
+        "checkoutSelection",
+        JSON.stringify({ items: selectedItems, createdAt: Date.now() })
+      );
+    } catch {
+      // ignore storage errors
+    }
+
+    navigate("/pagos", { state: { items: selectedItems } });
+  };
+
   if (!isAuthenticated) {
     return <div className="cart-container"><p>Inicia sesión para ver tu carrito.</p></div>;
   }
@@ -238,7 +257,7 @@ export default function Cart() {
           <span>Total:</span>
           <span>${Number(total).toLocaleString()}</span>
         </div>
-        <button className="cart-buy" disabled={selectedIds.size === 0}>
+        <button className="cart-buy" disabled={selectedIds.size === 0} onClick={handleBuy}>
           Comprar
         </button>
         <p className="cart-privacy">

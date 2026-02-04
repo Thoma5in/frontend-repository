@@ -1,7 +1,7 @@
 import './DetalleProductoParte1.css';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { obtenerProductoPorIdRequest, obtenerProductosRequest, obtenerImagenProductoRequest } from '../../services/productosApi';
+import { obtenerProductoPorIdRequest, obtenerProductosRequest, obtenerImagenesProductoRequest } from '../../services/productosApi';
 import { getInventarioByProducto } from '../../services/inventarioApi';
 import { obtenerCategoriaDeProducto } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
@@ -15,7 +15,7 @@ export default function DetalleProductoParte1() {
     const [loading, setLoading] = useState(true);
     const [selectedImage, setSelectedImage] = useState(0);
     const [error, setError] = useState('');
-    const [imageUrl, setImageUrl] = useState('');
+    const [imageUrls, setImageUrls] = useState([]);
     const [categoria, setCategoria] = useState('No data');
     const [inventarioCantidad, setInventarioCantidad] = useState(null);
 
@@ -54,14 +54,19 @@ export default function DetalleProductoParte1() {
 
                 setProducto(productoData);
 
-                // Obtener imagen del producto
+                // Obtener imágenes del producto
                 try {
-                    const imgData = await obtenerImagenProductoRequest(productoData.id_producto, authToken);
-                    if (imgData?.url) {
-                        setImageUrl(imgData.url);
-                    }
+                    const imgData = await obtenerImagenesProductoRequest(productoData.id_producto, authToken);
+                    console.log('Imágenes recibidas para detalle producto:', imgData);
+                    // Backend returns array of objects with url property
+                    const images = Array.isArray(imgData) 
+                        ? imgData.map(img => (typeof img === 'string' ? img : img?.url)).filter(Boolean)
+                        : [];
+                    console.log('Imágenes procesadas para detalle producto:', images);
+                    setImageUrls(images.length > 0 ? images : []);
                 } catch (imgErr) {
-                    console.error('Error al obtener imagen:', imgErr);
+                    console.error('Error al obtener imágenes:', imgErr);
+                    setImageUrls([]);
                 }
 
                 // Obtener inventario del producto
@@ -187,7 +192,7 @@ export default function DetalleProductoParte1() {
     }
 
     // Preparar imágenes (usar placeholder si no hay)
-    const imagenes = imageUrl ? [imageUrl] : ['/img/placeholder-product.jpg'];
+    const imagenes = imageUrls.length > 0 ? imageUrls : ['/img/placeholder-product.jpg'];
 
     // Calcular precio con descuento
     const precioBase = producto.precio_base || 0;

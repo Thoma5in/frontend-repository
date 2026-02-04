@@ -22,6 +22,9 @@ import Categorias from './components/dashboard-components/categorias.jsx'
 import ProductDetails from './pages/product-detail/ProductDetail.jsx'
 import Cart from './pages/carrito/Cart.jsx'
 import Vender from './pages/vender/Vender.jsx'
+import Mensaje from './pages/mensaje/Mensaje.jsx'
+import Supermarket from './pages/supermarket/Supermarket.jsx'
+import PasarelaPagos from './pages/pagos/PasarelaPagos.jsx'
 
 
 
@@ -33,6 +36,7 @@ createRoot(document.getElementById('root')).render(
           <Routes>
             <Route path="/*" element={<Home />} />
             <Route path='/product-details/:id' element={<ProductDetails />} />
+            <Route path='/supermercado' element={<Supermarket />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
             <Route path='/login' element={<Login />} />
@@ -48,6 +52,9 @@ createRoot(document.getElementById('root')).render(
             <Route path='/admin/eliminar-usuarios' element={<ProtectedAdminRoute> <EliminarUsuario /> </ProtectedAdminRoute>} />
             <Route path='/admin/categorias' element={<ProtectedAdminRoute> <Categorias /> </ProtectedAdminRoute>} />
             <Route path='/cart' element={<Cart/>} />
+            <Route path='/pagos' element={<PasarelaPagos />} />
+            <Route path='/conversaciones/:id' element={<Mensaje />} />
+            <Route path='/mensajes/:id' element={<Mensaje />} />
           </Routes>
         </Layout>
       </BrowserRouter>

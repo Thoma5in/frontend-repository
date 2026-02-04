@@ -2,12 +2,14 @@ import './Home.css';
 import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useEffect, useRef, useState } from "react";
-import { obtenerProductosRequest, obtenerImagenProductoRequest } from "../../services/productosApi";
+import { obtenerProductosRequest, obtenerImagenesProductoRequest } from "../../services/productosApi";
 import { obtenerCategoriaDeProducto } from "../../services/categoriasApi";
+import { obtenerProductosPorSupercategoria } from "../../services/supercategoriasApi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { actualizarCantidad, agregarAlCarrito, obtenerCarrito } from "../../services/cartApi";
 import { getInventario, getInventarioByProducto } from "../../services/inventarioApi";
+import ChatList from "../chat-list/ChatList.jsx";
 
 const DESCRIPTION_WORD_LIMIT = 20;
 
@@ -21,7 +23,7 @@ function truncateWords(text, limit = DESCRIPTION_WORD_LIMIT) {
     return `${words.slice(0, limit).join(" ")}...`;
 }
 
-export default function Home() {
+export default function Home({ idSupercategoria = null }) {
     const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -148,20 +150,33 @@ export default function Home() {
         
     }, []);
 
-
     useEffect(() => {
         const fetchProductos = async () => {
             try {
-                const data = await obtenerProductosRequest(session?.access_token);
-                if (data && Array.isArray(data.productos)) {
-                    setProducts(data.productos);
-                } else if (Array.isArray(data)) {
-                    setProducts(data);
+                let productosData;
+
+                // Si hay un idSupercategoria, usar el endpoint de supercategorías
+                if (idSupercategoria) {
+                    const response = await obtenerProductosPorSupercategoria(idSupercategoria, {
+                        limit: 1000,
+                        offset: 0,
+                        estado: "activo"
+                    });
+                    productosData = response?.data || [];
                 } else {
-                    console.error("Estructura de datos inesperada:", data);
-                    // Fallback para evitar romper la UI si no hay array
-                    setProducts([]);
+                    // Comportamiento normal
+                    const data = await obtenerProductosRequest(session?.access_token);
+                    if (data && Array.isArray(data.productos)) {
+                        productosData = data.productos;
+                    } else if (Array.isArray(data)) {
+                        productosData = data;
+                    } else {
+                        console.error("Estructura de datos inesperada:", data);
+                        productosData = [];
+                    }
                 }
+
+                setProducts(productosData);
             } catch (err) {
                 console.error("Error al cargar productos en Home:", err);
                 setError("Error al cargar productos.");
@@ -170,7 +185,7 @@ export default function Home() {
             }
         };
         fetchProductos();
-    }, [session]);
+    }, [session, idSupercategoria]);
 
     useEffect(() => {
         const fetchImagenes = async () => {
@@ -182,13 +197,21 @@ export default function Home() {
                         const id = product.id_producto;
                         if (!id) return;
                         try {
-                            const data = await obtenerImagenProductoRequest(id, session?.access_token);
-                            if (data?.url) {
-                                urls[id] = data.url;
+                            const data = await obtenerImagenesProductoRequest(id, session?.access_token);
+                            console.log(`Imágenes para producto ${id}:`, data);
+                            // Backend returns array of objects with url property
+                            const images = Array.isArray(data) 
+                                ? data.map(img => (typeof img === 'string' ? img : img?.url)).filter(Boolean)
+                                : [];
+                            if (images.length > 0) {
+                                urls[id] = images[0]; // Use first image for product card
+                                console.log(`Imagen asignada para producto ${id}:`, images[0]);
+                            } else {
+                                console.log(`No se encontraron imágenes para producto ${id}`);
                             }
                         } catch (err) {
                             // Silenciar error por producto individual
-                            console.error(`Error al obtener imagen para producto ${id}:`, err);
+                            console.error(`Error al obtener imágenes para producto ${id}:`, err);
                         }
                     })
                 );
@@ -542,6 +565,10 @@ export default function Home() {
                     />
                 )}
             </div>
+
+            {isAuthenticated && (
+                <ChatList />
+            )}
 
             {toast && (
                 <div

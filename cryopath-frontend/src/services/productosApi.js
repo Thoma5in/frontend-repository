@@ -192,3 +192,95 @@ export async function obtenerImagenProductoRequest(idProducto, token) {
   return payload; // { url: string }
 }
 
+export async function obtenerImagenesProductoRequest(idProducto, token) {
+  const url = `${BASE_URL}/productos/${idProducto}/imagenes`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      payload?.message ||
+      payload?.error ||
+      'No se pudo obtener las imágenes del producto';
+    throw new Error(message);
+  }
+
+  // Handle various response formats from backend
+  // Could be: [{ url: string }], { imagenes: [...] }, { data: [...] }, etc.
+  if (Array.isArray(payload)) {
+    return payload;
+  }
+  if (payload?.imagenes && Array.isArray(payload.imagenes)) {
+    return payload.imagenes;
+  }
+  if (payload?.data && Array.isArray(payload.data)) {
+    return payload.data;
+  }
+  
+  return [];
+}
+
+export async function eliminarImagenesProductoRequest(idProducto, token) {
+  const url = `${BASE_URL}/productos/${idProducto}/imagenes`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      payload?.message ||
+      payload?.error ||
+      'No se pudieron eliminar las imágenes del producto';
+    throw new Error(message);
+  }
+
+  return payload;
+}
+
+export async function buscarProductosRequest(query) {
+  if (!query || query.trim().length < 2) return []
+
+  const url = `${BASE_URL}/productos/buscar?q=${encodeURIComponent(query)}`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const payload = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const message = 
+    payload?.message || payload?.error || 'No se pudo buscar los productos'
+    throw new Error(message)
+  }
+
+  return payload
+}
