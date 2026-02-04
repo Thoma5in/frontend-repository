@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import './VendedorProducto.css';
 
-const VendedorProducto = () => {
+const VendedorProducto = ({ onNavigate }) => {
 	const quickActions = useMemo(
 		() => [
 			{ label: 'Nuevo Producto', icon: '+', tone: 'blue' },
@@ -86,13 +86,25 @@ const VendedorProducto = () => {
 		return 'vp-action__icon';
 	};
 
+	const handleActionClick = (label) => {
+		if (label === 'Crear Oferta' && onNavigate) {
+			onNavigate('descuentos');
+		}
+	};
+
 	return (
 		<div className="vp">
 			<section className="vp-card" aria-label="Acciones rápidas">
 				<h2 className="vp-title">Acciones Rapidas</h2>
 				<div className="vp-actions" role="list">
 					{quickActions.map((a) => (
-						<button key={a.label} type="button" className="vp-action" role="listitem">
+						<button 
+							key={a.label} 
+							type="button" 
+							className="vp-action" 
+							role="listitem"
+							onClick={() => handleActionClick(a.label)}
+						>
 							<span className={actionIconClass(a.tone)} aria-hidden="true">
 								{a.icon}
 							</span>
