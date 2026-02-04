@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import VenderSidebar from '../../components/vendedor-producto/VenderSidebar';
 import VenderDashboard from '../../components/vendedor-producto/VenderDashboard';
 import VendedorProducto from '../../components/vendedor-producto/VendedorProducto';
+import VendedorDescuento from '../../components/vendedor-descuento/VendedorDescuento';
 
 const Vender = () => {
   const { profile, user } = useAuth();
@@ -26,7 +27,9 @@ const Vender = () => {
 
           {activeSection === 'dashboard' && <VenderDashboard />}
 
-          {activeSection === 'productos' && <VendedorProducto />}
+          {activeSection === 'productos' && <VendedorProducto onNavigate={setActiveSection} />}
+
+          {activeSection === 'descuentos' && <VendedorDescuento onNavigate={setActiveSection} />}
 
           {activeSection === 'pedidos' && (
             <div className="vender-placeholder">Vista pendiente.</div>
