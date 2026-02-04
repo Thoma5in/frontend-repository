@@ -115,6 +115,8 @@ const Mensaje = () => {
                   ? new Date(m.fecha_envio).toLocaleString()
                   : "";
 
+                const isRead = Boolean(m.leido);
+
                 return (
                   <div
                     key={m.id_mensaje ?? `${m.fecha_envio}-${Math.random()}`}
@@ -147,10 +149,45 @@ const Mensaje = () => {
                     )}
 
                     <div
-                      className={`chat__bubble ${isOwn ? "chat__bubble--own" : ""}`}
+                      className={`chat__bubble ${isOwn ? "chat__bubble--own" : ""} ${m.leido === false && !isOwn ? "chat__bubble--unread" : ""}`}
                     >
                       <p className="chat__text">{m.contenido}</p>
-                      {fecha && <span className="chat__time">{fecha}</span>}
+                      {fecha && (
+                        <span className="chat__meta">
+                          <span className="chat__time">{fecha}</span>
+                          {isOwn && (
+                            <span
+                              className={`chat__ticks ${isRead ? "chat__ticks--read" : "chat__ticks--unread"}`}
+                              aria-label={isRead ? "Leído" : "No leído"}
+                              title={isRead ? "Leído" : "No leído"}
+                            >
+                              <svg
+                                width="16"
+                                height="12"
+                                viewBox="0 0 16 12"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M1 6.5L4.5 10L9.5 1"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                                <path
+                                  d="M6.5 6.5L10 10L15 1"
+                                  stroke="currentColor"
+                                  strokeWidth="1.8"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </span>
+                          )}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );
