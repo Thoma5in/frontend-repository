@@ -13,6 +13,29 @@ const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, profile, logout, canManageProducts, loading, session, cartCount } = useAuth();
   const authToken = session?.access_token ?? user?.token ?? ""
+
+  const formatNotificationDate = (raw) => {
+    if (!raw) return null;
+
+    const timestamp = typeof raw === 'number' ? raw : Date.parse(raw);
+    if (!Number.isFinite(timestamp)) return null;
+
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return null;
+
+    try {
+      return new Intl.DateTimeFormat('es-ES', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date);
+    } catch {
+      return date.toLocaleString();
+    }
+  };
+
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -84,8 +107,8 @@ const Header = () => {
         const mapped = data.notificaciones.map((n) => ({
           id: n.id_notificacion,
           id_conversacion: n.id_conversacion,
-          read: n.leida,
-          createdLabel: new Date(n.created_at).toLocaleString(),
+          read: Boolean(n.leido ?? n.leida),
+          createdLabel: formatNotificationDate(n.fecha ?? n.created_at) ?? 'Sin fecha',
           title:
           n.tipo === "pregunta."
           ? "Tienes una nueva pregunta sobre tu producto."

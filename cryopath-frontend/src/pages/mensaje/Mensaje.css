@@ -161,6 +161,11 @@
 	color: #ffffff;
 }
 
+.chat__bubble--unread {
+  background-color: #eef2ff;
+  border-left: 3px solid #4f46e5;
+}
+
 .chat__text {
 	margin: 0;
 	font-size: 13px;
@@ -169,10 +174,40 @@
 }
 
 .chat__time {
-	display: block;
-	margin-top: 6px;
+	display: inline;
 	font-size: 11px;
 	opacity: 0.7;
+}
+
+.chat__meta {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 6px;
+	margin-top: 6px;
+	width: 100%;
+}
+
+.chat__ticks {
+	display: inline-flex;
+	align-items: center;
+	line-height: 1;
+}
+
+.chat__ticks--unread {
+	color: rgba(100, 116, 139, 0.9);
+}
+
+.chat__ticks--read {
+	color: #38bdf8;
+}
+
+.chat__bubble--own .chat__time {
+	opacity: 0.75;
+}
+
+.chat__bubble--own .chat__ticks--unread {
+	color: rgba(203, 213, 225, 0.95);
 }
 
 .chat__composer {
