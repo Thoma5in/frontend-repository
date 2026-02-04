@@ -13,6 +13,19 @@ export const obtenerPromociones = async () => {
 	}
 };
 
+export const obtenerPromocionesConCategorias = async () => {
+	try {
+		const response = await fetch(`${API_URL}/promociones/con-categorias`);
+		if (!response.ok) {
+			throw new Error('Error al obtener promociones con categorías');
+		}
+		return await response.json();
+	} catch (error) {
+		console.error('Error en obtenerPromocionesConCategorias:', error);
+		throw error;
+	}
+};
+
 export const crearPromocion = async (data, token) => {
 	try {
 		const response = await fetch(`${API_URL}/promociones`, {
