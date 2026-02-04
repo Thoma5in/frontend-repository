@@ -8,11 +8,20 @@ import { obtenerNotificacionesRequest,
   marcarNotificacionLeidaRequest, 
   marcarTodasLeidasRequest 
 } from "../../../services/notificacionesApi";
+import { buscarProductosRequest } from "../../../services/productosApi";
 
 const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, profile, logout, canManageProducts, loading, session, cartCount } = useAuth();
   const authToken = session?.access_token ?? user?.token ?? ""
+
+  const getProductId = (product) => (
+    product?.id_producto ??
+    product?.id ??
+    product?.idProducto ??
+    product?.producto_id ??
+    product?.product_id
+  );
 
   const formatNotificationDate = (raw) => {
     if (!raw) return null;
@@ -50,6 +59,11 @@ const Header = () => {
 
   const [categorias, setCategorias] = useState([]);
   const [isCategoriasOpen, setIsCategoriasOpen] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchRef = useRef(null);
 
   const toggleDropDown = () => {
     setIsOpen((prev) => !prev);
@@ -186,6 +200,37 @@ const Header = () => {
     }
   }, [isCategoriasOpen]);
 
+  useEffect(() => {
+    if (!searchTerm || searchTerm.trim().length < 2) {
+      setSearchResults([]);
+      return
+    }
+
+    const delay = setTimeout(async () => {
+      try {
+        setIsSearching(true);
+        const data = await buscarProductosRequest(searchTerm);
+        setSearchResults(data);
+      } catch (error) {
+        console.error('Error al buscar productos:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 400)
+    return () => clearTimeout(delay);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchResults([]);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [])
+
 
   return (
     <header className="header">
@@ -195,15 +240,61 @@ const Header = () => {
             <img src="./img/logo-header.png" alt="Cryopath Logo" />
           </div>
 
-          <search className="header__search">
+          <search className="header__search" ref={searchRef}>
             <input
               type="text"
               className="header__search-input"
               placeholder="Busca tu proximo producto......"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  navigate(`/buscar?q=${searchTerm}`)
+                  setSearchResults([])
+                }
+              }}
             />
-            <button type="button" className="header__search-button">
+            <button type="button" className="header__search-button"
+            onClick={() => {
+              navigate(`/buscar?q=${searchTerm}`)
+              setSearchResults([])
+            }}
+            >
               <LupeIcon />
             </button>
+
+            {searchResults.length > 0 && (
+              <div className = "header__search-dropdown">
+                {searchResults.slice(0, 6).map((p) => (
+                  <div
+                  key={getProductId(p) ?? `${p?.nombre ?? 'producto'}-${p?.imagen ?? ''}`}
+                  className="header__search-item"
+                  onClick={() => {
+                    const productId = getProductId(p);
+                    if (!productId) return;
+                    navigate(`/product-details/${productId}`);
+                    setSearchTerm("");
+                    setSearchResults([]);
+                  }}
+                  >
+                    <img src={p.imagen} alt={p.nombre} />
+                    <div>
+                      <span className="title">{p.nombre}</span>
+                      <span className="price"> 
+                        ${Number(p.precio_base).toLocaleString("es-CO")}
+                        </span>
+                    </div>
+                  </div>
+                ))}
+
+              </div>
+            )}
+
+            {isSearching && (
+              <div className="header__search-loading">
+                Buscando...
+              </div >
+            )}
           </search>
 
           {!isAuthenticated && (

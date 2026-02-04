@@ -262,3 +262,25 @@ export async function eliminarImagenesProductoRequest(idProducto, token) {
   return payload;
 }
 
+export async function buscarProductosRequest(query) {
+  if (!query || query.trim().length < 2) return []
+
+  const url = `${BASE_URL}/productos/buscar?q=${encodeURIComponent(query)}`
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const payload = await response.json().catch(() => null)
+
+  if (!response.ok) {
+    const message = 
+    payload?.message || payload?.error || 'No se pudo buscar los productos'
+    throw new Error(message)
+  }
+
+  return payload
+}
