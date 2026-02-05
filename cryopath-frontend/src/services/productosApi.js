@@ -284,3 +284,43 @@ export async function buscarProductosRequest(query) {
 
   return payload
 }
+
+export async function obtenerProductosRelacionadosRequest(idProducto, { limit = 10 } = {}, token) {
+  if (!idProducto) throw new Error('idProducto es requerido para obtener relacionados');
+
+  const params = new URLSearchParams();
+  if (limit && Number.isFinite(limit)) {
+    params.set('limit', String(limit));
+  }
+
+  const url = `${BASE_URL}/productos/${idProducto}/relacionados${params.toString() ? `?${params.toString()}` : ''}`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers,
+  });
+
+  const payload = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message = payload?.message || payload?.error || 'No se pudo obtener los productos relacionados';
+    throw new Error(message);
+  }
+
+  // Permitir distintos formatos desde backend: { data: [...] } o [...]
+  if (Array.isArray(payload)) return payload;
+  if (payload?.data && Array.isArray(payload.data)) return payload.data;
+
+  return [];
+}
+
+// Deprecado: mantener compatibilidad temporal con nombre anterior
+export const obtenerProductosRecomendadosRequest = obtenerProductosRelacionadosRequest;
