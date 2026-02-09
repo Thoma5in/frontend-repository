@@ -5,6 +5,7 @@ import VenderSidebar from '../../components/vendedor-producto/VenderSidebar';
 import VenderDashboard from '../../components/vendedor-producto/VenderDashboard';
 import VendedorProducto from '../../components/vendedor-producto/VendedorProducto';
 import VendedorDescuento from '../../components/vendedor-descuento/VendedorDescuento';
+import VendedorAgregarProducto from '../../components/vendedor-producto/VendedorAgregarProducto';
 import { obtenerPromocionesConCategorias, obtenerPromocionesConProductos } from '../../services/promocionesApi';
 
 const Vender = () => {
@@ -206,6 +207,10 @@ const Vender = () => {
                 )}
               </div>
             </div>
+          )}
+
+          {activeSection === 'nuevo-producto' && (
+            <VendedorAgregarProducto onNavigate={setActiveSection} />
           )}
 
           {activeSection === 'descuentos' && <VendedorDescuento onNavigate={setActiveSection} />}

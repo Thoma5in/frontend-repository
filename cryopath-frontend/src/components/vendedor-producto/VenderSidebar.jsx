@@ -1,8 +1,9 @@
 import './VenderSidebar.css';
 
 const VenderSidebar = ({ activeSection, onSectionChange }) => {
+  const effectiveSection = activeSection === 'nuevo-producto' ? 'productos' : activeSection;
   const navButtonClass = (key) =>
-    key === activeSection ? 'vender-nav__item vender-nav__item--active' : 'vender-nav__item';
+    key === effectiveSection ? 'vender-nav__item vender-nav__item--active' : 'vender-nav__item';
 
   return (
     <aside className="vender-sidebar" aria-label="Panel de Ventas">
