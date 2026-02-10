@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { listarCategorias } from '../../services/categoriasApi';
 import { obtenerProductosRequest } from '../../services/productosApi';
-import { crearPromocion } from '../../services/promocionesApi';
+import { crearPromocion, crearPromocionProductos } from '../../services/promocionesApi';
 import './VendedorDescuento.css';
 
 const VendedorDescuento = ({ onNavigate }) => {
@@ -148,8 +148,14 @@ const VendedorDescuento = ({ onNavigate }) => {
 			if (discountType === 'categoria') {
 				promotionData.id_categorias = [formData.selectedCategory];
 			}
+			if (discountType === 'productos') {
+				promotionData.id_productos = formData.selectedProducts;
+			}
 
-			const response = await crearPromocion(promotionData, user?.token);
+			const response =
+				discountType === 'productos'
+					? await crearPromocionProductos(promotionData, user?.token)
+					: await crearPromocion(promotionData, user?.token);
 			console.log('Promoción creada exitosamente:', response);
 
 			setError(null);

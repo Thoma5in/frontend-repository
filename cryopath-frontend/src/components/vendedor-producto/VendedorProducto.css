@@ -105,6 +105,16 @@
 	overflow-x: auto;
 }
 
+.vp-state {
+	padding: 16px;
+	color: #6b7280;
+	font-weight: 700;
+}
+
+.vp-state--error {
+	color: #b91c1c;
+}
+
 .vp-table {
 	width: 100%;
 	border-collapse: collapse;
