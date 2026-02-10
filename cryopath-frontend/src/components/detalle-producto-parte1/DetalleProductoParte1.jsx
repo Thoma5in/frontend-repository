@@ -18,6 +18,7 @@ export default function DetalleProductoParte1() {
     const [imageUrls, setImageUrls] = useState([]);
     const [categoria, setCategoria] = useState('No data');
     const [inventarioCantidad, setInventarioCantidad] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const authToken = session?.access_token ?? user?.token ?? '';
 
@@ -112,6 +113,13 @@ export default function DetalleProductoParte1() {
         setToast({ message, type });
         window.setTimeout(() => setToast(null), 2500);
     };
+
+    const openImageModal = (index) => {
+        setSelectedImage(index);
+        setIsModalOpen(true);
+    };
+
+    const closeImageModal = () => setIsModalOpen(false);
 
     const handleAddToCart = async () => {
         try {
@@ -220,6 +228,7 @@ export default function DetalleProductoParte1() {
                         <img 
                             src={imagenes[selectedImage]} 
                             alt={producto.nombre}
+                                onClick={() => openImageModal(selectedImage)}
                             onError={(e) => {
                                 e.target.src = '/img/placeholder-product.jpg';
                             }}
@@ -230,7 +239,7 @@ export default function DetalleProductoParte1() {
                             <div 
                                 key={index}
                                 className={`thumbnail ${selectedImage === index ? 'active' : ''}`}
-                                onClick={() => setSelectedImage(index)}
+                                    onClick={() => openImageModal(index)}
                             >
                                 <img 
                                     src={img} 
@@ -351,6 +360,21 @@ export default function DetalleProductoParte1() {
                     </div>
                 </div>
             </div>
+            {isModalOpen && (
+                <div className="image-modal-overlay" onClick={closeImageModal}>
+                    <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <button className="image-modal-close" onClick={closeImageModal} aria-label="Cerrar imagen">×</button>
+                        <img
+                            className="image-modal-image"
+                            src={imagenes[selectedImage]}
+                            alt={producto.nombre}
+                            onError={(e) => {
+                                e.target.src = '/img/placeholder-product.jpg';
+                            }}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
