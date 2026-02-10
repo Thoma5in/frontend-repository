@@ -1,8 +1,8 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
 
-export const obtenerPromociones = async () => {
+export const obtenerPromociones = async ({ signal } = {}) => {
 	try {
-		const response = await fetch(`${API_URL}/promociones`);
+		const response = await fetch(`${API_URL}/promociones`, { signal });
 		if (!response.ok) {
 			throw new Error('Error al obtener promociones');
 		}
@@ -13,9 +13,9 @@ export const obtenerPromociones = async () => {
 	}
 };
 
-export const obtenerPromocionesConCategorias = async () => {
+export const obtenerPromocionesConCategorias = async ({ signal } = {}) => {
 	try {
-		const response = await fetch(`${API_URL}/promociones/con-categorias`);
+		const response = await fetch(`${API_URL}/promociones/con-categorias`, { signal });
 		if (!response.ok) {
 			throw new Error('Error al obtener promociones con categorías');
 		}
@@ -26,9 +26,9 @@ export const obtenerPromocionesConCategorias = async () => {
 	}
 };
 
-export const obtenerPromocionesConProductos = async () => {
+export const obtenerPromocionesConProductos = async ({ signal } = {}) => {
 	try {
-		const response = await fetch(`${API_URL}/promociones/con-productos`);
+		const response = await fetch(`${API_URL}/promociones/con-productos`, { signal });
 		if (!response.ok) {
 			throw new Error('Error al obtener promociones con productos');
 		}
