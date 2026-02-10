@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './DetalleProductoParte4.css';
 import {useAuth} from "../../context/AuthContext.jsx";
 import { crearConversacionRequest } from '../../services/conversacionesApi.js';
@@ -6,10 +6,25 @@ import { crearConversacionRequest } from '../../services/conversacionesApi.js';
 const DetalleProductoParte4 = ({idProducto}) => {
     const [question, setQuestion] = useState('');
     const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState(null);
+    const toastTimerRef = useRef(null);
+    const [selfConversationError, setSelfConversationError] = useState(false);
     const {session, user, profile} = useAuth();
 
     const authToken = session?.access_token ?? user?.token ?? ""
 
+
+    const showToast = (message) => {
+        setToast(message);
+        if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+        toastTimerRef.current = window.setTimeout(() => setToast(null), 2200);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+        };
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,9 +48,15 @@ const DetalleProductoParte4 = ({idProducto}) => {
             )
 
             setQuestion('');
+            showToast("Mensaje enviado correctamente");
         } catch (error) {
             console.error(error);
-            alert((error.message))
+            const msg = error?.message || "Ocurrió un error";
+            if (msg.toLowerCase().includes("no puedes iniciar una conversación contigo mismo")) {
+                setSelfConversationError(true);
+            } else {
+                alert(msg);
+            }
         } finally {
             setLoading(false);
         }
@@ -65,6 +86,27 @@ const DetalleProductoParte4 = ({idProducto}) => {
                     {loading ? 'Enviando...' : 'Enviar'}
                 </button>
             </form>
+
+            {toast && (
+                <p className="dp4__toast" role="status" aria-live="polite">
+                    {toast}
+                </p>
+            )}
+
+            {selfConversationError && (
+                <div className="dp4__modalOverlay" role="dialog" aria-modal="true" aria-label="Aviso">
+                    <div className="dp4__modal">
+                        <p className="dp4__modalText">No puedes iniciar una conversación contigo mismo.</p>
+                        <button
+                            type="button"
+                            className="dp4__modalButton"
+                            onClick={() => setSelfConversationError(false)}
+                        >
+                            Entendido
+                        </button>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };
