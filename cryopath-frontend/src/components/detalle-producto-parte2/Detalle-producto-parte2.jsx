@@ -1,13 +1,12 @@
 import { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './detalle-producto-parte2.css';
-import { obtenerProductosRelacionadosRequest } from '../../services/productosApi';
 
-const DetalleProductoParte2 = ({ idProducto, limit = 10, token }) => {
+const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
     const scrollContainerRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
-    const [productos, setProductos] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const checkScroll = () => {
         if (scrollContainerRef.current) {
@@ -16,29 +15,6 @@ const DetalleProductoParte2 = ({ idProducto, limit = 10, token }) => {
             setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
         }
     };
-
-    useEffect(() => {
-        // Cargar productos relacionados desde la API cuando cambie idProducto/limit/token
-        let isMounted = true;
-        async function loadRelacionados() {
-            if (!idProducto) return;
-            setLoading(true);
-            try {
-                const relacionados = await obtenerProductosRelacionadosRequest(idProducto, { limit }, token);
-                if (isMounted) {
-                    setProductos(Array.isArray(relacionados) ? relacionados : []);
-                }
-            } catch (err) {
-                console.error('Error cargando productos relacionados:', err);
-                if (isMounted) setProductos([]);
-            } finally {
-                if (isMounted) setLoading(false);
-                setTimeout(() => checkScroll(), 100);
-            }
-        }
-        loadRelacionados();
-        return () => { isMounted = false; };
-    }, [idProducto, limit, token]);
 
     useEffect(() => {
         // Verificar scroll inicial después de que el componente se monte o cambien productos
@@ -77,6 +53,12 @@ const DetalleProductoParte2 = ({ idProducto, limit = 10, token }) => {
         }
     };
 
+    const handleProductoClick = (idProducto) => {
+        if (idProducto) {
+            navigate(`/producto/${idProducto}`);
+        }
+    };
+
     return (
         <div className="productos-relacionados-container">
             <div className="productos-relacionados-header">
@@ -110,7 +92,7 @@ const DetalleProductoParte2 = ({ idProducto, limit = 10, token }) => {
                     )}
 
                     {productos.map((producto, index) => (
-                        <div key={index} className="producto-card">
+                        <div key={index} className="producto-card" onClick={() => handleProductoClick(producto.id)}>
                             <div className="producto-card-inner">
                                 <div className="producto-image-container">
                                     <div className="producto-badge">{producto.marca || 'Marca'}</div>

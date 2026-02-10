@@ -315,8 +315,9 @@ export async function obtenerProductosRelacionadosRequest(idProducto, { limit = 
     throw new Error(message);
   }
 
-  // Permitir distintos formatos desde backend: { data: [...] } o [...]
+  // Manejar la estructura del backend: { productos: [...] }
   if (Array.isArray(payload)) return payload;
+  if (payload?.productos && Array.isArray(payload.productos)) return payload.productos;
   if (payload?.data && Array.isArray(payload.data)) return payload.data;
 
   return [];

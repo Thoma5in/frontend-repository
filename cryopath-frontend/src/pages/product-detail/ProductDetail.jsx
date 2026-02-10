@@ -20,19 +20,29 @@ const ProductDetail = () => {
         async function load() {
             try {
                 setLoadingRec(true)
+                console.log('🔍 Cargando productos relacionados para idProducto:', idProducto)
                 const data = await obtenerProductosRelacionadosRequest(idProducto, { limit: 10 })
+                console.log('📦 Respuesta de productos relacionados:', data)
                 if (!mounted) return
+                
+                // La API ya devuelve un array normalizado
+                const productos = Array.isArray(data) ? data : []
+                console.log('✅ Productos a mostrar:', productos)
+                
                 // Normalizar al formato esperado por el componente
-                const normalized = (Array.isArray(data) ? data : []).map(p => ({
+                const normalized = productos.map(p => ({
+                    id: p.id_producto,
                     nombre: p.nombre,
-                    precioActual: p.precio_base ?? p.precio ?? null,
-                    precioOriginal: p.precio_base ?? p.precio ?? null,
-                    descuento: null,
-                    marca: p.marca ?? 'Marca',
-                    imagen: p.imagen ?? (Array.isArray(p.imagenes) ? p.imagenes[0] : null),
+                    precioActual: p.precio_base ?? p.precioActual ?? null,
+                    precioOriginal: p.precio_base ?? p.precioOriginal ?? null,
+                    descuento: p.descuento ?? null,
+                    marca: p.marca ?? '',
+                    imagen: p.imagen ?? null,
                 }))
+                console.log('🎯 Productos normalizados:', normalized)
                 setRecomendados(normalized)
             } catch (e) {
+                console.error('❌ Error cargando productos relacionados:', e)
                 setRecomendados([])
             } finally {
                 if (mounted) setLoadingRec(false)
