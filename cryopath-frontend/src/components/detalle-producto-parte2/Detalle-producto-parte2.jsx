@@ -1,12 +1,19 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './detalle-producto-parte2.css';
+import { agregarAlCarrito } from '../../services/cartApi';
+import { useAuth } from '../../context/AuthContext';
 
 const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
     const scrollContainerRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const [agregando, setAgregando] = useState(null); // id del producto que se está agregando
     const navigate = useNavigate();
+    const { session, profile, refreshCartCount } = useAuth();
+
+    const token = session?.access_token;
+    const userId = profile?.id;
 
     const checkScroll = () => {
         if (scrollContainerRef.current) {
@@ -56,6 +63,30 @@ const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
     const handleProductoClick = (idProducto) => {
         if (idProducto) {
             navigate(`/producto/${idProducto}`);
+        }
+    };
+
+    const handleAgregarCarrito = async (e, producto) => {
+        e.stopPropagation(); // Evitar que el click navegue al detalle
+        
+        if (!token || !userId) {
+            navigate('/login');
+            return;
+        }
+
+        try {
+            setAgregando(producto.id);
+            await agregarAlCarrito(token, userId, {
+                id_producto: producto.id,
+                cantidad: 1
+            });
+            await refreshCartCount();
+            alert('Producto agregado al carrito');
+        } catch (error) {
+            console.error('Error al agregar al carrito:', error);
+            alert(error.message || 'Error al agregar al carrito');
+        } finally {
+            setAgregando(null);
         }
     };
 
@@ -122,6 +153,13 @@ const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
                                             <span className="descuento-badge">{producto.descuento}% OFF</span>
                                         )}
                                     </div>
+                                    <button 
+                                        className="agregar-carrito-button" 
+                                        onClick={(e) => handleAgregarCarrito(e, producto)}
+                                        disabled={agregando === producto.id}
+                                    >
+                                        {agregando === producto.id ? 'Agregando...' : 'Agregar al carrito'}
+                                    </button>
                                 </div>
                             </div>
                         </div>

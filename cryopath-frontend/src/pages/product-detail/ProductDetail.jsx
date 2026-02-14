@@ -58,7 +58,7 @@ const ProductDetail = () => {
             <DetalleProductoParte2 productos={recomendados} loading={loadingRec} />
             <DetalleProductoParte3 />
             <DetalleProductoParte4 idProducto={idProducto} />
-            <DetalleProductoParte5 />
+            <DetalleProductoParte5 idProducto={idProducto} />
         </div>
     )
 }
