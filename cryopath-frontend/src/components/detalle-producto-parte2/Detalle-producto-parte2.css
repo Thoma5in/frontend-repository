@@ -213,6 +213,7 @@
     align-items: center;
     gap: 0.75rem;
     flex-wrap: wrap;
+    margin-bottom: 0.75rem;
 }
 
 .precio-original {
@@ -237,6 +238,38 @@
     padding: 4px 10px;
     border-radius: 6px;
     letter-spacing: 0.3px;
+}
+
+/* Botón Agregar al carrito */
+.agregar-carrito-button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0.5rem;
+}
+
+.agregar-carrito-button:hover {
+    background: linear-gradient(135deg, #ee5a6f 0%, #d94a5f 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.agregar-carrito-button:active {
+    transform: translateY(0);
+}
+
+.agregar-carrito-button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Botón de navegación */
