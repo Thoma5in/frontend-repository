@@ -187,7 +187,59 @@ export default function DetalleProductoParte1() {
     };
 
     if (loading) {
-        return <div className="product-detail-loading">Cargando producto...</div>;
+        return (
+            <div className="product-detail-container">
+                <div className="product-detail-content product-detail-skeleton">
+                    <div className="product-images-section">
+                        <div className="product-main-image product-skeleton-block" />
+                        <div className="product-thumbnails">
+                            {Array.from({ length: 4 }, (_, index) => (
+                                <div
+                                    key={`thumb-skeleton-${index}`}
+                                    className="thumbnail product-skeleton-block"
+                                    aria-hidden="true"
+                                />
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="product-info-section">
+                        <div className="product-skeleton-line product-skeleton-line--title" />
+                        <div className="product-skeleton-row">
+                            <div className="product-skeleton-line product-skeleton-line--xs" />
+                            <div className="product-skeleton-line product-skeleton-line--sm" />
+                            <div className="product-skeleton-line product-skeleton-line--md" />
+                        </div>
+
+                        <div className="product-skeleton-pricing">
+                            <div className="product-skeleton-line product-skeleton-line--price" />
+                            <div className="product-skeleton-line product-skeleton-line--pill" />
+                        </div>
+
+                        <div className="product-skeleton-card">
+                            <div className="product-skeleton-line product-skeleton-line--card-title" />
+                            <div className="product-skeleton-line" />
+                            <div className="product-skeleton-line product-skeleton-line--md" />
+                            <div className="product-skeleton-line product-skeleton-line--sm" />
+                            <div className="product-skeleton-line product-skeleton-line--lg" />
+                        </div>
+
+                        <div className="product-skeleton-card product-skeleton-card--seller">
+                            <div className="product-skeleton-line product-skeleton-line--card-title" />
+                            <div className="product-skeleton-line product-skeleton-line--lg" />
+                            <div className="product-skeleton-line product-skeleton-line--md" />
+                            <div className="product-skeleton-line product-skeleton-line--sm" />
+                        </div>
+
+                        <div className="product-skeleton-actions">
+                            <div className="product-skeleton-card product-skeleton-card--shipping" />
+                            <div className="product-skeleton-button" />
+                            <div className="product-skeleton-button" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (error || !producto) {

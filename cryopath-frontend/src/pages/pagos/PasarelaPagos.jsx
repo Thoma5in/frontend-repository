@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import {useAuth} from "../../context/AuthContext";
+import { crearOrdenRequest } from "../../services/ordenApi";
+import { crearPedidoYPagoRequest } from "../../services/pagosApis";
 import "./PasarelaPagos.css";
 
 const formatCOP = (value) => {
@@ -16,7 +19,11 @@ export default function PasarelaPagos() {
 	const navigate = useNavigate();
 
 	const [items, setItems] = useState([]);
+	const {session, profile} = useAuth();
+	const token = session?.access_token;
+	const userId = profile?.id;
 
+	
 	// UI states (prototipo)
 	const [selectedPayment, setSelectedPayment] = useState("visa");
 	const [couponCode, setCouponCode] = useState("CUPON2025");
@@ -96,10 +103,42 @@ export default function PasarelaPagos() {
 		);
 	};
 
-	const confirmPurchase = () => {
-		// Prototipo: aquí iría la integración real con pagos/orden.
-		alert("Compra confirmada (prototipo)");
-		navigate("/cart");
+	const confirmPurchase = async () => {
+		try {
+			if (!items.length ) return
+
+			//Crear orden interna pendiente 
+			const ordenPayload = {
+				userId,
+				total,
+				items : items.map(item => ({
+					productoId: item.id_producto,
+					cantidad: item.cantidad,
+					precio: item.precio,
+				})),
+			}
+
+			const ordenResponse = await crearOrdenRequest(ordenPayload, token);	
+
+			const idOrden = ordenResponse.id_orden;
+
+			if (!idOrden) {
+				throw new Error("No se pudo crear la orden");
+			}
+
+			//Crear orden en Paypal
+			const payPalResponse = await crearPedidoYPagoRequest(idOrden, token);
+
+			if (!payPalResponse.approveUrl) {
+				throw new Error("No se pudo crear el pedido de PayPal");
+			}
+
+			//Redirigir a PayPal
+			window.location.href = payPalResponse.approveUrl;
+
+		} catch (error) {
+			alert(error.message || "Error al procesar el pago. Intenta de nuevo.");
+		}
 	};
 
 	return (
