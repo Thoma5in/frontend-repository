@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001' || import.meta.env.VITE_AUTH_API;
+const BASE_URL = import.meta.env.VITE_AUTH_API || 'http://localhost:3001';
 
 export async function getCurrentUsuario(token) {
   if (!token) {
