@@ -1,5 +1,5 @@
 export async function loginRequest(email, password) {
-  const response = await fetch('http://localhost:3001/auth/login' || import.meta.env.VITE_AUTH_API + '/auth/login', {
+  const response = await fetch('http://localhost:3001/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,7 +17,7 @@ export async function loginRequest(email, password) {
 }
 
 export async function registerRequest(payload) {
-  const response = await fetch('http://localhost:3001/auth/register' || import.meta.env.VITE_AUTH_API + '/auth/register', {
+  const response = await fetch('http://localhost:3001/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
