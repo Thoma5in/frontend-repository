@@ -108,7 +108,7 @@ export async function reactivateAccount(correo) {
 }
 
 export async function getUserRoles(token) {
-  const response = await fetch('http://localhost:3001/usuarios/roles', {
+  const response = await fetch('http://localhost:3001/usuarios/roles' || import.meta.env.VITE_AUTH_API + "/usuarios/roles", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
