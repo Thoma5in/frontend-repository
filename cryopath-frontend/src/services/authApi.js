@@ -1,5 +1,8 @@
+const BASE_URL = import.meta.env.VITE_AUTH_API || 'http://localhost:3001';
+
+
 export async function loginRequest(email, password) {
-  const response = await fetch('http://localhost:3001/auth/login', {
+  const response = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -9,7 +12,7 @@ export async function loginRequest(email, password) {
 
   if (!response.ok) {
     const errorJson = await response.json().catch(() => null);
-    const errorMessage = errorJson?.message ;
+    const errorMessage = errorJson?.message || errorJson?.error || 'Error al iniciar sesión';
     throw new Error(errorMessage);
   }
 
@@ -17,7 +20,7 @@ export async function loginRequest(email, password) {
 }
 
 export async function registerRequest(payload) {
-  const response = await fetch('http://localhost:3001/auth/register', {
+  const response = await fetch(`${BASE_URL}/auth/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
