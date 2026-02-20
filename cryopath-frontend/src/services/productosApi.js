@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_PRODUCTS_API_|| 'http://localhost:3002';
+const BASE_URL = import.meta.env.VITE_PRODUCTS_API || 'http://localhost:3002';
 
 export async function crearProductoRequest(producto, token) {
   const url = `${BASE_URL}/productos`;
