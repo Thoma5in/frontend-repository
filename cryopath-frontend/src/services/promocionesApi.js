@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3002';
+const API_URL = import.meta.env.VITE_PRODUCTS_API || 'http://localhost:3002';
 
 export const obtenerPromociones = async ({ signal } = {}) => {
 	try {
