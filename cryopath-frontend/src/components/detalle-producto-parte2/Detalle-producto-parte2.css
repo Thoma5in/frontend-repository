@@ -4,7 +4,7 @@
     padding: 3rem 0;
  
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    background: #ffffff;
+    background: var(--bg-card);
 }
 
 /* Header de la sección */
@@ -17,7 +17,7 @@
 .productos-relacionados-title {
     font-size: 1.75rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin: 0;
     letter-spacing: -0.5px;
     position: relative;
@@ -69,10 +69,10 @@
     flex: 0 0 280px;
     /* Ancho fijo para cada tarjeta */
     min-width: 280px;
-    background: #ffffff;
+    background: var(--bg-card);
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
@@ -112,7 +112,7 @@
     width: 100%;
     padding-top: 75%;
     /* Aspect ratio 4:3 */
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: var(--bg-secondary);
     overflow: hidden;
 }
 
@@ -185,13 +185,13 @@
 /* Información del producto */
 .producto-info {
     padding: 1.25rem;
-    background: white;
+    background: var(--bg-card);
 }
 
 .producto-nombre {
     font-size: 1rem;
     font-weight: 600;
-    color: #2d3748;
+    color: var(--text-primary);
     margin: 0 0 0.75rem 0;
     line-height: 1.4;
     min-height: 2.8em;
@@ -218,7 +218,7 @@
 
 .precio-original {
     font-size: 0.875rem;
-    color: #a0aec0;
+    color: var(--text-tertiary);
     text-decoration: line-through;
     font-weight: 500;
 }
@@ -226,7 +226,7 @@
 .precio-actual {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     letter-spacing: -0.5px;
 }
 
@@ -245,7 +245,7 @@
     width: 100%;
     padding: 0.75rem 1rem;
     background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
-    color: white;
+    color: var(--text-inverse);
     border: none;
     border-radius: 8px;
     font-size: 0.875rem;
@@ -266,7 +266,7 @@
 }
 
 .agregar-carrito-button:disabled {
-    background: #ccc;
+    background: var(--border-dark);
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
@@ -280,7 +280,7 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: white;
+    background: var(--bg-card);
     border: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     cursor: pointer;
@@ -289,7 +289,7 @@
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 10;
-    color: #2d3748;
+    color: var(--text-primary);
 }
 
 .nav-button:hover {

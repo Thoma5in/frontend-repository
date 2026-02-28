@@ -1,6 +1,6 @@
 .vender-page {
 	min-height: 100vh;
-	background: #f5f6f8;
+	background: var(--bg-secondary);
 	padding: 28px 20px;
 }
 
@@ -21,8 +21,8 @@
 }
 
 .vender-top {
-	background: #ffffff;
-	border: 1px solid #e5e7eb;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
 	padding: 16px 18px;
 }
@@ -31,15 +31,15 @@
 	margin: 0;
 	font-size: 14px;
 	font-weight: 700;
-	color: #111827;
+	color: var(--text-primary);
 }
 
 .vender-placeholder {
-	background: #ffffff;
-	border: 1px solid #e5e7eb;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
 	padding: 16px;
-	color: #6b7280;
+	color: var(--text-secondary);
 	font-weight: 700;
 	font-size: 12px;
 }
@@ -51,11 +51,11 @@
 }
 
 .vender-card {
-	background: #ffffff;
-	border: 1px solid #e5e7eb;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
 	padding: 16px;
-	box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+	box-shadow: var(--shadow-md);
 }
 
 .vender-card__header {
@@ -69,19 +69,19 @@
 	margin: 0;
 	font-size: 14px;
 	font-weight: 700;
-	color: #111827;
+	color: var(--text-primary);
 }
 
 .vender-card__subtitle {
 	font-size: 12px;
-	color: #6b7280;
+	color: var(--text-secondary);
 }
 
 .vender-card__state {
 	padding: 12px;
 	border-radius: 10px;
-	background: #f9fafb;
-	color: #6b7280;
+	background: var(--bg-tertiary);
+	color: var(--text-secondary);
 	font-size: 12px;
 	font-weight: 600;
 }
@@ -94,7 +94,7 @@
 .vender-table {
 
 
-	border: 1px solid #e5e7eb;
+	border: 1px solid var(--border-color);
 }
 
 .vender-table table {
@@ -104,20 +104,20 @@
 .vender-table th,
 .vender-table td {
 	padding: 12px 14px;
-	border-bottom: 1px solid #e5e7eb;
+	border-bottom: 1px solid var(--border-color);
 	text-align: left;
 	font-size: 12px;
-	color: #1f2937;
+	color: var(--text-primary);
 }
 
 .vender-table th {
-	background: #f9fafb;
+	background: var(--bg-tertiary);
 	font-weight: 700;
-	color: #111827;
+	color: var(--text-primary);
 }
 
 .vender-table tbody tr:hover {
-	background: #f8fafc;
+	background: var(--bg-hover);
 }
 
 .visually-hidden {

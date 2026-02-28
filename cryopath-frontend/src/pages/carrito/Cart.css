@@ -4,7 +4,7 @@
   grid-template-columns: 2.5fr 1fr;
   gap: 24px;
   padding: 24px;
-  background-color: #f5f6f8;
+  background-color: var(--bg-secondary);
   min-height: 100vh;
   font-family: "Segoe UI", sans-serif;
 }
@@ -19,6 +19,7 @@
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 /* ====== SELECCIONAR TODO ====== */
@@ -28,13 +29,14 @@
   gap: 12px;
   font-size: 14px;
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 /* ====== LOADER (OVERLAY) ====== */
 .cart-loading-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(245, 246, 248, 0.65);
+  background: rgba(26, 26, 26, 0.35);
   backdrop-filter: blur(2px);
   display: flex;
   align-items: center;
@@ -48,24 +50,24 @@
   align-items: center;
   gap: 10px;
   padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid #e6e8eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 999px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-lg);
 }
 
 .cart-spinner {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  border: 2px solid #d9dee6;
+  border: 2px solid var(--border-color);
   border-top-color: #0bbcd6;
   animation: cart-spin 0.9s linear infinite;
 }
 
 .cart-loader-text {
   font-size: 13px;
-  color: #374151;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -85,7 +87,7 @@
   margin-left: auto;
   background: none;
   border: none;
-  color: #ff4d4f;
+  color: var(--color-error);
   cursor: pointer;
   font-size: 14px;
 }
@@ -96,11 +98,11 @@
   grid-template-columns: auto 120px 1fr auto auto;
   align-items: center;
   gap: 16px;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 16px;
   margin-bottom: 16px;
-  border: 1px solid #e6e8eb;
+  border: 1px solid var(--border-color);
 }
 
 .cart-item.selected {
@@ -130,7 +132,7 @@
 .cart-item-title {
   font-size: 15px;
   font-weight: 600;
-  color: #222;
+  color: var(--text-primary);
 }
 
 .cart-item-prices {
@@ -142,12 +144,12 @@
 
 .cart-item-prices .original {
   text-decoration: line-through;
-  color: #8a8a8a;
+  color: var(--text-tertiary);
 }
 
 .cart-item-prices .price {
   font-weight: 700;
-  color: #000;
+  color: var(--text-primary);
 }
 
 .cart-item-prices .discount {
@@ -166,8 +168,9 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid #d0d0d0;
-  background: #fff;
+  border: 1px solid var(--border-dark);
+  background: var(--bg-primary);
+  color: var(--text-primary);
   cursor: pointer;
   font-size: 18px;
 }
@@ -176,13 +179,14 @@
   width: 24px;
   text-align: center;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 /* ====== ELIMINAR ====== */
 .cart-item .delete {
-  background: #ff4d4f;
+  background: var(--color-error);
   border: none;
-  color: #fff;
+  color: var(--text-inverse);
   padding: 6px 12px;
   border-radius: 6px;
   cursor: pointer;
@@ -191,16 +195,17 @@
 
 /* ====== RESUMEN ====== */
 .cart-summary {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 12px;
   padding: 20px;
   height: fit-content;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
 }
 
 .cart-summary h3 {
   font-size: 18px;
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 /* ====== TOTAL ====== */
@@ -210,14 +215,15 @@
   font-size: 16px;
   font-weight: 600;
   margin-bottom: 16px;
+  color: var(--text-primary);
 }
 
 /* ====== BOTÓN COMPRAR ====== */
 .cart-buy {
   width: 100%;
   padding: 12px;
-  background: #f5a623;
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--text-inverse);
   border: none;
   border-radius: 20px;
   font-size: 15px;
@@ -227,14 +233,14 @@
 }
 
 .cart-buy:disabled {
-  background: #ccc;
+  background: var(--border-dark);
   cursor: not-allowed;
 }
 
 /* ====== TEXTO LEGAL ====== */
 .cart-privacy {
   font-size: 12px;
-  color: #666;
+  color: var(--text-secondary);
   line-height: 1.4;
   margin-bottom: 16px;
 }
@@ -245,10 +251,19 @@
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 8px;
+  color: var(--text-primary);
 }
 
 .cart-payments div {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.cart-message {
+  color: var(--text-secondary);
+}
+
+.cart-message--error {
+  color: var(--color-error);
 }

@@ -1,14 +1,15 @@
 .header {
-    background-color: #3BA7C2;
+    background-color: var(--color-primary);
     padding: 1rem 2rem;
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: background-color 0.3s ease;
 }
 
 .header h1 {
     margin: 0;
-    color: white;
+    color: var(--text-inverse);
     font-size: 1.5rem;
 }
 
@@ -37,16 +38,17 @@
 }
 
 .header__nav a {
-    color: white;
+    color: var(--text-inverse);
     text-decoration: none;
     font-weight: 500;
     cursor: pointer;
-    background-color: #F8A23A;
+    background-color: var(--color-accent);
     border-radius: 16px;
     height: 2rem;
     align-content: center;
     padding: 0.25rem 1rem;
     border: 1px solid black;
+    transition: background-color 0.3s ease;
 }
 
 .header__nav a:hover {
@@ -59,11 +61,12 @@
     display: flex;
     align-items: center;
     flex: 1;
-    background-color: white;
+    background-color: var(--bg-input);
     border-radius: 16px;
     height: 44px;
     max-width: 560px;
     padding: 0 1rem;
+    transition: background-color 0.3s ease;
 }
 
 .header__search button {
@@ -82,10 +85,15 @@
     background: transparent;
     width: 100%;
     font-size: 0.95rem;
+    color: var(--text-primary);
 
 
 }
 
+.header__search-input::placeholder {
+    color: var(--text-tertiary);
+    opacity: 1;
+}
 .header__search {
   position: relative;
 }
@@ -95,12 +103,13 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  box-shadow: var(--shadow-lg);
   z-index: 999;
   max-height: 350px;
   overflow-y: auto;
+  transition: background-color 0.3s ease;
 }
 
 .header__search-item {
@@ -111,7 +120,8 @@
 }
 
 .header__search-item:hover {
-  background: #f4f9f9;
+  background: var(--bg-hover);
+  transition: background-color 0.3s ease;
 }
 
 .header__search-item img {
@@ -124,11 +134,12 @@
 .header__search-item .title {
   font-weight: 500;
   display: block;
+    color: var(--text-primary);
 }
 
 .header__search-item .price {
   font-size: 0.85rem;
-  color: #2e7d32;
+  color: var(--color-success);
 }
 
 .header__actions {
@@ -209,7 +220,7 @@
     border-radius: 18px;
     padding: 0.5rem 0.75rem;
     background: rgba(255, 255, 255, 0.08);
-    color: white;
+    color: var(--text-inverse);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -228,14 +239,15 @@
     right: 0;
     width: 520px;
     max-width: calc(100vw - 2rem);
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.16);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    box-shadow: var(--shadow-lg);
     z-index: 250;
     padding: 0;
     transform-origin: top right;
     animation: headerDropdownIn 160ms ease-out;
+    transition: background-color 0.3s ease;
 }
 
 .header__notifications-panel {
@@ -246,7 +258,7 @@
 
 .header__notifications-panel-top {
     height: 6px;
-    background: #3BA7C2;
+    background: var(--color-primary);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
 }
@@ -262,17 +274,18 @@
     margin: 0;
     font-size: 20px;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .header__notifications-action {
     border: none;
     background: transparent;
-    color: #111827;
+    color: var(--text-primary);
     font-weight: 600;
     cursor: pointer;
     padding: 6px 8px;
     border-radius: 8px;
+    transition: background-color 0.3s ease;
 }
 
 .header__notifications-action:hover {
@@ -295,16 +308,17 @@
     background: transparent;
     padding: 6px 0;
     cursor: pointer;
-    color: #111827;
+    color: var(--text-primary);
     font-weight: 600;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease;
 }
 
 .header__notifications-tab.active {
-    border-bottom-color: #111827;
+    border-bottom-color: var(--text-primary);
 }
 
 .header__notifications-pill {
@@ -315,16 +329,17 @@
     height: 18px;
     padding: 0 6px;
     border-radius: 999px;
-    border: 1px solid rgba(0, 0, 0, 0.20);
+    border: 1px solid var(--border-color);
     font-size: 12px;
     line-height: 1;
-    color: #111827;
-    background: #fff;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .header__notifications-divider {
     height: 1px;
-    background: rgba(0, 0, 0, 0.14);
+    background: var(--border-color);
     margin: 0 16px;
 }
 
@@ -335,7 +350,7 @@
 
 .header__notifications-empty {
     padding: 18px 12px;
-    color: #6b7280;
+    color: var(--text-secondary);
     font-weight: 600;
     text-align: center;
 }
@@ -364,8 +379,9 @@
     border-radius: 999px;
     overflow: hidden;
     flex: 0 0 auto;
-    border: 1px solid rgba(0, 0, 0, 0.10);
-    background: #fff;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .header__notifications-avatar img {
@@ -386,7 +402,7 @@
 .header__notifications-item-title {
     font-size: 12px;
     font-weight: 700;
-    color: #111827;
+    color: var(--text-primary);
     line-height: 1.25;
     white-space: nowrap;
     overflow: hidden;
@@ -396,21 +412,21 @@
 
 .header__notifications-item-meta {
     font-size: 11px;
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 .header__notifications-dot {
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: #3BA7C2;
+    background: var(--color-primary);
     flex: 0 0 auto;
     margin-top: 6px;
 }
 
 .header__notifications-item.is-read .header__notifications-item-title {
     font-weight: 600;
-    color: #374151;
+    color: var(--text-secondary);
 }
 
 @keyframes headerDropdownIn {
@@ -450,7 +466,7 @@
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 6px solid white;
+    border-top: 6px solid var(--text-inverse);
 }
 
 .header__user-menu-dropdown {
@@ -458,12 +474,13 @@
     right: 0;
     top: calc(100% + 8px);
     min-width: 180px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: var(--bg-modal);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-lg);
     z-index: 200;
+    transition: background-color 0.3s ease;
 }
 
 .header__user-menu-item {
@@ -474,7 +491,8 @@
     background: transparent;
     cursor: pointer;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text-primary);
+    transition: background-color 0.3s ease;
 }
 
 .header__user-menu-item:hover {
@@ -486,7 +504,7 @@
     border-radius: 18px;
     padding: 0.6rem 1.1rem;
     background: rgba(255, 255, 255, 0.08);
-    color: white;
+    color: var(--text-inverse);
     font-weight: 600;
     letter-spacing: 0.01em;
     cursor: pointer;
@@ -517,16 +535,30 @@
     height: 18px;
     padding: 0 6px;
     border-radius: 999px;
-    background: #ff3b30;
-    color: #fff;
+    background: var(--color-error);
+    color: var(--text-inverse);
     font-size: 11px;
     font-weight: 800;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     line-height: 1;
-    border: 2px solid #3BA7C2;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--color-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.header__theme-toggle {
+    transition: all 0.3s ease;
+}
+
+.header__theme-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+.header__theme-toggle:hover .header__theme-icon {
+    transform: rotate(15deg);
 }
 
 .header__user-button:hover {
@@ -690,13 +722,14 @@
     position: absolute;
     top: 100%;
     left: 0;
-    background: #fff;
+    background: var(--bg-modal);
     border-radius: 6px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
+    box-shadow: var(--shadow-lg);
     min-width: 220px;
     z-index: 100;
     max-height: 300px;
     overflow-y: auto;
+    transition: background-color 0.3s ease;
 }
 
 .header__dropdown-menu::-webkit-scrollbar {
@@ -723,10 +756,12 @@
     border: none;
     text-align: left;
     cursor: pointer;
+    color: var(--text-primary);
 }
 
 .header__dropdown-item:hover {
-    background-color: #f5f5f5;
+    background-color: var(--bg-hover);
+    transition: background-color 0.3s ease;
 }
 
 /* Auth modal */
@@ -745,18 +780,19 @@
 .header__modal {
     width: 460px;
     max-width: 100%;
-    background: #ffffff;
+    background: var(--bg-modal);
     border-radius: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
     overflow: hidden;
     transform-origin: center;
     animation: headerModalPopIn 170ms ease-out;
+    transition: background-color 0.3s ease;
 }
 
 .header__modal-top {
     height: 6px;
-    background: #3BA7C2;
+    background: var(--color-primary);
 }
 
 .header__modal-body {
@@ -767,12 +803,12 @@
     margin: 0 0 6px 0;
     font-size: 18px;
     font-weight: 800;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .header__modal-text {
     margin: 0;
-    color: #374151;
+    color: var(--text-secondary);
     font-size: 14px;
     line-height: 1.4;
 }
@@ -789,7 +825,7 @@
     padding: 10px 14px;
     font-weight: 800;
     cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--border-color);
     transition: transform 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
 }
 
@@ -798,8 +834,8 @@
 }
 
 .header__modal-button--secondary {
-    background: #ffffff;
-    color: #111827;
+    background: var(--bg-card);
+    color: var(--text-primary);
 }
 
 .header__modal-button--secondary:hover {
@@ -807,9 +843,9 @@
 }
 
 .header__modal-button--primary {
-    background: #F8A23A;
-    color: #111827;
-    border-color: rgba(0, 0, 0, 0.18);
+    background: var(--color-accent);
+    color: var(--text-primary);
+    border-color: var(--border-dark);
 }
 
 .header__modal-button--primary:hover {
