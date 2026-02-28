@@ -23,7 +23,7 @@
 }
 
 .vender-nav__item {
-	background: #ffffff;
+	background: var(--bg-tertiary);
 	border: 1px solid var(--border-color);
 	border-radius: 10px;
 	padding: 10px 12px;
@@ -45,13 +45,13 @@
 }
 
 .vender-nav__item--active {
-	background: #0066cc;
-	color: #ffffff;
+	background: var(--color-primary);
+	color: var(--text-inverse);
 	border-color: transparent;
 	font-weight: 700;
 }
 
 .vender-nav__item--active:hover {
-	background: #0052a3;
+	background: var(--color-primary);
 	filter: brightness(0.92);
 }
