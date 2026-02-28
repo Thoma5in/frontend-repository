@@ -1,16 +1,19 @@
 .vender-sidebar {
-	background: #ffffff;
-	border: 1px solid #e5e7eb;
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 12px;
 	padding: 18px;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+	box-shadow: var(--shadow-sm);
+	height: fit-content;
+	position: sticky;
+	top: 20px;
 }
 
 .vender-sidebar__title {
 	margin: 0 0 14px 0;
 	font-size: 14px;
 	font-weight: 700;
-	color: #111827;
+	color: var(--text-primary);
 }
 
 .vender-nav {
@@ -20,30 +23,35 @@
 }
 
 .vender-nav__item {
-	border: 1px solid transparent;
-	background: transparent;
+	background: #ffffff;
+	border: 1px solid var(--border-color);
 	border-radius: 10px;
 	padding: 10px 12px;
-	text-align: left;
 	font-weight: 600;
-	color: #374151;
+	color: var(--text-primary);
 	cursor: pointer;
-	transition: background 120ms ease, border-color 120ms ease;
+	transition: all 120ms ease;
+	font-size: 13px;
 }
 
 .vender-nav__item:hover {
-	background: #f3f4f6;
-	border-color: #e5e7eb;
+	background: var(--bg-hover);
+	border-color: var(--border-color);
+	color: var(--text-primary);
+}
+
+.vender-nav__item:active {
+	transform: scale(0.98);
 }
 
 .vender-nav__item--active {
-	background: #1976d2;
-	color: #fff;
+	background: #0066cc;
+	color: #ffffff;
 	border-color: transparent;
+	font-weight: 700;
 }
 
 .vender-nav__item--active:hover {
-	background: #1565c0;
-	color: #fff;
-	border-color: transparent;
+	background: #0052a3;
+	filter: brightness(0.92);
 }

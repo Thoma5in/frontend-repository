@@ -1,23 +1,25 @@
 .admin-page {
 	min-height: 100vh;
-	background-color: #f5f5f5;
+	background-color: var(--bg-secondary);
 	display: flex;
 	flex-direction: column;
+	transition: background-color 0.3s ease;
 }
 
 .admin-page--soft {
-	background: #f0f8ff;
+	background: var(--bg-tertiary);
 }
 
 /* Header Styles */
 .admin-header {
-	background-color: white;
+	background-color: var(--bg-card);
 	padding: 1rem 2rem;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	border-bottom: 1px solid #e0e0e0;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+	border-bottom: 1px solid var(--border-color);
+	box-shadow: var(--shadow-sm);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-header-left {
@@ -39,34 +41,35 @@
 	width: 48px;
 	height: 48px;
 	border-radius: 50%;
-	border: 2px solid #e0e0e0;
+	border: 2px solid var(--border-color);
 	padding: 2px;
+	transition: border-color 0.3s ease;
 }
 
 .admin-avatar-small svg {
 	width: 100%;
 	height: 100%;
 	fill: none;
-	stroke: #666;
+	stroke: var(--text-secondary);
 	stroke-width: 2;
 }
 
 .admin-header-name {
 	font-size: 1.1rem;
 	font-weight: 600;
-	color: #333;
+	color: var(--text-primary);
 	margin: 0;
 }
 
 .admin-header-role {
 	font-size: 0.85rem;
-	color: #1976D2;
+	color: var(--color-info);
 	font-weight: 500;
 }
 
 .admin-header-id {
 	font-size: 0.9rem;
-	color: #777;
+	color: var(--text-secondary);
 	margin: 0;
 }
 
@@ -84,17 +87,18 @@
 
 /* Sidebar Styles */
 .admin-sidebar {
-	background-color: white;
+	background-color: var(--bg-card);
 	padding: 1.5rem;
 	border-radius: 12px;
-	border: 1px solid #e0e0e0;
+	border: 1px solid var(--border-color);
 	height: fit-content;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-sidebar-title {
 	font-size: 0.95rem;
 	text-transform: uppercase;
-	color: #888;
+	color: var(--text-secondary);
 	margin: 0 0 1rem 0;
 	font-weight: 600;
 	letter-spacing: 0.5px;
@@ -113,7 +117,7 @@
 	text-align: left;
 	border-radius: 8px;
 	cursor: pointer;
-	color: #555;
+	color: var(--text-secondary);
 	font-weight: 500;
 	font-size: 0.95rem;
 	display: flex;
@@ -123,39 +127,41 @@
 }
 
 .admin-nav-button:hover {
-	background-color: #f5f5f5;
-	color: #333;
-	border-color: #e0e0e0;
+	background-color: var(--bg-hover);
+	color: var(--text-primary);
+	border-color: var(--border-color);
 	/* No translate transform here as requested */
 }
 
 .admin-nav-button--primary {
-	background-color: #1976D2;
-	color: white;
-	box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+	background-color: var(--color-info);
+	color: var(--text-inverse);
+	box-shadow: var(--shadow-sm);
 }
 
 .admin-nav-button--primary:hover {
-	background-color: #1565C0;
-	color: white;
+	background-color: var(--color-info);
+	color: var(--text-inverse);
 	border-color: transparent;
+	filter: brightness(0.9);
 }
 
 /* Dashboard Content Area */
 .admin-dashboard-content {
-	background-color: white;
+	background-color: var(--bg-card);
 	padding: 2rem;
 	border-radius: 12px;
-	border: 1px solid #e0e0e0;
+	border: 1px solid var(--border-color);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-section-title {
 	font-size: 1.25rem;
 	font-weight: 600;
-	color: #333;
+	color: var(--text-primary);
 	margin: 0 0 1.5rem;
 	padding-bottom: 1rem;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--border-light);
 }
 
 /* Table Styles */
@@ -172,21 +178,24 @@
 .admin-table th {
 	text-align: left;
 	padding: 1rem;
-	background-color: #f9f9f9;
-	color: #666;
+	background-color: var(--bg-tertiary);
+	color: var(--text-secondary);
 	font-weight: 600;
-	border-bottom: 2px solid #e0e0e0;
+	border-bottom: 2px solid var(--border-color);
+	transition: background-color 0.3s ease;
 }
 
 .admin-table td {
 	padding: 1rem;
-	border-bottom: 1px solid #eee;
-	color: #333;
+	border-bottom: 1px solid var(--border-light);
+	color: var(--text-primary);
 	vertical-align: middle;
+	transition: border-color 0.3s ease;
 }
 
 .admin-table tr:hover td {
-	background-color: #fafafa;
+	background-color: var(--bg-hover);
+	transition: background-color 0.3s ease;
 }
 
 /* Status Badges */
@@ -219,7 +228,8 @@
 }
 
 .icon-button:hover {
-	background-color: #eee;
+	background-color: var(--bg-hover);
+	transition: background-color 0.3s ease;
 }
 
 /* --- Keeping Form Styles for Reuse --- */
@@ -229,8 +239,9 @@
 	margin: 2rem auto;
 	padding: 2rem;
 	border-radius: 12px;
-	background-color: #ffffff;
-	border: 1px solid #e0e0e0;
+	background-color: var(--bg-card);
+	border: 1px solid var(--border-color);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .admin-product-form {
@@ -254,25 +265,27 @@
 
 .admin-form-field span {
 	font-weight: 500;
-	color: #555;
+	color: var(--text-secondary);
 }
 
 .admin-form-field input,
 .admin-form-field textarea,
 .admin-form-field select {
 	border-radius: 8px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--border-color);
 	padding: 0.75rem;
 	font-size: 0.95rem;
 	font-family: inherit;
 	transition: border-color 0.2s;
+	background-color: var(--bg-input);
+	color: var(--text-primary);
 }
 
 .admin-form-field input:focus,
 .admin-form-field textarea:focus,
 .admin-form-field select:focus {
 	outline: none;
-	border-color: #1976D2;
+	border-color: var(--color-info);
 }
 
 .admin-form-actions {
@@ -284,11 +297,12 @@
 
 .admin-error-message {
 	margin-top: 0.5rem;
-	color: #d32f2f;
+	color: var(--color-error);
 	font-size: 0.9rem;
 	padding: 0.5rem;
-	background-color: #ffebee;
+	background-color: var(--bg-secondary);
 	border-radius: 4px;
+	border: 1px solid var(--color-error);
 }
 
 .admin-primary-button,
@@ -303,25 +317,26 @@
 }
 
 .admin-primary-button {
-	background-color: #1976D2;
-	border-color: #1976D2;
-	color: #fff;
+	background-color: var(--color-info);
+	border-color: var(--color-info);
+	color: var(--text-inverse);
 }
 
 .admin-primary-button:hover {
-	background-color: #1565C0;
-	border-color: #1565C0;
+	background-color: var(--color-info);
+	border-color: var(--color-info);
+	filter: brightness(0.9);
 }
 
 .admin-secondary-button {
-	background-color: #ffffff;
-	border-color: #ccc;
-	color: #555;
+	background-color: var(--bg-card);
+	border-color: var(--border-color);
+	color: var(--text-secondary);
 }
 
 .admin-secondary-button:hover {
-	background-color: #f5f5f5;
-	border-color: #999;
+	background-color: var(--bg-hover);
+	border-color: var(--border-dark);
 }
 
 /* Responsive */

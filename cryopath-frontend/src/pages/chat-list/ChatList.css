@@ -18,7 +18,7 @@
 	border-radius: 999px;
 	padding: 12px 14px;
 	background: #4CAF50;
-	color: white;
+	color: var(--text-inverse);
 	font-weight: 900;
 	box-shadow: 0 18px 45px rgba(0, 0, 0, 0.20);
 	cursor: pointer;
@@ -43,10 +43,10 @@
 	height: 440px;
 	position: relative;
 
-	background: rgba(255, 255, 255, 0.92);
-	border: 1px solid rgba(0, 0, 0, 0.10);
+	background: var(--bg-card);
+	border: 1px solid var(--border-color);
 	border-radius: 16px;
-	box-shadow: 0 18px 45px rgba(0, 0, 0, 0.10);
+	box-shadow: var(--shadow-lg);
 	backdrop-filter: blur(8px);
 
 	overflow: hidden;
@@ -69,14 +69,14 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: 12px 12px 10px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+	border-bottom: 1px solid var(--border-color);
 }
 
 .chats__title {
 	margin: 0;
 	font-size: 14px;
 	font-weight: 900;
-	color: #111827;
+	color: var(--text-primary);
 }
 
 .chats__close {
@@ -84,15 +84,15 @@
 	height: 32px;
 	border-radius: 10px;
 	border: 0;
-	background: rgba(0, 0, 0, 0.05);
-	color: #111827;
+	background: var(--bg-tertiary);
+	color: var(--text-primary);
 	font-size: 18px;
 	line-height: 1;
 	cursor: pointer;
 }
 
 .chats__close:hover {
-	background: rgba(0, 0, 0, 0.08);
+	background: var(--bg-hover);
 }
 
 .chats__body {
@@ -104,7 +104,7 @@
 	margin: 0;
 	padding: 14px;
 	font-size: 13px;
-	color: #6b7280;
+	color: var(--text-secondary);
 }
 
 .chats__empty--error {
@@ -149,7 +149,7 @@
 .chats__name {
 	font-size: 13px;
 	font-weight: 800;
-	color: #111827;
+	color: var(--text-primary);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -157,7 +157,7 @@
 
 .chats__last {
 	font-size: 12px;
-	color: #6b7280;
+	color: var(--text-secondary);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -165,7 +165,7 @@
 
 .chats__time {
 	font-size: 11px;
-	color: #9ca3af;
+	color: var(--text-tertiary);
 	white-space: nowrap;
 }
 

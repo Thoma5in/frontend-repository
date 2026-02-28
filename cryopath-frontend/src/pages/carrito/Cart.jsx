@@ -198,8 +198,8 @@ export default function Cart() {
             </div>
           </div>
         )}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {!loading && cart.length === 0 && <p>No tienes productos en el carrito.</p>}
+        {error && <p className="cart-message cart-message--error">{error}</p>}
+        {!loading && cart.length === 0 && <p className="cart-message">No tienes productos en el carrito.</p>}
 
         {cart.map(item => (
           
