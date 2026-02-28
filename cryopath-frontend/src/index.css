@@ -5,6 +5,7 @@
   /* Brand Colors */
   --color-primary: #3ba7c2;
   --color-accent: #F8A23A;
+  --color-accent-hover: #e5942f;
   --color-footer: #2E2E2E;
   --text-footer: #ffffff;
   
@@ -16,6 +17,9 @@
   --bg-card: #ffffff;
   --bg-input: #ffffff;
   --bg-modal: #ffffff;
+  --bg-header: #3ba7c2;
+  --bg-header-action: rgba(255, 255, 255, 0.08);
+  --bg-header-action-hover: rgba(255, 255, 255, 0.16);
   
   /* Text Colors */
   --text-primary: #111827;
@@ -39,6 +43,11 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   
+  /* Overlay & Scrollbar */
+  --overlay-bg: rgba(0, 0, 0, 0.45);
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+  
   /* Gradient */
   --gradient-start: #3ba7c2;
   --gradient-end: #D8D9DA;
@@ -49,6 +58,7 @@
   /* Brand Colors - slightly adjusted for contrast */
   --color-primary: #4cb8d4;
   --color-accent: #F8A23A;
+  --color-accent-hover: #e5942f;
   --color-footer: #1a1a1a;
   --text-footer: #ffffff;
   
@@ -60,6 +70,9 @@
   --bg-card: #2d2d2d;
   --bg-input: #333333;
   --bg-modal: #2d2d2d;
+  --bg-header: #1a1a1a;
+  --bg-header-action: rgba(255, 255, 255, 0.08);
+  --bg-header-action-hover: rgba(255, 255, 255, 0.16);
   
   /* Text Colors */
   --text-primary: #e0e0e0;
@@ -82,6 +95,11 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+  
+  /* Overlay & Scrollbar */
+  --overlay-bg: rgba(0, 0, 0, 0.65);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.3);
   
   /* Gradient */
   --gradient-start: #1f4f5a;
