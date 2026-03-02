@@ -7,8 +7,9 @@ import ChatList from "../chat-list/ChatList.jsx";
 
 import useToast from '../../hooks/useToast';
 import useHomeProductsData from '../../hooks/useHomeProductsData';
-import useProductListing, { truncateWords } from '../../hooks/useProductListing';
+import useProductListing from '../../hooks/useProductListing';
 import useCartActions from '../../hooks/useCartActions';
+import { truncateWords } from '../../utils/formatters';
 
 export default function Home({ idSupercategoria = null }) {
     const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
