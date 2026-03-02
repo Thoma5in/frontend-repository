@@ -3,9 +3,11 @@ import "../../pages/dashboard/AdminDashboard.css";
 import { cambiarEstadoUsuario } from "../../services/adminApi";
 import "./CambiarEstadoUsuario.css";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CambiarEstadoUsuario() {
   const { isAdmin, session } = useAuth();
+  const navigate = useNavigate();
 
   const [usuarios, setUsuarios] = useState([]);
   const [idUsuario, setIdUsuario] = useState("");
@@ -68,7 +70,24 @@ const handleCambiarEstado = async () => {
     <div className="admin-page admin-page--soft">
       <div className="admin-content">
         <div className="admin-product-section change-user-status">
-          <h3 className="admin-section-title">Cambiar estado de usuario</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 className="admin-section-title" style={{ margin: 0 }}>Cambiar estado de usuario</h3>
+            <button 
+              type="button"
+              onClick={() => navigate('/admin')}
+              style={{ 
+                background: 'none', 
+                border: 'none', 
+                fontSize: '1.5rem', 
+                cursor: 'pointer',
+                padding: '0.5rem',
+                color: 'var(--text-color, #333)'
+              }}
+              title="Volver al dashboard"
+            >
+              ✕
+            </button>
+          </div>
           <p className="change-user-status__subtitle">
             Selecciona un usuario y un nuevo estado para actualizarlo.
           </p>

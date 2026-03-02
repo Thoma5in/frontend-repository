@@ -239,7 +239,7 @@ const Header = () => {
       <div className="header__container">
         <div className="header__top">
           <div onClick={() => navigate("/")} className="header__logo">
-            <img src="./img/logo-header.png" alt="Cryopath Logo" />
+            <img src="/img/logo-header.png" alt="Cryopath Logo" />
           </div>
 
           <search className="header__search" ref={searchRef}>
