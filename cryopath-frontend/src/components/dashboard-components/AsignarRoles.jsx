@@ -2,9 +2,11 @@ import { useAuth } from "../../context/AuthContext";
 import "../../pages/dashboard/AdminDashboard.css";
 import "./AsignarRoles.css";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AsignarRoles() {
   const { isAdmin, session } = useAuth();
+  const navigate = useNavigate();
 
     const [usuarios, setUsuarios] = useState([]);
     const [roles, setRoles] = useState([]);
@@ -82,7 +84,24 @@ export default function AsignarRoles() {
       <div className="admin-page admin-page--soft">
         <div className="admin-content">
           <div className="admin-product-section assign-roles">
-            <h3 className="admin-section-title">Asignar rol a usuario</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+              <h3 className="admin-section-title" style={{ margin: 0 }}>Asignar rol a usuario</h3>
+              <button 
+                type="button"
+                onClick={() => navigate('/admin')}
+                style={{ 
+                  background: 'none', 
+                  border: 'none', 
+                  fontSize: '1.5rem', 
+                  cursor: 'pointer',
+                  padding: '0.5rem',
+                  color: 'var(--text-color, #333)'
+                }}
+                title="Volver al dashboard"
+              >
+                ✕
+              </button>
+            </div>
             <p className="assign-roles__subtitle">
               Selecciona un usuario y un rol para asignarlo.
             </p>
