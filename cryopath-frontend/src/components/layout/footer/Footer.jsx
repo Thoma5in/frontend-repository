@@ -5,7 +5,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer__container">
         <div className="footer__logo">
-          <img src="./img/logo-header.png" alt="Cryopath Logo" />
+          <img src="/img/logo-header.png" alt="Cryopath Logo" />
           <p className="footer__copyright">Copyright © CryoPath Colombia.</p>
           <p className="footer__address">Calle de la casa de luis.</p>
         </div>
