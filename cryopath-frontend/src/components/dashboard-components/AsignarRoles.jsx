@@ -95,8 +95,12 @@ export default function AsignarRoles() {
                   fontSize: '1.5rem', 
                   cursor: 'pointer',
                   padding: '0.5rem',
-                  color: 'var(--text-color, #333)'
+                  color: 'var(--text-primary)',
+                  opacity: 0.7,
+                  transition: 'opacity 0.2s'
                 }}
+                onMouseEnter={(e) => e.target.style.opacity = '1'}
+                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
                 title="Volver al dashboard"
               >
                 ✕
