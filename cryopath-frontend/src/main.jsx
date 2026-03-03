@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import Layout from './components/layout/Layout.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import Profile from './pages/profile/Profile.jsx'
 import Home from './pages/home/Home.jsx'
 import Register from './pages/register/Register.jsx'
@@ -35,6 +36,7 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
+          <ScrollToTop />
           <Layout>
             <Routes>
               <Route path="/*" element={<Home />} />
