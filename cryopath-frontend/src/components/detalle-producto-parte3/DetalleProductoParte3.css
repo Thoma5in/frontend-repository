@@ -1,10 +1,10 @@
 .dp3 {
-    background: #fff;
+    background: var(--bg-card);
     padding: 20px 24px;
     margin: auto 0;
     max-width: 100%;
-    color: #111827;
-    box-shadow: 0 6px 16px rgba(17, 24, 39, 0.06);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
 }
 
 .dp3__title {
@@ -20,11 +20,11 @@
     font-size: 15px;
     line-height: 1.7;
     letter-spacing: 0.01em;
-    color: #111827;
+    color: var(--text-primary);
 }
 
 .dp3__loading {
-    color: #6b7280;
+    color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {

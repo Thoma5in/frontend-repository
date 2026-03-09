@@ -3,12 +3,14 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import Layout from './components/layout/Layout.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx'
 import Profile from './pages/profile/Profile.jsx'
 import Home from './pages/home/Home.jsx'
 import Register from './pages/register/Register.jsx'
 import Login from './pages/login/Login.jsx'
 import PerfilEditar from './pages/editar-perfil/EditarPerfil.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import AdminDashboard from './pages/dashboard/AdminDashboard.jsx'
 import Assistant from './pages/assistant/assistant.jsx'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute.jsx'
@@ -31,12 +33,14 @@ import PagoExitoso from './pages/pagos/PagoExitoso.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/*" element={<Home />} />
-            <Route path='/product-details/:id' element={<ProductDetails />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Layout>
+            <Routes>
+              <Route path="/*" element={<Home />} />
+              <Route path='/product-details/:id' element={<ProductDetails />} />
             <Route path='/supermercado' element={<Supermarket />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/register' element={<Register />} />
@@ -61,5 +65,6 @@ createRoot(document.getElementById('root')).render(
         </Layout>
       </BrowserRouter>
     </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

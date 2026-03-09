@@ -7,8 +7,8 @@
 }
 
 .assistant-left {
-  background: #f7f8fb;
-  border: 1px solid #e3e7ef;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -18,7 +18,7 @@
 .assistant-header {
   padding: 16px 20px;
   font-weight: 700;
-  background: #111827;
+  background: var(--bg-tertiary);
   color: #ffb100; /* julIA accent */
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -43,34 +43,37 @@
 }
 .msg-user {
   align-self: flex-end;
-  background: #1f2937;
-  color: white;
+  background: var(--text-primary);
+  color: var(--text-inverse);
 }
 .msg-assistant {
   align-self: flex-start;
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .chat-input {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  border-top: 1px solid #e5e7eb;
-  background: #fff;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card);
   border-bottom-left-radius: 12px;
   border-bottom-right-radius: 12px;
 }
 .chat-input input {
   flex: 1;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-dark);
   border-radius: 10px;
   padding: 10px 12px;
+  background: var(--bg-input);
+  color: var(--text-primary);
 }
 .chat-input button {
   border: none;
   background: #2563eb;
-  color: #fff;
+	color: var(--text-inverse);
   padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;

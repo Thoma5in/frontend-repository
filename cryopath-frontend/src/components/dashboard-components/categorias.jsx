@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import './categorias.css';
 import { obtenerCategoria, crearCategoria, eliminarCategoria, actualizarCategoria,listarCategorias } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Categorias = () => {
+    const navigate = useNavigate();
     const [nombre, setNombre] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [categorias, setCategorias] = useState([]);
@@ -91,7 +93,28 @@ const Categorias = () => {
 
         return (
             <div className="categorias-container">
-                <h2>Gestión de Categorías</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h2 style={{ margin: 0 }}>Gestión de Categorías</h2>
+                    <button 
+                        type="button"
+                        onClick={() => navigate('/admin')}
+                        style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            fontSize: '1.5rem', 
+                            cursor: 'pointer',
+                            padding: '0.5rem',
+                            color: 'var(--text-primary)',
+                            opacity: 0.7,
+                            transition: 'opacity 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.target.style.opacity = '1'}
+                        onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+                        title="Volver al dashboard"
+                    >
+                        ✕
+                    </button>
+                </div>
                 <form onSubmit={handlesubmit} className="categoria-form">
                     <div className="form-group">
                         <label>Nombre</label>

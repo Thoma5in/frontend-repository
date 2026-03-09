@@ -7,8 +7,9 @@ import ChatList from "../chat-list/ChatList.jsx";
 
 import useToast from '../../hooks/useToast';
 import useHomeProductsData from '../../hooks/useHomeProductsData';
-import useProductListing, { truncateWords } from '../../hooks/useProductListing';
+import useProductListing from '../../hooks/useProductListing';
 import useCartActions from '../../hooks/useCartActions';
+import { truncateWords } from '../../utils/formatters';
 
 export default function Home({ idSupercategoria = null }) {
     const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
@@ -131,7 +132,7 @@ export default function Home({ idSupercategoria = null }) {
                         </div>
                     ))
                 ) : error ? (
-                    <p style={{ color: 'red', textAlign: 'center', width: '100%' }}>{error}</p>
+                    <p className="home-message home-message--error">{error}</p>
                 ) : categoryMetaLoading ? (
                     skeletonItems.map((index) => (
                         <div
@@ -153,7 +154,7 @@ export default function Home({ idSupercategoria = null }) {
                         </div>
                     ))
                 ) : currentProducts.length === 0 ? (
-                    <p style={{ color: 'white', textAlign: 'center', width: '100%' }}>No se encontraron productos.</p>
+                    <p className="home-message">No se encontraron productos.</p>
                 ) : (
                     currentProducts.map((product) => {
 
@@ -197,14 +198,14 @@ export default function Home({ idSupercategoria = null }) {
                                 </div>
                                 <h2>{product.nombre}</h2>
                                 {categoriasPorProducto[product.id_producto]?.nombre && (
-                                    <p style={{ marginTop: "-6px", marginBottom: "10px", color: "#6b7280" }}>
+                                    <p className="product-category-text">
                                         {categoriasPorProducto[product.id_producto].nombre}
                                     </p>
                                 )}
                                 <p>{truncateWords(product.descripcion)}</p>
                                 <p>
                                     Cantidad disponible: {" "}
-                                    <strong style={{ color: sinStock ? "red" : "green" }}>{stock}</strong>
+                                    <strong className={sinStock ? "stock-text stock-text--out" : "stock-text stock-text--ok"}>{stock}</strong>
                                 </p>
 
                                 <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>

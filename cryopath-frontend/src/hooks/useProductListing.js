@@ -1,49 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { parsePrice } from '../utils/formatters';
 
 const DEFAULT_PAGE_SIZE = 9;
-
-export function parsePrice(raw) {
-  if (typeof raw === 'number') {
-    return Number.isFinite(raw) ? raw : null;
-  }
-
-  if (raw == null) return null;
-
-  if (typeof raw === 'string') {
-    const cleaned = raw.trim().replace(/[^0-9.,-]/g, '');
-    if (!cleaned) return null;
-
-    const lastDot = cleaned.lastIndexOf('.');
-    const lastComma = cleaned.lastIndexOf(',');
-
-    let normalized = cleaned;
-    if (lastDot !== -1 && lastComma !== -1) {
-      if (lastComma > lastDot) {
-        normalized = cleaned.replace(/\./g, '').replace(',', '.');
-      } else {
-        normalized = cleaned.replace(/,/g, '');
-      }
-    } else if (lastComma !== -1) {
-      normalized = cleaned.replace(',', '.');
-    }
-
-    const n = Number.parseFloat(normalized);
-    return Number.isFinite(n) ? n : null;
-  }
-
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : null;
-}
-
-export function truncateWords(text, limit = 20) {
-  if (text === null || text === undefined) return '';
-  const normalized = String(text).trim().replace(/\s+/g, ' ');
-  if (!normalized) return '';
-
-  const words = normalized.split(' ');
-  if (words.length <= limit) return normalized;
-  return `${words.slice(0, limit).join(' ')}...`;
-}
 
 export default function useProductListing({
   products,
