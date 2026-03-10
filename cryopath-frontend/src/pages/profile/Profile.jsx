@@ -104,7 +104,11 @@ const Profile = () => {
                             <span className="button-icon"></span>
                             Elimina la cuenta
                         </button>
-                        <button className="action-button">
+                        <button
+                            type="button"
+                            className="action-button"
+                            onClick={() => navigate('/direcciones')}
+                        >
                             <span className="button-icon"></span>
                             Guarda direcciones
                         </button>

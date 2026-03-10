@@ -28,6 +28,7 @@ import Mensaje from './pages/mensaje/Mensaje.jsx'
 import Supermarket from './pages/supermarket/Supermarket.jsx'
 import PasarelaPagos from './pages/pagos/PasarelaPagos.jsx'
 import PagoExitoso from './pages/pagos/PagoExitoso.jsx'
+import Direcciones from './pages/direcciones/Direcciones.jsx'
 
 
 
@@ -61,6 +62,7 @@ createRoot(document.getElementById('root')).render(
             <Route path='/conversaciones/:id' element={<Mensaje />} />
             <Route path='/mensajes/:id' element={<Mensaje />} />
             <Route path='/pago-exitoso' element={<PagoExitoso />} />
+            <Route path='/direcciones' element={<Direcciones />} />
           </Routes>
         </Layout>
       </BrowserRouter>
