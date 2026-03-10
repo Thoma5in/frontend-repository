@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
 import EliminarProductodashboard from "../../components/dashboard-components/EliminarProductodashboard";
+import { getInventario } from "../../services/inventarioApi";
 import {} from "../../services/categoriasApi";
 
 
@@ -12,6 +13,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   const [productos, setProductos] = useState([]);
+  const [inventario, setInventario] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showEliminarProductos, setShowEliminarProductos] = useState(false);
@@ -44,6 +46,25 @@ export default function AdminDashboard() {
     };
     fetchProductos();
   }, [authToken]);
+
+  useEffect(() => {
+    const fetchInventario = async () => {
+      try {
+        const data = await getInventario();
+        // Crear un mapa de id_producto -> cantidad_disponible
+        const inventarioMap = {};
+        if (Array.isArray(data)) {
+          data.forEach(item => {
+            inventarioMap[item.id_producto] = item.cantidad_disponible || 0;
+          });
+        }
+        setInventario(inventarioMap);
+      } catch (err) {
+        console.error("Error fetching inventario:", err);
+      }
+    };
+    fetchInventario();
+  }, []);
 
   const fullName =
     profile?.nombre && profile?.apellido
@@ -176,6 +197,7 @@ export default function AdminDashboard() {
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Precio</th>
+                    <th>Disponible</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
@@ -183,6 +205,8 @@ export default function AdminDashboard() {
                 <tbody>
                   {productos.map((producto, index) => {
                     const productId = producto.id_producto ?? producto.id;
+                    const cantidadDisponible = inventario[productId] ?? 0;
+                    const enStock = cantidadDisponible > 0;
                     return (
                       <tr key={productId || index}>
                         <td>#{productId}</td>
@@ -195,14 +219,17 @@ export default function AdminDashboard() {
                             : producto.precio_base}
                         </td>
                         <td>
+                          <strong>{cantidadDisponible}</strong> unidades
+                        </td>
+                        <td>
                           <span
                             className={`status-badge ${
-                              producto.stock > 0
+                              enStock
                                 ? "status-active"
                                 : "status-inactive"
                             }`}
                           >
-                            {producto.stock > 0 ? "En Stock" : "Agotado"}
+                            {enStock ? "En Stock" : "Agotado"}
                           </span>
                         </td>
                         <td>
@@ -240,7 +267,7 @@ export default function AdminDashboard() {
                   })}
                   {productos.length === 0 && (
                     <tr>
-                      <td colSpan="6" style={{ textAlign: "center" }}>
+                      <td colSpan="7" style={{ textAlign: "center" }}>
                         No hay productos registrados via API.
                       </td>
                     </tr>

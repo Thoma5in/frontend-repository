@@ -43,3 +43,58 @@ export const formatDiscountValue = (tipoDescuento, valorDescuento) => {
     return decimalFormatter.format(parsed);
   }
 };
+
+/**
+ * Convierte un valor de precio (número, string, etc) a número decimal
+ * Maneja múltiples formatos: "1.234,56" (EU), "1,234.56" (US), "1234.56", etc
+ * @param {number|string|null|undefined} raw - Valor a convertir
+ * @returns {number|null} Número decimal o null si no es válido
+ */
+export function parsePrice(raw) {
+  if (typeof raw === 'number') {
+    return Number.isFinite(raw) ? raw : null;
+  }
+
+  if (raw == null) return null;
+
+  if (typeof raw === 'string') {
+    const cleaned = raw.trim().replace(/[^0-9.,-]/g, '');
+    if (!cleaned) return null;
+
+    const lastDot = cleaned.lastIndexOf('.');
+    const lastComma = cleaned.lastIndexOf(',');
+
+    let normalized = cleaned;
+    if (lastDot !== -1 && lastComma !== -1) {
+      if (lastComma > lastDot) {
+        normalized = cleaned.replace(/\./g, '').replace(',', '.');
+      } else {
+        normalized = cleaned.replace(/,/g, '');
+      }
+    } else if (lastComma !== -1) {
+      normalized = cleaned.replace(',', '.');
+    }
+
+    const n = Number.parseFloat(normalized);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Trunca un texto a un número máximo de palabras
+ * @param {string} text - Texto a truncar
+ * @param {number} limit - Número máximo de palabras (default: 20)
+ * @returns {string} Texto truncado con "..." al final si fue necesario
+ */
+export function truncateWords(text, limit = 20) {
+  if (text === null || text === undefined) return '';
+  const normalized = String(text).trim().replace(/\s+/g, ' ');
+  if (!normalized) return '';
+
+  const words = normalized.split(' ');
+  if (words.length <= limit) return normalized;
+  return `${words.slice(0, limit).join(' ')}...`;
+}

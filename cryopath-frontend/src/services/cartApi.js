@@ -1,5 +1,4 @@
-
-const BASE_URL = 'http://localhost:3003';
+const BASE_URL = import.meta.env.VITE_ORDERS_API || 'http://localhost:3003';
 
 
 

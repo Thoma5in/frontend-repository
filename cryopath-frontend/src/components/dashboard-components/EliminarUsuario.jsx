@@ -1,9 +1,11 @@
 import {useAuth} from '../../context/AuthContext';
 import {useEffect, useState} from 'react';
 import "../../pages/dashboard/AdminDashboard.css";
+import {useNavigate} from 'react-router-dom';
 
 export default function EliminarUsuario() {
     const {session, isAdmin} = useAuth();  
+    const navigate = useNavigate();
 
     const [usuarios, setUsuarios] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -66,7 +68,28 @@ export default function EliminarUsuario() {
 
     return (
         <div className="admin-dashboard-content">
-        <h3>Eliminar cuentas de usuario</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3 style={{ margin: 0 }}>Eliminar cuentas de usuario</h3>
+            <button 
+                type="button"
+                onClick={() => navigate('/admin')}
+                style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    fontSize: '1.5rem', 
+                    cursor: 'pointer',
+                    padding: '0.5rem',
+                    color: 'var(--text-primary)',
+                    opacity: 0.7,
+                    transition: 'opacity 0.2s'
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '1'}
+                onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+                title="Volver al dashboard"
+            >
+                ✕
+            </button>
+        </div>
 
       {loading && <p>Cargando usuarios...</p>}
       {mensaje && <p className="error-message">{mensaje}</p>}

@@ -333,7 +333,7 @@ export default function EditarProducto() {
                               position: "absolute",
                               top: "4px",
                               right: "4px",
-                              background: "rgba(239, 68, 68, 0.9)",
+                              background: "var(--color-error)",
                               color: "white",
                               border: "none",
                               borderRadius: "50%",
@@ -344,8 +344,12 @@ export default function EditarProducto() {
                               alignItems: "center",
                               justifyContent: "center",
                               fontSize: "14px",
-                              fontWeight: "bold"
+                              fontWeight: "bold",
+                              opacity: 0.9,
+                              transition: "opacity 0.2s"
                             }}
+                            onMouseEnter={(e) => e.target.style.opacity = "1"}
+                            onMouseLeave={(e) => e.target.style.opacity = "0.9"}
                             title="Eliminar imagen"
                           >
                             ×
@@ -421,7 +425,7 @@ export default function EditarProducto() {
                               position: "absolute",
                               top: "4px",
                               right: "4px",
-                              background: "rgba(239, 68, 68, 0.9)",
+                              background: "var(--color-error)",
                               color: "white",
                               border: "none",
                               borderRadius: "50%",
@@ -432,8 +436,12 @@ export default function EditarProducto() {
                               alignItems: "center",
                               justifyContent: "center",
                               fontSize: "14px",
-                              fontWeight: "bold"
+                              fontWeight: "bold",
+                              opacity: 0.9,
+                              transition: "opacity 0.2s"
                             }}
+                            onMouseEnter={(e) => e.target.style.opacity = "1"}
+                            onMouseLeave={(e) => e.target.style.opacity = "0.9"}
                             title="Eliminar imagen"
                           >
                             ×

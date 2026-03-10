@@ -1,17 +1,20 @@
 .home-left-panel {
   flex: 0 0 350px;
-  background-color: #FFF9F9;
+  background-color: var(--bg-card);
   padding: 16px;
   margin-left: 50px;
+  margin-top: 32px;
   border-radius: 10px;
   margin-bottom: 20px;
   height: fit-content;
+  transition: background-color 0.3s ease;
 }
 
 .home-left-panel-title {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 12px;
+  color: var(--text-primary);
 }
 
 .price-slider-container {
@@ -28,6 +31,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 14px;
+  color: var(--text-primary);
 }
 
 .sort-container {
@@ -40,21 +44,23 @@
 .sort-button {
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #3BA7C2;
-  background-color: #ffffff;
-  color: #3BA7C2;
+  border: 1px solid var(--color-primary);
+  background-color: var(--bg-card);
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 14px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .sort-button.active {
-  background-color: #3BA7C2;
-  color: #ffffff;
+  background-color: var(--color-primary);
+  color: var(--text-inverse);
 }
 
 @media (max-width: 600px) {
   .home-left-panel {
     width: 100%;
     margin-left: 0;
+    margin-top: 0;
   }
 }

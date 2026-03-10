@@ -321,9 +321,9 @@ const VendedorDescuento = ({ onNavigate }) => {
 												</th>
 												<th>PRODUCTO</th>
 												<th>ID SKU</th>
-												<th className="vp-right">INVENTARIO</th>
-												<th className="vp-right">PRECIO BASE</th>
-												<th className="vp-right">ESTADO</th>
+												<th className="vd-right">INVENTARIO</th>
+												<th className="vd-right">PRECIO BASE</th>
+												<th className="vd-right">ESTADO</th>
 											</tr>
 										</thead>
 										<tbody>

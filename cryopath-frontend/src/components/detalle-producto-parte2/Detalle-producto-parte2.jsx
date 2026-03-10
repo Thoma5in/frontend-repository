@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './detalle-producto-parte2.css';
+import './Detalle-producto-parte2.css';
 import { agregarAlCarrito } from '../../services/cartApi';
 import { useAuth } from '../../context/AuthContext';
 

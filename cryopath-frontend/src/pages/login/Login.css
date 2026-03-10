@@ -14,10 +14,10 @@
 }
 
 .login-card {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   border-radius: 24px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md);
   padding: 40px 32px;
   max-width: 420px;
   width: 100%;
@@ -62,20 +62,21 @@
 .login-logo-text {
   font-size: 14px;
   font-weight: 600;
-  color: #00a0a0;
+  color: var(--color-primary);
 }
 
 .login-title {
   margin: 8px 0 4px;
   font-size: 22px;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .login-subtitle {
   margin: 0 0 20px;
   font-size: 15px;
   text-align: center;
-  color: #666666;
+  color: var(--text-secondary);
 }
 
 .login-form {
@@ -92,6 +93,7 @@
 
 .login-field label {
   font-size: 13px;
+  color: var(--text-primary);
 }
 
 .login-asterisk {
@@ -102,8 +104,10 @@
 .login-field input {
   padding: 9px 12px;
   border-radius: 24px;
-  border: 1px solid #c9c9c9;
+  border: 1px solid var(--border-dark);
   font-size: 14px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .login-password-wrapper {
@@ -130,7 +134,7 @@
   border: none;
   background: none;
   font-size: 12px;
-  color: #666666;
+  color: var(--text-secondary);
   cursor: pointer;
 }
 
@@ -141,7 +145,7 @@
   border-radius: 24px;
   border: none;
   background-color: #ff9f2e;
-  color: #ffffff;
+  color: var(--text-inverse);
   font-size: 15px;
   cursor: pointer;
 }
@@ -165,18 +169,19 @@
 .login-divider-line {
   flex: 1;
   height: 1px;
-  background-color: #dddddd;
+  background-color: var(--border-color);
 }
 
 .login-divider-dot {
   font-size: 10px;
-  color: #999999;
+  color: var(--text-tertiary);
 }
 
 .login-register-text {
   margin-top: 4px;
   text-align: center;
   font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .login-register-text a {

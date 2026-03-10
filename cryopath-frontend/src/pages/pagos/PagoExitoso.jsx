@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 function PagoExitoso() {
     const navigate = useNavigate();
+    const VITE_ORDERS_API = import.meta.env.VITE_ORDERS_API || 'http://localhost:3003';
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const token = params.get("token");
 
         if(token) {
-            fetch (`http://localhost:3003/pagos/capturar/${token}`, {
+            fetch (`${VITE_ORDERS_API}/pagos/capturar/${token}`, {
                 method: "POST",
             })
             .then (async res => {

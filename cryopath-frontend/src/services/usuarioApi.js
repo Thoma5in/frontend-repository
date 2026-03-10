@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = import.meta.env.VITE_AUTH_API || 'http://localhost:3001';
 
 export async function getCurrentUsuario(token) {
   if (!token) {
@@ -108,7 +108,7 @@ export async function reactivateAccount(correo) {
 }
 
 export async function getUserRoles(token) {
-  const response = await fetch('http://localhost:3001/usuarios/roles', {
+  const response = await fetch(`${BASE_URL}/usuarios/roles`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
