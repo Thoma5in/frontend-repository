@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
+import { SkeletonFormCard } from '../../components/skeletons/SkeletonComposed';
 import { loginRequest, registerRequest } from '../../services/authApi';
 import { useAuth } from '../../context/AuthContext';
 import { checkEmail, reactivateAccount } from '../../services/usuarioApi';
@@ -115,6 +116,13 @@ const Register = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Skeleton loading — set to true to preview skeleton or connect to real loading state
+  const isPageLoading = false;
+
+  if (isPageLoading) {
+    return <SkeletonFormCard fields={7} showDivider={false} />;
   }
 
   return (

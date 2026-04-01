@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SkeletonCartItem, SkeletonCartSummary } from "../../components/skeletons/SkeletonComposed";
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -191,11 +192,10 @@ export default function Cart() {
         </div>
 
         {loading && (
-          <div className="cart-loading-overlay" aria-live="polite" aria-busy="true">
-            <div className="cart-loader" role="status" aria-label="Cargando carrito">
-              <span className="cart-spinner" aria-hidden="true" />
-              <span className="cart-loader-text">Cargando carrito…</span>
-            </div>
+          <div aria-busy="true" role="status" aria-label="Cargando carrito">
+            {Array.from({ length: 3 }, (_, i) => (
+              <SkeletonCartItem key={`skel-cart-${i}`} />
+            ))}
           </div>
         )}
         {error && <p className="cart-message cart-message--error">{error}</p>}
@@ -251,26 +251,30 @@ export default function Cart() {
         ))}
       </div>
 
-      <div className="cart-summary">
-        <h3>Resumen del Pedido</h3>
-        <div className="cart-total">
-          <span>Total:</span>
-          <span>${Number(total).toLocaleString()}</span>
-        </div>
-        <button className="cart-buy" disabled={selectedIds.size === 0} onClick={handleBuy}>
-          Comprar
-        </button>
-        <p className="cart-privacy">
-          No venderemos tu información personal por dinero y solo utilizamos tu información de acuerdo con nuestra política de privacidad y cookies para proporcionar y mejorar nuestros servicios.
-        </p>
-        <div className="cart-payments">
-          <span>Métodos de Pago</span>
-          <div>
-            <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" width={40} />
-            <img src="https://seeklogo.com/images/P/pse-logo-6B5B6B6B6B-seeklogo.com.png" alt="PSE" width={40} />
+      {loading ? (
+        <SkeletonCartSummary />
+      ) : (
+        <div className="cart-summary">
+          <h3>Resumen del Pedido</h3>
+          <div className="cart-total">
+            <span>Total:</span>
+            <span>${Number(total).toLocaleString()}</span>
+          </div>
+          <button className="cart-buy" disabled={selectedIds.size === 0} onClick={handleBuy}>
+            Comprar
+          </button>
+          <p className="cart-privacy">
+            No venderemos tu información personal por dinero y solo utilizamos tu información de acuerdo con nuestra política de privacidad y cookies para proporcionar y mejorar nuestros servicios.
+          </p>
+          <div className="cart-payments">
+            <span>Métodos de Pago</span>
+            <div>
+              <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" width={40} />
+              <img src="https://seeklogo.com/images/P/pse-logo-6B5B6B6B6B-seeklogo.com.png" alt="PSE" width={40} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

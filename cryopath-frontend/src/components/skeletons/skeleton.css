@@ -1,0 +1,452 @@
+/* ============================================================
+   Skeleton Loading System — Bello Amuleto
+   Paleta cálida premium: beige, crema, arena
+   ============================================================ */
+
+/* ---------- Variables ---------- */
+:root {
+  --skeleton-base: #f1ebe3;
+  --skeleton-highlight: #fbf6f3;
+  --skeleton-accent: #efe7dd;
+  --skeleton-radius: 8px;
+  --skeleton-radius-lg: 12px;
+  --skeleton-radius-pill: 999px;
+  --skeleton-speed: 1.6s;
+}
+
+[data-theme="dark"] {
+  --skeleton-base: #3a3632;
+  --skeleton-highlight: #4a4540;
+  --skeleton-accent: #2e2a26;
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Base class ---------- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 0%,
+    var(--skeleton-highlight) 40%,
+    var(--skeleton-base) 80%
+  );
+  background-size: 400% 100%;
+  animation: skeleton-shimmer var(--skeleton-speed) ease-in-out infinite;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- Primitives ---------- */
+.skeleton-block {
+  border-radius: var(--skeleton-radius);
+}
+
+.skeleton-text {
+  height: 12px;
+  border-radius: var(--skeleton-radius-pill);
+  margin-bottom: 10px;
+}
+
+.skeleton-text:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-text--title {
+  height: 20px;
+  width: 70%;
+}
+
+.skeleton-text--subtitle {
+  height: 14px;
+  width: 55%;
+}
+
+.skeleton-text--short {
+  width: 40%;
+}
+
+.skeleton-text--medium {
+  width: 65%;
+}
+
+.skeleton-text--long {
+  width: 90%;
+}
+
+.skeleton-text--full {
+  width: 100%;
+}
+
+.skeleton-text--price {
+  height: 22px;
+  width: 30%;
+  border-radius: var(--skeleton-radius);
+}
+
+.skeleton-circle {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-button {
+  height: 40px;
+  border-radius: var(--skeleton-radius);
+}
+
+.skeleton-button--pill {
+  border-radius: var(--skeleton-radius-pill);
+}
+
+.skeleton-button--full {
+  width: 100%;
+}
+
+/* ---------- Composed: Product Card ---------- */
+.skeleton-product-card {
+  background: var(--skeleton-accent);
+  border: 1px solid var(--skeleton-base);
+  border-radius: 15px;
+  padding: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.skeleton-product-card__image {
+  width: 100%;
+  height: 220px;
+  border-radius: var(--skeleton-radius);
+  margin-bottom: 15px;
+}
+
+.skeleton-product-card__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.skeleton-product-card__actions .skeleton-button {
+  flex: 1;
+  height: 30px;
+}
+
+/* ---------- Composed: Cart Item ---------- */
+.skeleton-cart-item {
+  display: grid;
+  grid-template-columns: auto 120px 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  background: var(--skeleton-accent);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--skeleton-base);
+}
+
+.skeleton-cart-item__checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+}
+
+.skeleton-cart-item__image {
+  width: 120px;
+  height: 80px;
+  border-radius: 6px;
+}
+
+.skeleton-cart-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-cart-item__qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skeleton-cart-item__qty-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.skeleton-cart-item__qty-num {
+  width: 24px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.skeleton-cart-item__delete {
+  width: 72px;
+  height: 30px;
+  border-radius: 6px;
+}
+
+/* ---------- Composed: Cart Summary ---------- */
+.skeleton-cart-summary {
+  background: var(--skeleton-accent);
+  border-radius: 12px;
+  padding: 20px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skeleton-cart-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ---------- Composed: Detail Product ---------- */
+.skeleton-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  padding: 2rem;
+}
+
+.skeleton-detail__images {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-detail__main-image {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: var(--skeleton-radius);
+}
+
+.skeleton-detail__thumbnails {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+.skeleton-detail__thumb {
+  aspect-ratio: 1;
+  border-radius: 6px;
+}
+
+.skeleton-detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.skeleton-detail__rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.skeleton-detail__pricing {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--skeleton-base);
+  border-bottom: 1px solid var(--skeleton-base);
+}
+
+.skeleton-detail__card {
+  border-radius: var(--skeleton-radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--skeleton-accent);
+}
+
+.skeleton-detail__card--seller {
+  border-left: 4px solid var(--skeleton-base);
+}
+
+.skeleton-detail__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.skeleton-detail__shipping {
+  height: 86px;
+  border-radius: var(--skeleton-radius);
+}
+
+.skeleton-detail__action-btn {
+  height: 52px;
+  border-radius: var(--skeleton-radius);
+}
+
+/* ---------- Composed: Form Card ---------- */
+.skeleton-form-card {
+  background: var(--skeleton-accent);
+  border-radius: 24px;
+  border: 1px solid var(--skeleton-base);
+  padding: 40px 32px;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.skeleton-form-card__logo {
+  width: 160px;
+  height: 50px;
+  border-radius: var(--skeleton-radius);
+  margin-bottom: 8px;
+}
+
+.skeleton-form-card__field {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeleton-form-card__label {
+  width: 40%;
+  height: 12px;
+  border-radius: var(--skeleton-radius-pill);
+}
+
+.skeleton-form-card__input {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--skeleton-radius-pill);
+}
+
+.skeleton-form-card__submit {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--skeleton-radius-pill);
+  margin-top: 8px;
+}
+
+.skeleton-form-card__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--skeleton-base);
+  margin: 8px 0;
+}
+
+.skeleton-form-card__footer {
+  width: 55%;
+  height: 12px;
+  border-radius: var(--skeleton-radius-pill);
+}
+
+/* ---------- Composed: Filter Panel ---------- */
+.skeleton-filter-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--skeleton-accent);
+  border-radius: 10px;
+  height: fit-content;
+}
+
+.skeleton-filter-panel__slider {
+  width: 100%;
+  height: 6px;
+  border-radius: var(--skeleton-radius-pill);
+  margin: 8px 0;
+}
+
+.skeleton-filter-panel__values {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.skeleton-filter-panel__btn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-filter-panel__btn {
+  height: 36px;
+  border-radius: 6px;
+}
+
+/* ---------- Composed: Banner ---------- */
+.skeleton-banner {
+  width: 100%;
+  padding: 26px 22px;
+  border-radius: 18px;
+  background: var(--skeleton-accent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .skeleton-detail {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .skeleton-cart-item {
+    grid-template-columns: auto 80px 1fr;
+    gap: 10px;
+  }
+
+  .skeleton-cart-item__qty,
+  .skeleton-cart-item__delete {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .skeleton-detail {
+    padding: 1rem;
+  }
+
+  .skeleton-detail__thumbnails {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .skeleton-form-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-form-card {
+    padding: 24px 16px;
+  }
+
+  .skeleton-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--skeleton-base);
+  }
+}
