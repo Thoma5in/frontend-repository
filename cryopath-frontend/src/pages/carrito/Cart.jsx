@@ -8,6 +8,7 @@ import {
   eliminarItem,
   vaciarCarrito,
 } from "../../services/cartApi";
+import { formatCOP } from "../../utils/formatters";
 
 export default function Cart() {
   const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
@@ -215,10 +216,10 @@ export default function Cart() {
               <div className="cart-item-title">{item.nombre}</div>
               <div className="cart-item-prices">
                 <span className="original">
-                  ${Number(item.precioOriginal).toLocaleString()}
+                  {formatCOP(item.precioOriginal)}
                 </span>
                 <span className="price">
-                  ${Number(item.precio).toLocaleString()}
+                  {formatCOP(item.precio)}
                 </span>
                 {Number(item.descuento) > 0 && (
                   <span className="discount">{Number(item.descuento)}%OFF</span>
@@ -255,7 +256,7 @@ export default function Cart() {
         <h3>Resumen del Pedido</h3>
         <div className="cart-total">
           <span>Total:</span>
-          <span>${Number(total).toLocaleString()}</span>
+          <span>{formatCOP(total)}</span>
         </div>
         <button className="cart-buy" disabled={selectedIds.size === 0} onClick={handleBuy}>
           Comprar

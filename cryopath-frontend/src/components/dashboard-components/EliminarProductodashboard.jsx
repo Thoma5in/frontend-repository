@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { eliminarProductoRequest, eliminarImagenesProductoRequest } from "../../services/productosApi";
+import { formatCOP } from "../../utils/formatters";
 
 export default function EliminarProductodashboard({
   productos = [],
@@ -91,9 +92,7 @@ export default function EliminarProductodashboard({
                   <td>{producto.nombre}</td>
                   <td>{producto.descripcion}</td>
                   <td>
-                    {typeof producto.precio_base === "number"
-                      ? producto.precio_base.toFixed(2)
-                      : producto.precio_base}
+                    {formatCOP(producto.precio_base)}
                   </td>
                   <td>{producto.estado ?? "Sin estado"}</td>
                 </tr>

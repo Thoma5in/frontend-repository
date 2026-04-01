@@ -9,7 +9,7 @@ import useToast from '../../hooks/useToast';
 import useHomeProductsData from '../../hooks/useHomeProductsData';
 import useProductListing from '../../hooks/useProductListing';
 import useCartActions from '../../hooks/useCartActions';
-import { truncateWords } from '../../utils/formatters';
+import { truncateWords, formatCOP } from '../../utils/formatters';
 
 export default function Home({ idSupercategoria = null }) {
     const { session, profile, isAuthenticated, refreshCartCount } = useAuth();
@@ -208,7 +208,7 @@ export default function Home({ idSupercategoria = null }) {
                                     <strong className={sinStock ? "stock-text stock-text--out" : "stock-text stock-text--ok"}>{stock}</strong>
                                 </p>
 
-                                <p>Precio: ${typeof product.precio_base === 'number' ? product.precio_base.toFixed(2) : product.precio_base}</p>
+                                <p>Precio: {formatCOP(product.precio_base)}</p>
                                 <button className="details-button" onClick={() => navigate(`/product-details/${product.id_producto}`)}>Ver más detalles</button>
                                 <div className="product-actions-row">
                                     <button className="buy-button">Comprar</button>

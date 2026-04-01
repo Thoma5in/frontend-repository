@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Detalle-producto-parte2.css';
 import { agregarAlCarrito } from '../../services/cartApi';
 import { useAuth } from '../../context/AuthContext';
+import { formatCOP } from '../../utils/formatters';
 
 const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
     const scrollContainerRef = useRef(null);
@@ -144,10 +145,10 @@ const DetalleProductoParte2 = ({ productos = [], loading = false }) => {
                                     <h3 className="producto-nombre">{producto.nombre}</h3>
                                     <div className="producto-precios">
                                         {producto.precioOriginal != null && (
-                                            <span className="precio-original">${producto.precioOriginal?.toLocaleString('es-CL')}</span>
+                                            <span className="precio-original">{formatCOP(producto.precioOriginal)}</span>
                                         )}
                                         {producto.precioActual != null && (
-                                            <span className="precio-actual">${producto.precioActual?.toLocaleString('es-CL')}</span>
+                                            <span className="precio-actual">{formatCOP(producto.precioActual)}</span>
                                         )}
                                         {producto.descuento && (
                                             <span className="descuento-badge">{producto.descuento}% OFF</span>

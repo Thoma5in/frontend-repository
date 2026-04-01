@@ -98,3 +98,22 @@ export function truncateWords(text, limit = 20) {
   if (words.length <= limit) return normalized;
   return `${words.slice(0, limit).join(' ')}...`;
 }
+
+/**
+ * Formatea un valor numérico como precio en Pesos Colombianos (COP).
+ * Usa separador de miles con punto (ej: 2000 → "$ 2.000").
+ * @param {number|string|null|undefined} value - Valor a formatear
+ * @returns {string} Precio formateado en COP
+ */
+const copFormatter = new Intl.NumberFormat('es-CO', {
+  style: 'currency',
+  currency: 'COP',
+  maximumFractionDigits: 0,
+  minimumFractionDigits: 0,
+});
+
+export function formatCOP(value) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '$ 0';
+  return copFormatter.format(num);
+}

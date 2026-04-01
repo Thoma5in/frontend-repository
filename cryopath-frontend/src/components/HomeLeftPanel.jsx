@@ -1,5 +1,6 @@
 import React from 'react';
 import './HomeLeftPanel.css';
+import { formatCOP } from '../utils/formatters';
 
 const HomeLeftPanel = ({
   minPrice,
@@ -51,8 +52,8 @@ const HomeLeftPanel = ({
           className="price-slider"
         />
         <div className="price-values">
-          <span>Mín: ${sliderMinPrice.toLocaleString()}</span>
-          <span>Máx: ${Number(sliderValuePrice).toLocaleString()}</span>
+          <span>Mín: {formatCOP(sliderMinPrice)}</span>
+          <span>Máx: {formatCOP(sliderValuePrice)}</span>
         </div>
       </div>
 

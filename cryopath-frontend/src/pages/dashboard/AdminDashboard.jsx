@@ -1,4 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
+import { formatCOP } from "../../utils/formatters";
 import "./AdminDashboard.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -213,10 +214,7 @@ export default function AdminDashboard() {
                         <td>{producto.nombre}</td>
                         <td>{producto.descripcion}</td>
                         <td>
-                          $
-                          {typeof producto.precio_base === "number"
-                            ? producto.precio_base.toFixed(2)
-                            : producto.precio_base}
+                          {formatCOP(producto.precio_base)}
                         </td>
                         <td>
                           <strong>{cantidadDisponible}</strong> unidades
