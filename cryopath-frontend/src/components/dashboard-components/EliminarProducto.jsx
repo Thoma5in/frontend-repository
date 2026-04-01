@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { eliminarProductoRequest, eliminarImagenesProductoRequest } from "../../services/productosApi";
+import { formatCOP } from "../../utils/formatters";
 import "../../pages/dashboard/AdminDashboard.css";
 import { useState } from "react";
 
@@ -78,9 +79,7 @@ export default function EliminarProducto() {
                   <td>{producto.nombre}</td>
                   <td>{producto.descripcion}</td>
                   <td>
-                    {typeof producto.precio_base === "number"
-                      ? producto.precio_base.toFixed(2)
-                      : producto.precio_base}
+                    {formatCOP(producto.precio_base)}
                   </td>
                   <td>{producto.estado}</td>
                 </tr>

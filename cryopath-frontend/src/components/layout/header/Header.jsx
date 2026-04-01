@@ -10,6 +10,7 @@ import { obtenerNotificacionesRequest,
   marcarTodasLeidasRequest 
 } from "../../../services/notificacionesApi";
 import { buscarProductosRequest } from "../../../services/productosApi";
+import { formatCOP } from "../../../utils/formatters";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -283,7 +284,7 @@ const Header = () => {
                     <div>
                       <span className="title">{p.nombre}</span>
                       <span className="price"> 
-                        ${Number(p.precio_base).toLocaleString("es-CO")}
+                        {formatCOP(p.precio_base)}
                         </span>
                     </div>
                   </div>

@@ -4,15 +4,7 @@ import {useAuth} from "../../context/AuthContext";
 import { crearOrdenRequest } from "../../services/ordenApi";
 import { crearPedidoYPagoRequest } from "../../services/pagosApis";
 import "./PasarelaPagos.css";
-
-const formatCOP = (value) => {
-	const numberValue = Number(value) || 0;
-	return new Intl.NumberFormat("es-CO", {
-		style: "currency",
-		currency: "COP",
-		maximumFractionDigits: 0,
-	}).format(numberValue);
-};
+import { formatCOP } from "../../utils/formatters";
 
 export default function PasarelaPagos() {
 	const location = useLocation();

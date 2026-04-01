@@ -116,7 +116,7 @@ const VendedorProducto = ({ onNavigate }) => {
 		return new Intl.NumberFormat('es-CO', {
 			style: 'currency',
 			currency: 'COP',
-			maximumFractionDigits: 2,
+			maximumFractionDigits: 0,
 		}).format(numeric);
 	};
 

@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { listarCategorias } from '../../services/categoriasApi';
 import { obtenerProductosRequest } from '../../services/productosApi';
 import { crearPromocion, crearPromocionProductos } from '../../services/promocionesApi';
+import { formatCOP } from '../../utils/formatters';
 import './VendedorDescuento.css';
 
 const VendedorDescuento = ({ onNavigate }) => {
@@ -348,7 +349,7 @@ const VendedorDescuento = ({ onNavigate }) => {
 													</td>
 													<td className="vd-mono">{p.sku || p.id_producto}</td>
 													<td className="vd-right">{p.cantidad_disponible || p.inventario || 0} un.</td>
-													<td className="vd-right">${p.precio || p.precioBase || '0.00'}</td>
+													<td className="vd-right">{formatCOP(p.precio || p.precioBase)}</td>
 													<td className="vd-right">
 														<span className={statusClass(p.estado || 'Activo')}>{p.estado || 'Activo'}</span>
 													</td>

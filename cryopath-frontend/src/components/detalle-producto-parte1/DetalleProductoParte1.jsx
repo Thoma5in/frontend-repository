@@ -6,6 +6,7 @@ import { getInventarioByProducto } from '../../services/inventarioApi';
 import { obtenerCategoriaDeProducto } from '../../services/categoriasApi';
 import { useAuth } from '../../context/AuthContext';
 import { agregarAlCarrito, actualizarCantidad, obtenerCarrito } from '../../services/cartApi';
+import { formatCOP } from '../../utils/formatters';
 
 export default function DetalleProductoParte1() {
     const { id } = useParams();
@@ -325,10 +326,10 @@ export default function DetalleProductoParte1() {
                     {/* Precio */}
                     <div className="product-pricing">
                         {descuento > 0 && (
-                            <span className="price-original">$ {precioBase.toLocaleString('es-CL')}</span>
+                            <span className="price-original">{formatCOP(precioBase)}</span>
                         )}
                         <div className="price-current-container">
-                            <span className="price-current">$ {precioConDescuento.toLocaleString('es-CL')}</span>
+                            <span className="price-current">{formatCOP(precioConDescuento)}</span>
                             {descuento > 0 && (
                                 <span className="price-discount">{descuento}% OFF</span>
                             )}
