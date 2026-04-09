@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { parsePrice } from '../utils/formatters';
 
 const DEFAULT_PAGE_SIZE = 9;
@@ -38,23 +38,20 @@ export default function useProductListing({
   const [currentPage, setCurrentPage] = useState(1);
   const [maxPriceFilter, setMaxPriceFilter] = useState(maxPrice || 0);
   const [maxQuantityFilter, setMaxQuantityFilter] = useState(maxQuantity || 0);
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
   const [sortOrder, setSortOrder] = useState(initialSortOrder);
 
-  useEffect(() => {
-    if (maxPrice <= 0) return;
-    setMaxPriceFilter((prev) => {
-      if (!Number.isFinite(prev) || prev <= 0) return maxPrice;
-      return Math.min(prev, maxPrice);
-    });
-  }, [maxPrice]);
+  const effectiveMaxPriceFilter = useMemo(() => {
+    if (!Number.isFinite(maxPrice) || maxPrice <= 0) return 0;
+    if (!Number.isFinite(maxPriceFilter) || maxPriceFilter <= 0) return maxPrice;
+    return Math.min(maxPriceFilter, maxPrice);
+  }, [maxPrice, maxPriceFilter]);
 
-  useEffect(() => {
-    if (!hasInventory || maxQuantity <= 0) return;
-    setMaxQuantityFilter((prev) => {
-      if (!Number.isFinite(prev) || prev <= 0) return maxQuantity;
-      return Math.min(prev, maxQuantity);
-    });
-  }, [hasInventory, maxQuantity]);
+  const effectiveMaxQuantityFilter = useMemo(() => {
+    if (!hasInventory || !Number.isFinite(maxQuantity) || maxQuantity <= 0) return 0;
+    if (!Number.isFinite(maxQuantityFilter) || maxQuantityFilter <= 0) return maxQuantity;
+    return Math.min(maxQuantityFilter, maxQuantity);
+  }, [hasInventory, maxQuantity, maxQuantityFilter]);
 
   const filteredAndSortedProducts = useMemo(() => {
     if (!Array.isArray(products)) return [];
@@ -69,13 +66,18 @@ export default function useProductListing({
       .filter((product) => {
         const priceValue = parsePrice(product?.precio_base);
         if (typeof priceValue !== 'number') return true;
-        return priceValue <= maxPriceFilter;
+        return priceValue <= effectiveMaxPriceFilter;
       })
       .filter((product) => {
         if (!hasInventory) return true;
         const stock = Number(inventarioMap?.[product?.id_producto]);
         if (!Number.isFinite(stock)) return true;
-        return stock <= maxQuantityFilter;
+        return stock <= effectiveMaxQuantityFilter;
+      })
+      .filter((product) => {
+        if (!onlyAvailable || !hasInventory) return true;
+        const stock = Number(inventarioMap?.[product?.id_producto]);
+        return Number.isFinite(stock) && stock > 0;
       })
       .sort((a, b) => {
         const priceA = parsePrice(a?.precio_base) ?? 0;
@@ -87,10 +89,11 @@ export default function useProductListing({
     isCategoriaFilterActive,
     categoriasPorProducto,
     selectedCategoriaId,
-    maxPriceFilter,
+    effectiveMaxPriceFilter,
     hasInventory,
     inventarioMap,
-    maxQuantityFilter,
+    effectiveMaxQuantityFilter,
+    onlyAvailable,
     sortOrder,
   ]);
 
@@ -119,6 +122,11 @@ export default function useProductListing({
     setCurrentPage(1);
   };
 
+  const handleOnlyAvailableChange = (value) => {
+    setOnlyAvailable(Boolean(value));
+    setCurrentPage(1);
+  };
+
   const skeletonItems = useMemo(() => Array.from({ length: pageSize }, (_, index) => index), [pageSize]);
 
   return {
@@ -126,8 +134,9 @@ export default function useProductListing({
     maxPrice,
     minQuantity,
     maxQuantity,
-    maxPriceFilter,
-    maxQuantityFilter,
+    maxPriceFilter: effectiveMaxPriceFilter,
+    maxQuantityFilter: effectiveMaxQuantityFilter,
+    onlyAvailable,
     sortOrder,
     currentPage,
     totalPages,
@@ -140,6 +149,7 @@ export default function useProductListing({
     handleNext,
     handleMaxPriceChange,
     handleMaxQuantityChange,
+    handleOnlyAvailableChange,
     handleSortOrderChange,
   };
 }

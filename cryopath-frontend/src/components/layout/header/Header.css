@@ -23,6 +23,7 @@
 .header__top {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1rem;
 }
 
@@ -32,9 +33,8 @@
 }
 
 .header__nav {
-    margin-left: auto;
     display: flex;
-    gap: 2rem;
+    gap: 1rem;
 }
 
 .header__nav a {
@@ -61,6 +61,7 @@
     display: flex;
     align-items: center;
     flex: 1;
+    margin: 0 2rem;
     background-color: var(--bg-input);
     border-radius: 16px;
     height: 44px;
@@ -667,6 +668,10 @@
         display: none;
     }
 
+    .header__category-wrapper {
+        gap: 0.35rem;
+    }
+
     .header__hamburger {
         display: inline-flex;
         order: 2;
@@ -715,7 +720,10 @@
 
 .header__category-wrapper {
     position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .header__dropdown-menu {
