@@ -11,6 +11,9 @@ const HomeLeftPanel = ({
   maxQuantity,
   currentMaxQuantity,
   onMaxQuantityChange,
+  onlyAvailable,
+  onOnlyAvailableChange,
+  hasInventory,
   sortOrder,
   onSortOrderChange,
 }) => {
@@ -34,6 +37,10 @@ const HomeLeftPanel = ({
 
   const handleQuantityChange = (event) => {
     onMaxQuantityChange(Number(event.target.value));
+  };
+
+  const handleOnlyAvailableChange = (event) => {
+    onOnlyAvailableChange(event.target.checked);
   };
 
   return (
@@ -74,6 +81,24 @@ const HomeLeftPanel = ({
           <span>Máx: {currentMaxQuantity}</span>
         </div>
       </div>
+
+      <h3 className="home-left-panel-title">Disponibilidad</h3>
+      <label
+        className={`availability-filter ${onlyAvailable ? 'active' : ''} ${!hasInventory ? 'is-disabled' : ''}`}
+      >
+        <input
+          type="checkbox"
+          className="availability-filter__input"
+          checked={Boolean(onlyAvailable)}
+          onChange={handleOnlyAvailableChange}
+          disabled={!hasInventory}
+        />
+        <span className="availability-filter__switch" aria-hidden="true" />
+        <span className="availability-filter__label">Solo productos disponibles</span>
+      </label>
+      {!hasInventory && (
+        <p className="availability-filter__hint">No se pudo cargar inventario para filtrar disponibilidad.</p>
+      )}
 
       {/* Orden */}
       <h3 className="home-left-panel-title">Ordenar</h3>

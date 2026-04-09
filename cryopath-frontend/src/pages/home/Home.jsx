@@ -66,6 +66,7 @@ export default function Home({ idSupercategoria = null }) {
         maxQuantity,
         maxPriceFilter,
         maxQuantityFilter,
+        onlyAvailable,
         sortOrder,
         currentPage,
         totalPages,
@@ -75,7 +76,9 @@ export default function Home({ idSupercategoria = null }) {
         handleNext,
         handleMaxPriceChange,
         handleMaxQuantityChange,
+        handleOnlyAvailableChange,
         handleSortOrderChange,
+        hasInventory,
     } = useProductListing({
         products,
         inventarioMap,
@@ -106,6 +109,9 @@ export default function Home({ idSupercategoria = null }) {
                 maxQuantity={maxQuantity}
                 currentMaxQuantity={maxQuantityFilter}
                 onMaxQuantityChange={handleMaxQuantityChange}
+                onlyAvailable={onlyAvailable}
+                onOnlyAvailableChange={handleOnlyAvailableChange}
+                hasInventory={hasInventory}
                 sortOrder={sortOrder}
                 onSortOrderChange={handleSortOrderChange}
             />
