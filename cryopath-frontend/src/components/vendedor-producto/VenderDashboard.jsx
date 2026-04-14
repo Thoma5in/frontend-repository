@@ -1,7 +1,61 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { listarTodosPedidosRequest } from '../../services/pedidosApi';
 import './VenderDashboard.css';
 
 const VenderDashboard = () => {
+  const { session } = useAuth();
+  const token = session?.access_token;
+  const [recentOrders, setRecentOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [ordersError, setOrdersError] = useState('');
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const cargarPedidos = async () => {
+      setLoadingOrders(true);
+      setOrdersError('');
+
+      try {
+        const response = await listarTodosPedidosRequest({ limit: 10, offset: 0 }, token);
+        if (!isMounted) return;
+
+        const pedidos = Array.isArray(response?.data) ? response.data : [];
+        const mappedOrders = pedidos.map((pedido) => {
+          const items = Array.isArray(pedido?.pedido_detalle) ? pedido.pedido_detalle : [];
+          const totalProductos = items.reduce(
+            (acc, item) => acc + Number(item?.cantidad || 0),
+            0
+          );
+
+          return {
+            id: pedido?.id_pedido,
+            cliente: pedido?.id_usuario || 'N/A',
+            productos: totalProductos,
+            total: pedido?.total ?? 0,
+            estado: pedido?.estado || 'PENDIENTE',
+          };
+        });
+
+        setRecentOrders(mappedOrders);
+      } catch (error) {
+        if (!isMounted) return;
+        setOrdersError(error?.message || 'No se pudieron cargar los pedidos.');
+        setRecentOrders([]);
+      } finally {
+        if (!isMounted) return;
+        setLoadingOrders(false);
+      }
+    };
+
+    cargarPedidos();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
   const stats = useMemo(
     () => [
       {
@@ -13,7 +67,7 @@ const VenderDashboard = () => {
       },
       {
         label: 'Pedidos',
-        value: '666',
+        value: String(recentOrders.length),
         meta: 'Este mes',
         delta: '+12%',
         icon: '📦',
@@ -33,20 +87,7 @@ const VenderDashboard = () => {
         icon: '👤',
       },
     ],
-    []
-  );
-
-  const recentOrders = useMemo(
-    () => [
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'Entregado' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'En camino' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'En camino' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'Entregado' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'Entregado' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'Entregado' },
-      { id: '#UJT-234', cliente: 'Armando Webbs', productos: 5, total: '$100000,99', estado: 'Entregado' },
-    ],
-    []
+    [recentOrders.length]
   );
 
   const topProducts = useMemo(
@@ -63,8 +104,19 @@ const VenderDashboard = () => {
   const getStatusClass = (estado) => {
     const normalized = String(estado || '').toLowerCase();
     if (normalized.includes('entregado')) return 'vender-pill vender-pill--ok';
-    if (normalized.includes('camino')) return 'vender-pill vender-pill--warn';
+    if (normalized.includes('enviado') || normalized.includes('camino')) {
+      return 'vender-pill vender-pill--warn';
+    }
     return 'vender-pill';
+  };
+
+  const formatCurrency = (value) => {
+    const amount = Number(value || 0);
+    return new Intl.NumberFormat('es-VE', {
+      style: 'currency',
+      currency: 'VES',
+      maximumFractionDigits: 2,
+    }).format(amount);
   };
 
   return (
@@ -93,32 +145,40 @@ const VenderDashboard = () => {
           </button>
         </div>
 
-        <div className="vender-tableWrap">
-          <table className="vender-table">
-            <thead>
-              <tr>
-                <th>Pedido</th>
-                <th>Cliente</th>
-                <th>Num. Productos</th>
-                <th>Total</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((row, idx) => (
-                <tr key={`${row.id}-${idx}`}>
-                  <td className="vender-mono">{row.id}</td>
-                  <td>{row.cliente}</td>
-                  <td className="vender-center">{row.productos}</td>
-                  <td className="vender-right">{row.total}</td>
-                  <td className="vender-right">
-                    <span className={getStatusClass(row.estado)}>{row.estado}</span>
-                  </td>
+        {loadingOrders ? (
+          <p className="vender-empty">Cargando pedidos...</p>
+        ) : ordersError ? (
+          <p className="vender-empty">{ordersError}</p>
+        ) : recentOrders.length === 0 ? (
+          <p className="vender-empty">No hay pedidos aun. Cuando lleguen, apareceran aqui.</p>
+        ) : (
+          <div className="vender-tableWrap">
+            <table className="vender-table">
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Cliente</th>
+                  <th>Num. Productos</th>
+                  <th>Total</th>
+                  <th>Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {recentOrders.map((row, idx) => (
+                  <tr key={`${row.id}-${idx}`}>
+                    <td className="vender-mono">{row.id}</td>
+                    <td>{row.cliente}</td>
+                    <td className="vender-center">{row.productos}</td>
+                    <td className="vender-right">{formatCurrency(row.total)}</td>
+                    <td className="vender-right">
+                      <span className={getStatusClass(row.estado)}>{row.estado}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <section className="vender-card" aria-label="Productos más vendidos">
