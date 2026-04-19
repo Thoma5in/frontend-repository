@@ -1,4 +1,5 @@
 import './Supermarket.css'
+import { SkeletonBanner, SkeletonProductGrid, SkeletonFilterPanel } from '../../components/skeletons/SkeletonComposed';
 import Home from '../home/Home';
 import { useState, useEffect } from 'react';
 import { listarSupercategorias } from '../../services/supercategoriasApi';
@@ -37,7 +38,14 @@ const Supermarket = () =>{
             </header>
 
             <div className="supermarket-content">
-                {!loading && (
+                {loading ? (
+                    <div className="home-background" aria-busy="true" role="status" aria-label="Cargando supermercado">
+                        <SkeletonFilterPanel />
+                        <div className="home-products">
+                            <SkeletonProductGrid count={9} />
+                        </div>
+                    </div>
+                ) : (
                     <Home idSupercategoria={idSupercategoriaSupermercado} />
                 )}
             </div>
