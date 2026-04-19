@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { SkeletonFormCard } from '../../components/skeletons/SkeletonComposed';
 import { loginRequest } from '../../services/authApi';
 import { useAuth } from '../../context/AuthContext';
 
@@ -33,6 +34,13 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  // Skeleton loading — set to true to preview skeleton or connect to real loading state
+  const isPageLoading = false;
+
+  if (isPageLoading) {
+    return <SkeletonFormCard fields={2} showDivider={true} />;
+  }
 
   return (
     <div className="login-page">

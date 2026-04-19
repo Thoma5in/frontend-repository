@@ -1,4 +1,5 @@
 import './Home.css';
+import { SkeletonProductGrid, SkeletonFilterPanel } from '../../components/skeletons/SkeletonComposed';
 import Pagination from '../../components/Pagination';
 import HomeLeftPanel from '../../components/HomeLeftPanel';
 import { useLocation, useNavigate } from "react-router-dom";
@@ -99,66 +100,31 @@ export default function Home({ idSupercategoria = null }) {
     });
 
     return (
-        <div className="home-background">
-            <HomeLeftPanel
-                minPrice={minPrice}
-                maxPrice={maxPrice}
-                currentMaxPrice={maxPriceFilter}
-                onMaxPriceChange={handleMaxPriceChange}
-                minQuantity={minQuantity}
-                maxQuantity={maxQuantity}
-                currentMaxQuantity={maxQuantityFilter}
-                onMaxQuantityChange={handleMaxQuantityChange}
-                onlyAvailable={onlyAvailable}
-                onOnlyAvailableChange={handleOnlyAvailableChange}
-                hasInventory={hasInventory}
-                sortOrder={sortOrder}
-                onSortOrderChange={handleSortOrderChange}
-            />
+        <div className="home-background" aria-busy={loading || categoryMetaLoading} role="region" aria-label="Productos">
+            {loading ? (
+                <SkeletonFilterPanel />
+            ) : (
+                <HomeLeftPanel
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    currentMaxPrice={maxPriceFilter}
+                    onMaxPriceChange={handleMaxPriceChange}
+                    minQuantity={minQuantity}
+                    maxQuantity={maxQuantity}
+                    currentMaxQuantity={maxQuantityFilter}
+                    onMaxQuantityChange={handleMaxQuantityChange}
+                    sortOrder={sortOrder}
+                    onSortOrderChange={handleSortOrderChange}
+                />
+            )}
 
             <div className="home-products">
                 {loading ? (
-                    skeletonItems.map((index) => (
-                        <div
-                            className="product-card product-card--skeleton"
-                            key={`skeleton-${index}`}
-                            aria-hidden="true"
-                        >
-                            <div className="product-image skeleton-block" />
-                            <div className="skeleton-line skeleton-line--title" />
-                            <div className="skeleton-line" />
-                            <div className="skeleton-line skeleton-line--short" />
-                            <div className="skeleton-line skeleton-line--medium" />
-                            <div className="skeleton-line skeleton-line--price" />
-                            <div className="skeleton-button skeleton-button--full" />
-                            <div className="skeleton-actions-row">
-                                <div className="skeleton-button" />
-                                <div className="skeleton-button" />
-                            </div>
-                        </div>
-                    ))
+                    <SkeletonProductGrid count={skeletonItems.length || 9} />
                 ) : error ? (
                     <p className="home-message home-message--error">{error}</p>
                 ) : categoryMetaLoading ? (
-                    skeletonItems.map((index) => (
-                        <div
-                            className="product-card product-card--skeleton"
-                            key={`skeleton-category-${index}`}
-                            aria-hidden="true"
-                        >
-                            <div className="product-image skeleton-block" />
-                            <div className="skeleton-line skeleton-line--title" />
-                            <div className="skeleton-line" />
-                            <div className="skeleton-line skeleton-line--short" />
-                            <div className="skeleton-line skeleton-line--medium" />
-                            <div className="skeleton-line skeleton-line--price" />
-                            <div className="skeleton-button skeleton-button--full" />
-                            <div className="skeleton-actions-row">
-                                <div className="skeleton-button" />
-                                <div className="skeleton-button" />
-                            </div>
-                        </div>
-                    ))
+                    <SkeletonProductGrid count={skeletonItems.length || 9} />
                 ) : currentProducts.length === 0 ? (
                     <p className="home-message">No se encontraron productos.</p>
                 ) : (
