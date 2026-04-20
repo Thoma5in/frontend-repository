@@ -4,6 +4,12 @@ import "./AdminDashboard.css";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { obtenerProductosRequest } from "../../services/productosApi";
+import {
+  quoteRates,
+  createShipment,
+  getShipment,
+  getShipmentLabel,
+} from "../../services/enviaApi";
 import EliminarProductodashboard from "../../components/dashboard-components/EliminarProductodashboard";
 import { getInventario } from "../../services/inventarioApi";
 import {} from "../../services/categoriasApi";
@@ -275,7 +281,135 @@ export default function AdminDashboard() {
             </div>
           )}
         </section>
+        {isAdmin && (
+          <section className="admin-product-section" style={{ marginTop: 24 }}>
+            <h3 className="admin-section-title">Pruebas Envia (solo admin)</h3>
+            <EnviaTestPanel authToken={authToken} />
+          </section>
+        )}
       </main>
+    </div>
+  );
+}
+
+function EnviaTestPanel({ authToken }) {
+  const [ratesResp, setRatesResp] = useState(null);
+  const [createResp, setCreateResp] = useState(null);
+  const [getResp, setGetResp] = useState(null);
+  const [labelResp, setLabelResp] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const sampleRatePayload = {
+    origin: { postal_code: "01000", country: "MX" },
+    destination: { postal_code: "04510", country: "MX" },
+    parcels: [{ weight: 1, dimensions: { height: 10, width: 10, length: 10 } }],
+  };
+
+  const sampleShipmentPayload = {
+    shipper: { name: "Sender", postal_code: "01000", country: "MX", address: "Calle 1" },
+    recipient: { name: "Receiver", postal_code: "04510", country: "MX", address: "Calle 2" },
+    parcels: [{ weight: 1, dimensions: { height: 10, width: 10, length: 10 } }],
+    service: "express",
+    reference: "order-12345",
+  };
+
+  async function handleQuote() {
+    setLoading(true);
+    setRatesResp(null);
+    try {
+      const res = await quoteRates(sampleRatePayload);
+      setRatesResp(res);
+    } catch (err) {
+      setRatesResp({ ok: false, error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleCreate() {
+    setLoading(true);
+    setCreateResp(null);
+    try {
+      const res = await createShipment(sampleShipmentPayload, "order-12345");
+      setCreateResp(res);
+    } catch (err) {
+      setCreateResp({ ok: false, error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleGet(id) {
+    if (!id) return setGetResp({ ok: false, error: 'id required' });
+    setLoading(true);
+    setGetResp(null);
+    try {
+      const res = await getShipment(id);
+      setGetResp(res);
+    } catch (err) {
+      setGetResp({ ok: false, error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleLabel(id, format) {
+    if (!id) return setLabelResp({ ok: false, error: 'id required' });
+    setLoading(true);
+    setLabelResp(null);
+    try {
+      const res = await getShipmentLabel(id, format);
+      setLabelResp(res);
+    } catch (err) {
+      setLabelResp({ ok: false, error: err.message });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div>
+      <div className="admin-form-grid" style={{ gap: 12 }}>
+        <div className="admin-form-field">
+          <span>Cotizar tarifas</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="admin-primary-button" onClick={handleQuote} disabled={loading}>Cotizar</button>
+            <small style={{ alignSelf: 'center', color: 'var(--text-secondary)' }}>Payload sample used</small>
+          </div>
+          <pre style={{ maxHeight: 220, overflow: 'auto', marginTop: 8 }}>{ratesResp ? JSON.stringify(ratesResp, null, 2) : ''}</pre>
+        </div>
+
+        <div className="admin-form-field">
+          <span>Crear envío</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="admin-primary-button" onClick={handleCreate} disabled={loading}>Crear envío</button>
+            <small style={{ alignSelf: 'center', color: 'var(--text-secondary)' }}>Idempotency-Key: order-12345</small>
+          </div>
+          <pre style={{ maxHeight: 220, overflow: 'auto', marginTop: 8 }}>{createResp ? JSON.stringify(createResp, null, 2) : ''}</pre>
+        </div>
+
+        <div className="admin-form-field">
+          <span>Obtener envío / rastreo</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input id="envia-get-id" placeholder="shipment id" />
+            <button className="admin-secondary-button" onClick={() => handleGet(document.getElementById('envia-get-id').value)} disabled={loading}>Obtener</button>
+          </div>
+          <pre style={{ maxHeight: 220, overflow: 'auto', marginTop: 8 }}>{getResp ? JSON.stringify(getResp, null, 2) : ''}</pre>
+        </div>
+
+        <div className="admin-form-field">
+          <span>Obtener etiqueta</span>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input id="envia-label-id" placeholder="shipment id" />
+            <select id="envia-label-format" defaultValue="pdf">
+              <option value="pdf">pdf</option>
+              <option value="png">png</option>
+            </select>
+            <button className="admin-secondary-button" onClick={() => handleLabel(document.getElementById('envia-label-id').value, document.getElementById('envia-label-format').value)} disabled={loading}>Label</button>
+          </div>
+          <pre style={{ maxHeight: 220, overflow: 'auto', marginTop: 8 }}>{labelResp ? JSON.stringify(labelResp, null, 2) : ''}</pre>
+        </div>
+      </div>
     </div>
   );
 }
